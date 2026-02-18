@@ -1,0 +1,23 @@
+---
+import MainLayout from "../../layouts/Layout.astro";
+import MbtiGame from "../../components/games/guess-mbti/MbtiGame";
+---
+
+<MainLayout title="Guess the MBTI | Personality Game">
+  <div
+    class="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4"
+  >
+    <header class="mb-10 text-center">
+      <h1
+        class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500 mb-2"
+      >
+        MBTI Quiz
+      </h1>
+      <p class="text-slate-400">
+        Analiza al personaje y adivina su tipo de personalidad
+      </p>
+    </header>
+
+    <MbtiGame client:load />
+  </div>
+</MainLayout>

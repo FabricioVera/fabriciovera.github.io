@@ -44,7 +44,6 @@ export default function GameContainer() {
           src={character.image}
           alt="Character to guess"
           className={`w-full h-full object-cover transition-all duration-500`}
-          // Tip de juego: Inicia con blur y ve quitándolo si piden pistas
         />
       </div>
 
