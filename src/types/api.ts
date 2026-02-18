@@ -6,10 +6,14 @@ export interface Character {
       image_url: string;
     };
   };
-  anime: Array<{
-    role: string;
-    anime: {
-      title: string;
+}
+
+export interface Anime {
+  mal_id: number;
+  title: string;
+  images: {
+    jpg: {
+      image_url: string;
     };
-  }>;
+  };
 }
