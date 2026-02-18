@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import charactersData from "../../../../public/data/mbti_characters.json";
 
 // Los 16 tipos de personalidad
 const MBTI_TYPES = [
@@ -25,48 +26,35 @@ interface CharacterData {
   name: string;
   category: string;
   subcategory: string;
-  image: string;
   four_letter: string;
 }
 
+const allCharacters: CharacterData[] = charactersData;
+
 export default function MbtiGame() {
-  const [allCharacters, setAllCharacters] = useState<CharacterData[]>([]);
   const [character, setCharacter] = useState<CharacterData | null>(null);
   const [status, setStatus] = useState<"loading" | "playing" | "won" | "lost">(
     "loading",
   );
   const [selectedType, setSelectedType] = useState<string | null>(null);
+
   useEffect(() => {
-    const loadCharacters = async () => {
-      try {
-        const res = await fetch("/api/game/mbti");
-        const data = await res.json();
-
-        if (!Array.isArray(data) || data.length === 0) {
-          throw new Error("No characters found");
-        }
-
-        setAllCharacters(data);
-        pickRandomCharacter(data);
-      } catch (err) {
-        console.error(err);
-        setStatus("lost");
-      }
-    };
-
-    loadCharacters();
+    pickRandomCharacter();
   }, []);
 
-  const pickRandomCharacter = (list = allCharacters) => {
-    if (!list.length) return;
+  const pickRandomCharacter = () => {
+    if (!allCharacters.length) {
+      setStatus("lost");
+      return;
+    }
 
     let randomIndex;
     let newCharacter;
 
     do {
-      randomIndex = Math.floor(Math.random() * list.length);
-      newCharacter = list[randomIndex];
-    } while (list.length > 1 && newCharacter.id === character?.id);
+      randomIndex = Math.floor(Math.random() * allCharacters.length);
+      newCharacter = allCharacters[randomIndex];
+    } while (allCharacters.length > 1 && newCharacter.id === character?.id);
 
     setCharacter(newCharacter);
     setSelectedType(null);
@@ -74,15 +62,10 @@ export default function MbtiGame() {
   };
 
   const handleGuess = (type: string) => {
-    if (status !== "playing" || !character) return;
+    if (!character || status !== "playing") return;
 
     setSelectedType(type);
-
-    if (type === character.four_letter) {
-      setStatus("won");
-    } else {
-      setStatus("lost");
-    }
+    setStatus(type === character.four_letter ? "won" : "lost");
   };
 
   if (status === "loading")
@@ -94,13 +77,15 @@ export default function MbtiGame() {
   if (!character)
     return <div className="text-red-500">Error al cargar datos</div>;
 
+  const imageUrl = `https://personality-database.com/profile_images/${character.id}.png`;
+
   return (
     <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 p-4">
       {/* Columna Izquierda */}
       <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 flex flex-col items-center text-center">
         <div className="w-48 h-48 mb-4 overflow-hidden rounded-full border-4 border-slate-600 bg-slate-900">
           <img
-            src={character.image}
+            src={imageUrl}
             alt={character.name}
             className="w-full h-full object-cover"
             onError={(e) => {
