@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import charactersData from "../../../../public/data/mbti_characters.json";
+import charactersData from "../../../data/mbti_characters.json";
 
 // Los 16 tipos de personalidad
 const MBTI_TYPES = [
@@ -27,6 +27,8 @@ interface CharacterData {
   category: string;
   subcategory: string;
   four_letter: string;
+  four_letter_votes: number;
+  image: string;
 }
 
 const allCharacters: CharacterData[] = charactersData;
@@ -37,6 +39,7 @@ export default function MbtiGame() {
     "loading",
   );
   const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     pickRandomCharacter();
@@ -68,16 +71,27 @@ export default function MbtiGame() {
     setStatus(type === character.four_letter ? "won" : "lost");
   };
 
+  useEffect(() => {
+    const loadImage = async () => {
+      if (!character) return;
+      console.log(
+        `Buscando imagen para: ${character.name} (${character.category} ${character.subcategory}) ${character.image}`,
+      );
+      setImageUrl(character.image);
+    };
+
+    loadImage();
+  }, [character]);
+
   if (status === "loading")
     return (
       <div className="text-white p-10 text-center animate-pulse">
         Cargando mbti...
       </div>
     );
+
   if (!character)
     return <div className="text-red-500">Error al cargar datos</div>;
-
-  const imageUrl = `https://personality-database.com/profile_images/${character.id}.png`;
 
   return (
     <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 p-4">
@@ -85,11 +99,15 @@ export default function MbtiGame() {
       <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 flex flex-col items-center text-center">
         <div className="w-48 h-48 mb-4 overflow-hidden rounded-full border-4 border-slate-600 bg-slate-900">
           <img
-            src={imageUrl}
+            src={
+              imageUrl ||
+              "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+            }
             alt={character.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-top"
+            loading="lazy"
             onError={(e) => {
-              (e.target as HTMLImageElement).src =
+              (e.currentTarget as HTMLImageElement).src =
                 "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
             }}
           />
