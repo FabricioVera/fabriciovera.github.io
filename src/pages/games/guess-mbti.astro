@@ -7,22 +7,23 @@ import { games } from "@data/games";
 const game = games.find((g) => g.url === "/games/guess-mbti");
 ---
 
-<MainLayout title={game?.title || "Guess the MBTI | Personality Game"}>
-  <div class="min-h-screen flex flex-col items-center justify-center p-4">
-    <div
-      class="absolute inset-0 bg-cover bg-center transition-transform duration-100 ease-out -z-10"
-      style={`background-image: url('${game?.backgroundImage}');`}
-      transition:name=`background ${game?.id}`
-    >
-    </div>
-    <header class="mb-10 text-center">
+<MainLayout title={game?.title || "Juego de MBTI"} }>
+  <div
+    class="fixed inset-0 bg-cover bg-center transition-transform duration-100 ease-out -z-10 opacity-30"
+    style={`background-image: url('${game?.backgroundImage}');`}
+    transition:name=`background ${game?.id}`
+  >
+  </div>
+
+  <div class="h-full flex flex-col items-center justify-center m-auto">
+    <div class="mb-10">
       <h1
         class="text-5xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-accent to-accent2 mb-2"
         transition:name=`gameTitle ${game?.id}`
       >
         {game?.title}
       </h1>
-    </header>
+    </div>
 
     <MbtiGame client:load />
   </div>

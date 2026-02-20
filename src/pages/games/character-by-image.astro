@@ -1,25 +1,25 @@
 ---
-import MainLayout from "../../layouts/Layout.astro";
-import GameContainer from "../../components/games/guess-anime/GameContainer";
+import MainLayout from "@layouts/GameLayout.astro";
+import GameContainer from "@components/games/guess-anime/GameContainer";
 
 // Puedes hacer fetch de datos iniciales en el servidor si quieres SSR para la primera carga
 // y pasárselos al componente como props iniciales.
 // https://api.jikan.moe/v4/characters?limit=5&q=lelouch%20lamperouge
+
+import { games } from "@data/games";
+
+const game = games.find((g) => g.url === "/games/character-by-image");
 ---
 
 <MainLayout title="Adivina el Personaje | Anime Games">
-  <section
-    class="min-h-screen flex flex-col items-center justify-center bg-slate-950 text-white p-4"
-  >
+  <section class="flex flex-col items-center justify-center text-white p-4">
     <header class="mb-8 text-center">
       <h1
-        class="text-4xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-purple-600"
+        class="text-4xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-accent to-accent2 mb-2"
+        transition:name=`gameTitle ${game?.id}`
       >
         ¿Quién es ese personaje?
       </h1>
-      <p class="text-slate-400 mt-2">
-        Adivina el personaje viendo su foto borrosa
-      </p>
     </header>
 
     <GameContainer client:load />

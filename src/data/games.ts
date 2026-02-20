@@ -14,11 +14,11 @@ export const games: Game[] = [
     isAvailable: true,
     backgroundImage: "/img/bg-anime-character.jpg",
     frontImage: "/img/fg-Ryxga.png",
-    url: "/juego/adivina-imagen",
+    url: "/games/character-by-image",
   },
   {
     id: "2",
-    title: "Adivina el MBTI de un personaje",
+    title: "Adivina el MBTI del personaje",
     isAvailable: true,
     backgroundImage: "/img/bg-anime-character.jpg",
     frontImage: "/img/fg-mbti2.png",
