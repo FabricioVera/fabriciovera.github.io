@@ -1,0 +1,36 @@
+export interface Game {
+  id: string;
+  title: string;
+  isAvailable: boolean;
+  backgroundImage: string;
+  frontImage: string;
+  url: string;
+}
+
+export const games: Game[] = [
+  {
+    id: "1",
+    title: "Adivina el personaje con una imagen",
+    isAvailable: true,
+    backgroundImage: "/img/bg-anime-character.jpg",
+    frontImage: "/img/fg-Ryxga.png",
+    url: "/juego/adivina-imagen",
+  },
+  {
+    id: "2",
+    title: "Adivina el MBTI de un personaje",
+    isAvailable: true,
+    backgroundImage: "img/fg-mbti.png",
+    frontImage: "img/fg-mbti2.png",
+    url: "/games/guess-mbti",
+  },
+  // Generación dinámica de los 4 juegos "Próximamente" para mantener DRY
+  ...Array.from({ length: 4 }).map((_, index) => ({
+    id: `coming-soon-${index + 3}`,
+    title: "Próximamente",
+    isAvailable: false,
+    backgroundImage: "/img/bg-placeholder.jpg",
+    frontImage: "/img/front-placeholder.png",
+    url: "#",
+  })),
+];

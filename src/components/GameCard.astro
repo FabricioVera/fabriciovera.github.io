@@ -1,0 +1,130 @@
+---
+import type { Game } from "@data/games";
+
+interface Props {
+  game: Game;
+}
+
+const { game } = Astro.props;
+const opacityClass = game.isAvailable
+  ? "opacity-100 hover:opacity-95"
+  : "opacity-60 grayscale cursor-not-allowed";
+---
+
+<parallax-card
+  class="block w-full h-40 lg:h-80 relative rounded-2xl overflow-hidden cursor-pointer group border-2 border-gray-700"
+  style="perspective: 1000px;"
+>
+  <a
+    href={game.isAvailable ? game.url : "#"}
+    class={`block w-full h-full relative transform-style-3d transition-all duration-300 ease-out ${opacityClass}`}
+    tabindex={game.isAvailable ? "0" : "-1"}
+    aria-disabled={!game.isAvailable}
+  >
+    <div
+      class="bg-layer absolute inset-[-10%] w-[120%] h-[120%] bg-cover bg-center transition-transform duration-100 ease-out"
+      style={`background-image: url('${game.backgroundImage}');`}
+    >
+      <div class="absolute inset-0 bg-black/50 group-hover:bg-black/5"></div>
+    </div>
+    <picture
+      class="front-layer absolute inset-0 flex flex-col items-center justify-center transition-transform duration-100 ease-out z-10 group-hover:z-20"
+    >
+      <img
+        src={game.frontImage}
+        alt={`${game.title}`}
+        class="h-full object-contain drop-shadow-2xl pointer-events-none"
+      />
+    </picture>
+  </a>
+
+  <h2
+    class="absolute min-h-20 w-full p-2 bg-red-950/50 bottom-0 text-white text-xl md:text-2xl font-bold mt-4 text-center text-shadow-2xs px-4 pointer-events-none"
+  >
+    {game.title}
+  </h2>
+</parallax-card>
+
+<script>
+  class ParallaxCard extends HTMLElement {
+    private bgLayer: HTMLElement | null = null;
+    private frontLayer: HTMLElement | null = null;
+    private rafId: number | null = null;
+
+    connectedCallback() {
+      this.bgLayer = this.querySelector(".bg-layer");
+      this.frontLayer = this.querySelector(".front-layer");
+
+      // Escuchadores de eventos para el mouse
+      this.addEventListener("mousemove", this.handleMouseMove);
+      this.addEventListener("mouseleave", this.handleMouseLeave);
+    }
+
+    disconnectedCallback() {
+      this.removeEventListener("mousemove", this.handleMouseMove);
+      this.removeEventListener("mouseleave", this.handleMouseLeave);
+      if (this.rafId) cancelAnimationFrame(this.rafId);
+    }
+
+    private handleMouseMove = (e: MouseEvent) => {
+      if (!this.bgLayer || !this.frontLayer) return;
+
+      const rect = this.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      // Calcular el centro de la tarjeta
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      // Calcular el desplazamiento (offset) relativo al centro
+      const offsetX = (x - centerX) / centerX;
+      const offsetY = (y - centerY) / centerY;
+
+      // Usar requestAnimationFrame para un rendimiento suave
+      if (this.rafId) cancelAnimationFrame(this.rafId);
+
+      this.rafId = requestAnimationFrame(() => {
+        // Rotación 3D del contenedor base (Opcional, pero da mejor efecto)
+        const rotateX = -offsetY * 10; // Máximo 10 grados
+        const rotateY = offsetX * 10;
+
+        // Movimiento de las capas (El frente se mueve más que el fondo)
+        const bgTranslateX = offsetX * -10;
+        const bgTranslateY = offsetY * -10;
+
+        const frontTranslateX = offsetX * 20;
+        const frontTranslateY = offsetY * 20;
+
+        // Aplicar transformaciones
+        const anchor = this.querySelector("a") as HTMLElement;
+        if (anchor)
+          anchor.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+        this.bgLayer!.style.transform = `translate(${bgTranslateX}px, ${bgTranslateY}px)`;
+        this.frontLayer!.style.transform = `translate(${frontTranslateX}px, ${frontTranslateY}px) scale(1.05)`;
+      });
+    };
+
+    private handleMouseLeave = () => {
+      if (this.rafId) cancelAnimationFrame(this.rafId);
+
+      const anchor = this.querySelector("a") as HTMLElement;
+      if (anchor) anchor.style.transform = `rotateX(0deg) rotateY(0deg)`;
+
+      if (this.bgLayer) this.bgLayer.style.transform = `translate(0px, 0px)`;
+      if (this.frontLayer)
+        this.frontLayer.style.transform = `translate(0px, 0px) scale(1)`;
+    };
+  }
+
+  // Registramos el Web Component si no existe
+  if (!customElements.get("parallax-card")) {
+    customElements.define("parallax-card", ParallaxCard);
+  }
+</script>
+<style>
+  .transform-style-3d {
+    transform-style: preserve-3d;
+  }
+</style>

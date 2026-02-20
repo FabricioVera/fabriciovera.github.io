@@ -1,0 +1,18 @@
+---
+import { games } from "@data/games";
+import GameCard from "@components/GameCard.astro";
+---
+
+<section class="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8 min-h-screen">
+  <div id="main-menu-header" class="text-center mb-4">
+    <h1
+      class="text-4xl md:text-2xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-accent to-accent2/80"
+    >
+      FabriGames
+    </h1>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+    {games.map((game) => <GameCard game={game} />)}
+  </div>
+</section>
