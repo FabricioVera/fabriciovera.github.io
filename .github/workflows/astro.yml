@@ -26,6 +26,7 @@ concurrency:
 
 env:
   BUILD_PATH: "." # default value when not using subfolders
+  MAL_CLIENT_ID: ${{ secrets.MALCLIENTID }}
   # BUILD_PATH: subfolder
 
 jobs:
