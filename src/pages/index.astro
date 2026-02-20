@@ -1,8 +1,10 @@
 ---
 import MainMenu from "@components/MainMenu.astro";
 import Layout from "@layouts/Layout.astro";
+const apiKey = process.env.REACT_APP_API_KEY;
 ---
 
 <Layout title="FabriGames | Home">
+  {apiKey}
   <MainMenu />
 </Layout>
