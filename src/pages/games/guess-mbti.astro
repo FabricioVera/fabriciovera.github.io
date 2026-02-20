@@ -1,19 +1,27 @@
 ---
-import MainLayout from "../../layouts/Layout.astro";
-import MbtiGame from "../../components/games/guess-mbti/MbtiGame";
+import MainLayout from "@layouts/GameLayout.astro";
+import MbtiGame from "@components/games/guess-mbti/MbtiGame";
+
+import { games } from "@data/games";
+
+const game = games.find((g) => g.url === "/games/guess-mbti");
 ---
 
-<MainLayout title="Guess the MBTI | Personality Game">
-  <div
-    class="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4"
-  >
+<MainLayout title={game?.title || "Guess the MBTI | Personality Game"}>
+  <div class="min-h-screen flex flex-col items-center justify-center p-4">
+    <div
+      class="absolute inset-0 bg-cover bg-center transition-transform duration-100 ease-out -z-10"
+      style={`background-image: url('${game?.backgroundImage}');`}
+      transition:name=`background ${game?.id}`
+    >
+    </div>
     <header class="mb-10 text-center">
       <h1
-        class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500 mb-2"
+        class="text-5xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-accent to-accent2 mb-2"
+        transition:name=`gameTitle ${game?.id}`
       >
-        MBTI Quiz
+        {game?.title}
       </h1>
-      <p class="text-slate-400">Adivina el mbti del personaje</p>
     </header>
 
     <MbtiGame client:load />

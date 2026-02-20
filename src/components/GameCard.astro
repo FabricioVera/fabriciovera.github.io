@@ -22,8 +22,9 @@ const opacityClass = game.isAvailable
     aria-disabled={!game.isAvailable}
   >
     <div
-      class="bg-layer absolute inset-[-10%] w-[120%] h-[120%] bg-cover bg-center transition-transform duration-100 ease-out"
+      class="bg-layer absolute inset-[-10%] w-[120%] h-[120%] bg-cover bg-center transition-all duration-300 ease-out"
       style={`background-image: url('${game.backgroundImage}');`}
+      transition:name=`background ${game.id}`
     >
       <div class="absolute inset-0 bg-black/50 group-hover:bg-black/5"></div>
     </div>
@@ -40,6 +41,7 @@ const opacityClass = game.isAvailable
 
   <h2
     class="absolute min-h-20 w-full p-2 bg-red-950/50 bottom-0 text-white text-xl md:text-2xl font-bold mt-4 text-center text-shadow-2xs px-4 pointer-events-none"
+    transition:name=`gameTitle ${game?.id}`
   >
     {game.title}
   </h2>
