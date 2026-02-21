@@ -1,11 +1,5 @@
 import { supabase } from "@lib/supabase";
-
-export interface ScoreEntry {
-  id: string;
-  player_name: string;
-  score: number;
-  created_at: string;
-}
+import type { ScoreEntry } from "src/types/score";
 
 export async function saveHighScore(
   gameId: string,
@@ -13,7 +7,24 @@ export async function saveHighScore(
   score: number,
 ): Promise<void> {
   if (score <= 0) return;
+  const { data: existingScore, error: fetchError } = await supabase
+    .from("leaderboard")
+    .select("score")
+    .eq("game_id", gameId)
+    .eq("player_name", playerName);
 
+  if (fetchError) {
+    console.error("Error al obtener el puntaje existente:", fetchError);
+    return;
+  }
+  for (let i = 0; i < existingScore.length; i++) {
+    if (existingScore[i].score >= score) {
+      console.log(
+        "El puntaje no es mayor a los existentes, no se actualizará.",
+      );
+      return;
+    }
+  }
   const { error } = await supabase
     .from("leaderboard")
     .insert([{ game_id: gameId, player_name: playerName, score }]);
@@ -22,6 +33,7 @@ export async function saveHighScore(
     console.error("Error al guardar el puntaje:", error);
     // Aquí podrías implementar un sistema de telemetría o manejo de errores global
   }
+  console.log("Puntaje guardado exitosamente");
 }
 
 export async function getTopScores(

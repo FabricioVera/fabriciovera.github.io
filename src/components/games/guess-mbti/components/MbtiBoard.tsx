@@ -56,7 +56,7 @@ export function MbtiBoard({
           {isWon ? "¡Correcto!" : "¡Incorrecto!"}{" "}
           <span className="text-white">
             Es <span className="text-accent2">{character.four_letter}</span> con{" "}
-            {character.four_letter_votes} votos totales.
+            {character.four_letter_votes} votos.
           </span>
         </p>
       )}

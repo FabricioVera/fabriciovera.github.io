@@ -16,7 +16,7 @@ export default function Pointer({
         Puntos: <span className="text-accent font-bold">{score}</span>
       </div>
 
-      <Leaderboard gameId="mbti_game" />
+      <Leaderboard gameId="guess-mbti" />
     </div>
   );
 }
