@@ -1,8 +1,17 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { CharacterData, GameStatus } from "../types";
-import charactersData from "@data/mbti_characters.json";
 
-export function useMbtiGame(characters: CharacterData[]) {
+interface UseMbtiGameProps {
+  characters: CharacterData[];
+  onCorrectGuess: () => void;
+  onIncorrectGuess: () => void;
+}
+
+export function useMbtiGame({
+  characters,
+  onCorrectGuess,
+  onIncorrectGuess,
+}: UseMbtiGameProps) {
   const [character, setCharacter] = useState<CharacterData | null>(null);
   const [status, setStatus] = useState<GameStatus>("loading");
   const [selectedType, setSelectedType] = useState<string | null>(null);
@@ -32,6 +41,11 @@ export function useMbtiGame(characters: CharacterData[]) {
 
       setSelectedType(type);
       setStatus(type === character.four_letter ? "won" : "lost");
+      if (type === character.four_letter) {
+        onCorrectGuess();
+      } else {
+        onIncorrectGuess();
+      }
     },
     [character, status],
   );

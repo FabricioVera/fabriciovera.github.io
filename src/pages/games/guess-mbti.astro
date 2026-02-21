@@ -7,7 +7,7 @@ import { games } from "@data/games";
 const game = games.find((g) => g.url === "/games/guess-mbti");
 ---
 
-<MainLayout title={game?.title || "Juego de MBTI"} }>
+<MainLayout title={game?.title || "Juego de MBTI"}>
   <div
     class="fixed inset-0 bg-cover bg-center transition-transform duration-100 ease-out -z-10 opacity-30"
     style={`background-image: url('${game?.backgroundImage}');`}
@@ -15,10 +15,10 @@ const game = games.find((g) => g.url === "/games/guess-mbti");
   >
   </div>
 
-  <div class="h-full flex flex-col items-center justify-center m-auto">
+  <div class="h-full flex flex-col items-center justify-center m-auto mx-2">
     <div class="mb-10">
       <h1
-        class="text-5xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-accent to-accent2 mb-2"
+        class="text-2xl font-extrabold text-transparent text-center bg-clip-text bg-linear-to-r from-accent to-accent2 mb-2"
         transition:name=`gameTitle ${game?.id}`
       >
         {game?.title}
