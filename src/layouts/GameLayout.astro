@@ -1,23 +1,24 @@
 ---
-import { Header } from "@components/index";
 import "../styles/global.css";
 import ClientRouter from "astro/components/ClientRouter.astro";
-import { games } from "@data/games";
 import { Sidebar } from "./Sidebar";
+import { games } from "@data/games";
 
 interface Props {
-  title: string;
+  gameId: string;
 }
 
-const { title } = Astro.props;
+const { gameId } = Astro.props;
+const game = games.find((g) => g.id === gameId);
+
+if (!game) {
+  throw new Error(`Game with id ${gameId} not found`);
+}
 
 // Adaptamos los datos al formato que espera el Sidebar, por si en el futuro la estructura cambia
 const navigationLinks = games
-  .map((game) => ({
-    title: game.title, // o game.name, ajusta según tu archivo data/games.ts
-    url: game.url,
-  }))
-  .filter((link) => link.url); // Filtra enlaces sin URL definida
+  .filter((g) => g.url)
+  .map((g) => ({ name: g.name, url: g.url }));
 ---
 
 <!doctype html>
@@ -27,13 +28,32 @@ const navigationLinks = games
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" href="/favicon.jpg" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+    <title>{game.title}</title>
     <ClientRouter />
   </head>
   <body class="min-h-screen flex flex-col bg-black">
     <Sidebar links={navigationLinks} client:load transition:persist />
+
     <main class="flex-1 flex flex-col relative z-0">
-      <slot />
+      <background
+        class="fixed inset-0 bg-cover bg-center transition-transform duration-100 ease-out -z-10 opacity-30"
+        style={`background-image: url('${game.backgroundImage}');`}
+        transition:name={`background ${game.id}`}></background>
+
+      <div
+        class="h-full flex flex-col items-center justify-center m-auto mx-2 w-full"
+      >
+        <header class="mb-8 text-center mt-10">
+          <h1
+            class="text-4xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-accent to-accent2 mb-2"
+            transition:name={`gameTitle ${game.id}`}
+          >
+            {game.title}
+          </h1>
+        </header>
+
+        <slot />
+      </div>
     </main>
   </body>
 </html>

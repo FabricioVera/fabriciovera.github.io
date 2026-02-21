@@ -1,0 +1,21 @@
+---
+import GameLayout from "@layouts/GameLayout.astro";
+import GameRenderer from "./GameRenderer.astro";
+import { games } from "@data/games";
+
+export function getStaticPaths() {
+  const validGames = games.filter((game) => game.id);
+  return validGames.map((game) => ({
+    params: { id: game.id },
+    props: { game },
+  }));
+}
+const { game } = Astro.props;
+if (!game) {
+  return Astro.redirect("/404");
+}
+---
+
+<GameLayout gameId={game.id}>
+  <GameRenderer gameId={game.id} />
+</GameLayout>

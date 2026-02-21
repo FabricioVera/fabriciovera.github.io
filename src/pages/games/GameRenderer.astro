@@ -1,0 +1,32 @@
+---
+// Juegos
+import MbtiGame from "@components/games/guess-mbti/MbtiGame";
+import AnimeGame from "@components/games/guess-anime/GameContainer";
+
+// DATA
+import mbtiCharactersData from "@data/mbti_characters.json";
+
+interface Props {
+  gameId: string;
+}
+
+const { gameId } = Astro.props;
+---
+
+{gameId === "guess-mbti" && <MbtiGame client:load />}
+
+{gameId === "character-by-image" && <AnimeGame client:load />}
+
+{/* Manejo de Errores: Fallback visual si el ID no está mapeado */}
+{
+  !["guess-mbti", "character-by-image"].includes(gameId) && (
+    <div class="flex flex-col items-center justify-center p-10 text-center bg-primary/80 rounded-xl border border-secondary/50">
+      <h2 class="text-2xl font-bold text-accent2 mb-2">
+        Juego en Construcción
+      </h2>
+      <p class="text-gray-300">
+        El juego '{gameId}' aún no tiene un componente asignado.
+      </p>
+    </div>
+  )
+}

@@ -10,8 +10,8 @@ export interface Game {
 
 export const games: Game[] = [
   {
-    id: "1",
-    name: "character-by-image",
+    id: "character-by-image",
+    name: "Adivina Personaje Anime",
     title: "Adivina el personaje con una imagen",
     isAvailable: true,
     backgroundImage: "/img/bg-anime-character.jpg",
@@ -19,16 +19,25 @@ export const games: Game[] = [
     url: "/games/character-by-image",
   },
   {
-    id: "2",
-    name: "guess-mbti",
+    id: "guess-mbti",
+    name: "Adivina el MBTI",
     title: "Adivina el MBTI del personaje",
     isAvailable: true,
     backgroundImage: "/img/bg-anime-character.jpg",
     frontImage: "/img/fg-mbti2.png",
     url: "/games/guess-mbti",
   },
-  // Generación dinámica de los 4 juegos "Próximamente" para mantener DRY
-  ...Array.from({ length: 4 }).map((_, index) => ({
+  {
+    id: "warframedle",
+    name: "Warframe DLE",
+    title: "Warframe DLE",
+    isAvailable: true,
+    backgroundImage: "/img/bg-warframe-dle.jpg",
+    frontImage: "/img/fg-warframe-dle.png",
+    url: "/games/warframedle",
+  },
+  // Generación dinámica de los 3 juegos "Próximamente" para mantener DRY
+  ...Array.from({ length: 3 }).map((_, index) => ({
     id: `coming-soon-${index + 3}`,
     name: `coming-soon-${index + 3}`,
     title: "Próximamente",
