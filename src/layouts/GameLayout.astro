@@ -15,7 +15,6 @@ if (!game) {
   throw new Error(`Game with id ${gameId} not found`);
 }
 
-// Adaptamos los datos al formato que espera el Sidebar, por si en el futuro la estructura cambia
 const navigationLinks = games
   .filter((g) => g.url)
   .map((g) => ({ name: g.name, url: g.url }));

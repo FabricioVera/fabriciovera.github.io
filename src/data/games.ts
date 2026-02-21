@@ -32,8 +32,8 @@ export const games: Game[] = [
     name: "Warframe DLE",
     title: "Warframe DLE",
     isAvailable: true,
-    backgroundImage: "/img/bg-warframe-dle.jpg",
-    frontImage: "/img/fg-warframe-dle.png",
+    backgroundImage: "/img/WarframeBackground.png",
+    frontImage: "/img/WarframeOnly2.png",
     url: "/games/warframedle",
   },
   // Generación dinámica de los 3 juegos "Próximamente" para mantener DRY
