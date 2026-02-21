@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { getTopScores, type ScoreEntry } from "../../services/scoreRepository";
+import { getTopScores } from "../../services/scoreRepository";
+import type { ScoreEntry } from "src/types/score";
 
 interface LeaderboardProps {
   gameId: string;

@@ -70,12 +70,21 @@ export function Sidebar({ links }: SidebarProps) {
 
         <nav className="flex-1 overflow-y-auto py-4">
           <ul className="flex flex-col gap-2 px-4">
+            <li key="home">
+              <a
+                href="/"
+                className="block px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-accent transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                Inicio
+              </a>
+            </li>
             {links.map((link) => (
               <li key={link.url}>
                 <a
                   href={link.url}
                   className="block px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-accent transition-colors"
-                  onClick={() => setIsOpen(false)} // Cierra el menú al navegar
+                  onClick={() => setIsOpen(false)}
                 >
                   {link.title}
                 </a>

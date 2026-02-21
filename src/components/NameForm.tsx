@@ -1,5 +1,6 @@
 import { useStore } from "@nanostores/react";
 import { $playerName } from "@store/playerStore";
+import RemovePlayerName from "./common/RemovePlayerName";
 
 export default function NameForm() {
   const playerName = useStore($playerName);
@@ -7,7 +8,8 @@ export default function NameForm() {
   if (playerName)
     return (
       <h1 className="text-2xl text-center font-bold text-white mb-4">
-        Bienvenido {playerName}, elije un juego!
+        Bienvenido {playerName}
+        <RemovePlayerName />, elije un juego!
       </h1>
     );
   else {
