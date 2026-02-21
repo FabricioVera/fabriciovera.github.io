@@ -58,9 +58,9 @@ export function Leaderboard({ gameId }: LeaderboardProps) {
 
       {/* Panel Lateral Deslizante */}
       <div
-        className={`fixed top-0 right-0 h-full w-full sm:w-80 bg-gray-900 border-l border-gray-700 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col ${isOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed top-0 right-0 h-full w-full sm:w-80 bg-primary border-l border-secondary shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
-        <div className="flex justify-between items-center p-6 border-b border-gray-800">
+        <div className="flex justify-between items-center p-6 border-b border-secondary">
           <h3 className="text-xl font-bold text-white flex items-center gap-2">
             Top 10
           </h3>
@@ -76,7 +76,7 @@ export function Leaderboard({ gameId }: LeaderboardProps) {
         <div className="flex-1 overflow-y-auto p-6">
           {isLoading ? (
             <div className="flex justify-center items-center h-full">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-accent2"></div>
             </div>
           ) : scores.length === 0 ? (
             <p className="text-gray-400 text-center mt-10">
@@ -87,7 +87,7 @@ export function Leaderboard({ gameId }: LeaderboardProps) {
               {scores.map((entry, index) => (
                 <li
                   key={entry.id}
-                  className={`flex items-center justify-between p-3 rounded-lg border ${index === 0 ? "bg-yellow-500/10 border-yellow-500/30" : index === 1 ? "bg-gray-300/10 border-gray-300/30" : index === 2 ? "bg-amber-700/10 border-amber-700/30" : "bg-gray-800 border-gray-700"}`}
+                  className={`flex items-center justify-between p-3 rounded-lg border ${index === 0 ? "bg-primary/10 border-primary/30" : index === 1 ? "bg-secondary/10 border-secondary/30" : index === 2 ? "bg-accent2/10 border-accent2/30" : "bg-primary border-secondary"}`}
                 >
                   <div className="flex items-center gap-3">
                     <span
@@ -102,13 +102,13 @@ export function Leaderboard({ gameId }: LeaderboardProps) {
                             : `${index + 1}.`}
                     </span>
                     <span
-                      className="text-white font-medium truncate max-w-[120px]"
+                      className="text-white font-medium truncate max-w-30"
                       title={entry.player_name}
                     >
                       {entry.player_name}
                     </span>
                   </div>
-                  <span className="font-bold text-purple-400">
+                  <span className="font-bold text-accent2">
                     {entry.score} pts
                   </span>
                 </li>

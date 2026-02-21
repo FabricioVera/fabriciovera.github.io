@@ -12,7 +12,9 @@
       "@data/*": ["src/data/*"],
       "@hooks/*": ["src/hooks/*"],
       "@store/*": ["src/store/*"],
-      "@lib/*": ["src/lib/*"]
+      "@lib/*": ["src/lib/*"],
+      "@types/*": ["src/types/*"],
+      "@services/*": ["src/services/*"]
     }
   }
 }
