@@ -12,10 +12,12 @@ interface Props {
 const { title } = Astro.props;
 
 // Adaptamos los datos al formato que espera el Sidebar, por si en el futuro la estructura cambia
-const navigationLinks = games.map((game) => ({
-  title: game.title, // o game.name, ajusta según tu archivo data/games.ts
-  url: game.url,
-}));
+const navigationLinks = games
+  .map((game) => ({
+    title: game.title, // o game.name, ajusta según tu archivo data/games.ts
+    url: game.url,
+  }))
+  .filter((link) => link.url); // Filtra enlaces sin URL definida
 ---
 
 <!doctype html>
@@ -29,7 +31,6 @@ const navigationLinks = games.map((game) => ({
     <ClientRouter />
   </head>
   <body class="min-h-screen flex flex-col bg-black">
-    <Header />
     <Sidebar links={navigationLinks} client:load transition:persist />
     <main class="flex-1 flex flex-col relative z-0">
       <slot />

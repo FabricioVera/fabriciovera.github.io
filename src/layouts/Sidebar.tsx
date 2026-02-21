@@ -74,7 +74,7 @@ export function Sidebar({ links }: SidebarProps) {
               <li key={link.url}>
                 <a
                   href={link.url}
-                  className="block px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+                  className="block px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-accent transition-colors"
                   onClick={() => setIsOpen(false)} // Cierra el menú al navegar
                 >
                   {link.title}

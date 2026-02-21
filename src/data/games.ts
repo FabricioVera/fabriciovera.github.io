@@ -35,6 +35,6 @@ export const games: Game[] = [
     isAvailable: false,
     backgroundImage: "/img/bg-anime-character.jpg",
     frontImage: "/img/front-placeholder.png",
-    url: "#",
+    url: "",
   })),
 ];
