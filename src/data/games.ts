@@ -43,7 +43,7 @@ export const games: Game[] = [
     title: "Próximamente",
     isAvailable: false,
     backgroundImage: "/img/bg-anime-character.jpg",
-    frontImage: "/img/front-placeholder.png",
+    frontImage: "/img/fg-placeholder.png",
     url: "",
   })),
 ];
