@@ -19,7 +19,7 @@ const { gameId } = Astro.props;
 
 {/* Manejo de Errores: Fallback visual si el ID no está mapeado */}
 {
-  !["guess-mbti", "character-by-image"].includes(gameId) && (
+  !["guess-mbti", "character-by-image", "warframedle"].includes(gameId) && (
     <div class="flex flex-col items-center justify-center p-10 text-center bg-primary/80 rounded-xl border border-secondary/50">
       <h2 class="text-2xl font-bold text-accent2 mb-2">
         Juego en Construcción
