@@ -71,14 +71,15 @@ export default function WarframedleGame() {
 
       {guesses.length > 0 && (
         <div className="overflow-x-auto rounded-2xl border border-secondary mt-4">
-          <table className="w-full text-left text-white whitespace-nowrap">
+          <table className="w-full text-center text-white whitespace-nowrap">
             <thead className="bg-primary">
               <tr>
-                <th className="p-3">Warframe</th>
-                <th className="p-3">Prime</th>
-                <th className="p-3">Aura</th>
-                <th className="p-3">Año</th>
-                <th className="p-3">Sexo</th>
+                <th className="p-3 border-r border-secondary">Img</th>
+                <th className="p-3 border-r border-secondary">Warframe</th>
+                <th className="p-3 border-r border-secondary">Prime</th>
+                <th className="p-3 border-r border-secondary">Aura</th>
+                <th className="p-3 border-r border-secondary">Año</th>
+                <th className="p-3 border-r border-secondary">Sexo</th>
                 <th className="p-3">Playstyle</th>
               </tr>
             </thead>
@@ -88,6 +89,15 @@ export default function WarframedleGame() {
                   key={guess.name}
                   className="border-b border-slate-700 animate-in fade-in slide-in-from-top-2"
                 >
+                  <td
+                    className={`p-3 font-bold ${guess.wikiaThumbnail === dailyWarframe.wikiaThumbnail ? "bg-accent" : "bg-secondary"}`}
+                  >
+                    <img
+                      src={guess.wikiaThumbnail}
+                      alt=""
+                      className="w-24 h-24 rounded-full"
+                    />
+                  </td>
                   <td
                     className={`p-3 font-bold ${guess.name === dailyWarframe.name ? "bg-accent" : "bg-secondary"}`}
                   >
