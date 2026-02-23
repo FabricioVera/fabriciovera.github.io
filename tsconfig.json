@@ -14,7 +14,9 @@
       "@store/*": ["src/store/*"],
       "@lib/*": ["src/lib/*"],
       "@types/*": ["src/types/*"],
-      "@services/*": ["src/services/*"]
+      "@services/*": ["src/services/*"],
+      "@utils/*": ["src/utils/*"],
+      "@auth/*": ["src/components/auth/*"]
     }
   }
 }
