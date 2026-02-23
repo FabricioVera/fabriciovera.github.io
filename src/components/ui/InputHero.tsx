@@ -1,15 +1,19 @@
 import { motion, AnimatePresence } from "framer-motion";
 
 interface HeroInputProps {
+  className?: string;
   itemName: string;
   thumbnailUrl: string | undefined;
   selectDirection: number;
+  isDefault?: boolean;
 }
 
 export default function HeroInput({
+  className,
   itemName,
   thumbnailUrl,
   selectDirection,
+  isDefault = false,
 }: HeroInputProps) {
   const h1Variants = {
     initial: (selectDirection: number) => ({
@@ -31,33 +35,32 @@ export default function HeroInput({
     animate: { opacity: 1 },
     exit: { opacity: 0 },
   };
-  if (!itemName) {
-    return;
-  }
 
   return (
-    <section className="relative w-auto h-[40vh] md:h-[50vh] flex items-end justify-center overflow-hidden rounded-2xl shadow-lg mb-5 bg-sidebar min-w-[300px]">
-      {/* AnimatePresence gestiona el desmontaje de los componentes (exit) */}
-      <AnimatePresence mode="wait" custom={selectDirection}>
-        {/* Usamos itemName como key para que Framer sepa cuándo desmontar y montar */}
+    <section
+      className={`${className} relative w-auto ${isDefault ? "h-20" : "h-[25vh] md:h-[35vh]"} flex justify-center mb-2 min-w-3xs aspect-square`}
+    >
+      <AnimatePresence custom={selectDirection}>
         <motion.div
           key={itemName}
           className="absolute inset-0 flex items-end justify-center w-full h-full"
         >
-          {thumbnailUrl && (
+          {false && (
+            <div className="absolute inset-0 bg-linear-to-t from-red-500/30 via-white/20 to-transparent rounded-2xl" />
+          )}
+
+          {thumbnailUrl && !isDefault && (
             <motion.img
               variants={bgVariants}
               initial="initial"
               animate="animate"
               exit="exit"
-              transition={{ duration: 0.2 }}
-              className="absolute inset-0 w-full h-full object-cover brightness-75 mask-fade-bottom"
+              transition={{ duration: 0.3 }}
+              className="absolute inset-0 w-full h-full object-cover object-top brightness-75 mask-b-from-70"
               src={thumbnailUrl}
-              alt={itemName}
+              alt=""
             />
           )}
-
-          <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
 
           <motion.h1
             custom={selectDirection}
@@ -66,10 +69,14 @@ export default function HeroInput({
             animate="center"
             exit="exit"
             transition={{
-              duration: 0.3,
-              ease: "easeInOut",
+              duration: 0.4,
+              ease: [0.25, 0.8, 0.25, 1],
             }}
-            className="relative z-10 text-4xl md:text-6xl font-bold text-white drop-shadow-lg text-center px-4 pb-12 css-3d-text"
+            className={`relative bottom-5 z-10 text-2xl md:text-4xl font-bold text-center px-4 drop-shadow-lg tracking-wider transition-colors duration-300 ${
+              isDefault
+                ? "bg-linear-to-r from-accent to-accent2 bg-clip-text text-transparent"
+                : "text-white css-3d-text"
+            }`}
           >
             {itemName}
           </motion.h1>

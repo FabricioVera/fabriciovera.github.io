@@ -1,8 +1,78 @@
 @import "tailwindcss";
 
 @theme {
+  --dark-red-900: #1a0000;
+  --dark-red-800: #260101; /* primary */
+  --dark-red-700: #3b0202;
+  --dark-red-600: #730202; /* secondary */
+  --dark-red-500: #a60303;
+  --dark-red-400: #cc2a2a;
+
+  /* === ACCENT WARM CONTROLADO === */
+
+  --accent-600: #d95f76; /* accent */
+  --accent-500: #e66b5f;
+  --accent-400: #f2762e; /* accent2 */
+
+  /* === NEUTRALS (críticos) === */
+
+  --neutral-950: #0f0f12;
+  --neutral-900: #17171c;
+  --neutral-800: #1f2026;
+  --neutral-700: #2a2c33;
+  --neutral-600: #3a3d45;
+  --neutral-500: #5a5f6b;
+  --neutral-300: #b8bcc6;
+  --neutral-100: #f2f2f4;
+
+  /* Backgrounds */
+  --bg-app: var(--neutral-950);
+  --bg-surface: var(--neutral-900);
+  --bg-card: var(--neutral-800);
+  --bg-elevated: var(--neutral-700);
+
+  /* Text */
+  --color-text-primary: var(--neutral-100);
+  --text-secondary: var(--neutral-300);
+  --text-muted: var(--neutral-500);
+
+  /* Brand */
+  --brand-primary: var(--red-600);
+  --brand-primary-hover: var(--red-500);
+  --brand-primary-active: var(--red-700);
+
+  /* Accent */
+  --color-accent-main: var(--accent-600);
+  --accent-alt: var(--accent-400);
+
+  /* Correct / success */
+  --color-success: #1e6648;
+  /* Incorrect */
+  --color-error: #c92a2a;
+  /* Partial / hint */
+  --color-warning: #e6a100;
+  /* Locked */
+  --color-disabled: var(--neutral-600);
+
+  /* LEGACY */
   --color-primary: #260101;
   --color-secondary: #730202;
   --color-accent: #d95f76;
   --color-accent2: #f2762e;
+  --color-neutral: #1a1f24;
+  --color-calid: #bfb3a8;
+}
+
+.css-3d-text {
+  letter-spacing: 3px;
+  text-shadow:
+    0px 1px 0 #5a0202,
+    0px 2px 0 #4a0101,
+    0px 3px 0 #3b0101,
+    0px 4px 0 #2a0101,
+    0px 5px 0 #1a0000,
+    /* Sombra de caída (Drop shadow) para separar del fondo */ 0px 8px 10px
+      rgba(0, 0, 0, 0.7),
+    /* Un ligero resplandor (Glow) del color accent para que parezca caliente */
+    0px 0px 15px rgba(255, 69, 0, 0.4);
 }

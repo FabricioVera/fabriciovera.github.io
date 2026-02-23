@@ -43,7 +43,7 @@ export function Leaderboard({ gameId }: LeaderboardProps) {
       {/* Botón Discreto en la UI */}
       <button
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 px-3 py-1.5 bg-accent/10 hover:bg-accent/20 text-accent2 rounded-lg transition-colors border border-accent/30 font-medium text-sm"
+        className="flex items-center gap-2 px-3 py-1.5 bg-accent/50 hover:bg-accent text-white rounded-lg transition-colors border border-accent/30 font-medium text-sm"
         aria-label="Ver Ranking"
       >
         Ranking
@@ -88,7 +88,7 @@ export function Leaderboard({ gameId }: LeaderboardProps) {
               {scores.map((entry, index) => (
                 <li
                   key={entry.id}
-                  className={`flex items-center justify-between p-3 rounded-lg border ${index === 0 ? "bg-primary/10 border-primary/30" : index === 1 ? "bg-secondary/10 border-secondary/30" : index === 2 ? "bg-accent2/10 border-accent2/30" : "bg-primary border-secondary"}`}
+                  className={`flex items-center justify-between p-3 rounded-lg border ${index === 0 ? "bg-yellow-500/10 border-yellow-500/30" : index === 1 ? "bg-gray-400/10 border-gray-400/30" : index === 2 ? "bg-accent2/10 border-accent2/30" : "bg-primary border-secondary"}`}
                 >
                   <div className="flex items-center gap-3">
                     <span
@@ -109,7 +109,7 @@ export function Leaderboard({ gameId }: LeaderboardProps) {
                       {entry.player_name}
                     </span>
                   </div>
-                  <span className="font-bold text-accent2">
+                  <span className="font-bold text-white">
                     {entry.score} pts
                   </span>
                 </li>

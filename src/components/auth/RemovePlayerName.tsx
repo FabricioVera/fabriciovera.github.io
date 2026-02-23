@@ -1,10 +1,10 @@
-import { $playerName } from "../../store/playerStore";
+import { $playerName } from "@store/playerStore";
 
-export default function RemovePlayerName() {
+export function RemovePlayerName() {
   return (
     <button
       className="w-4 h-4 top-0 left-0 cursor-pointer font-bold"
-      onClick={() => $playerName.set("")}
+      onClick={() => $playerName.set(null)}
       title="Cambiar nombre"
     >
       <svg

@@ -3,7 +3,7 @@ import { useAnimeGame } from "./hooks/useAnimeGame";
 import Pointer from "../Pointer";
 import { useStore } from "@nanostores/react";
 import { $playerName } from "../../../store/playerStore";
-import NameForm from "../../NameForm";
+import NameForm from "../../auth/NameForm";
 
 export default function GameContainer() {
   const playerName = useStore($playerName);

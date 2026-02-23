@@ -6,7 +6,7 @@ import { useMbtiGame } from "./hooks/useMbtiGame";
 import { MbtiBoard } from "./components/MbtiBoard";
 import { $playerName } from "@store/playerStore";
 import { useGameScore } from "@hooks/useGameScore";
-import NameForm from "@components/NameForm";
+import NameForm from "@components/auth/NameForm";
 import { Pointer } from "@components/index";
 
 const allCharacters = charactersData as CharacterData[];

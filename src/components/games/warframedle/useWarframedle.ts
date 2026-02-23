@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import type { Warframe, ParsedWarframe } from "src/types/warframe";
+import type { preWarframe, Warframe } from "src/types/warframe";
 import type { GameStatus } from "src/types/game";
 
-export default function useWarframedle(rawData: Warframe[]) {
-  const warframes: ParsedWarframe[] = useMemo(() => {
+export default function useWarframedle(rawData: preWarframe[]) {
+  const warframes: Warframe[] = useMemo(() => {
     return rawData.map((wf) => ({
       ...wf,
       releaseYear: new Date(wf.releaseDate).getFullYear(),
@@ -20,7 +20,7 @@ export default function useWarframedle(rawData: Warframe[]) {
     return warframes[index];
   }, [warframes]);
 
-  const [guesses, setGuesses] = useState<ParsedWarframe[]>([]);
+  const [guesses, setGuesses] = useState<Warframe[]>([]);
   const [status, setStatus] = useState<GameStatus>("playing");
   const [selectedWarframe, setSelectedWarframe] = useState<string>("");
 
@@ -45,7 +45,6 @@ export default function useWarframedle(rawData: Warframe[]) {
       .filter((wf) => !guesses.some((g) => g.name === wf.name))
       .map((wf) => ({
         name: wf.name,
-        wikiaThumbnail: wf.wikiaThumbnail,
       }));
   }, [warframes, guesses]);
 

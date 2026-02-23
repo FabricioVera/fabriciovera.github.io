@@ -39,18 +39,19 @@ const navigationLinks = games
         style={`background-image: url('${game.backgroundImage}');`}
         transition:name={`background ${game.id}`}></background>
 
-      <div
-        class="h-full flex flex-col items-center justify-center m-auto mx-2 w-full"
-      >
+      <div class="h-full flex flex-col items-center justify-center w-full">
         <header class="mb-8 text-center mt-10">
-          <h1
-            class="text-4xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-accent to-accent2 mb-2"
-            transition:name={`gameTitle ${game.id}`}
-          >
-            {game.title}
-          </h1>
+          {
+            !game.hideTitle && (
+              <h1
+                class="text-4xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-accent to-accent2 mb-2"
+                transition:name={`gameTitle ${game.id}`}
+              >
+                {game.title}
+              </h1>
+            )
+          }
         </header>
-
         <slot />
       </div>
     </main>

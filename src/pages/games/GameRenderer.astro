@@ -15,7 +15,7 @@ const { gameId } = Astro.props;
 
 {gameId === "character-by-image" && <AnimeGame client:load />}
 
-{gameId === "warframedle" && <WarframedleGame client:load />}
+{gameId === "warframedle" && <WarframedleGame client:only="React" />}
 
 {/* Manejo de Errores: Fallback visual si el ID no está mapeado */}
 {

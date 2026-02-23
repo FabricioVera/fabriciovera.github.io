@@ -6,7 +6,7 @@ export interface Ability {
   cardImage?: string;
 }
 
-export interface Warframe {
+export interface preWarframe {
   name: string;
   isPrime: boolean;
   aura: string;
@@ -18,7 +18,7 @@ export interface Warframe {
   wikiaThumbnail: string;
 }
 
-export interface ParsedWarframe extends Omit<Warframe, "releaseDate"> {
+export interface Warframe extends Omit<preWarframe, "releaseDate"> {
   releaseYear: number;
 }
 

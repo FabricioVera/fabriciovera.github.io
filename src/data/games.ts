@@ -6,6 +6,7 @@ export interface Game {
   backgroundImage: string;
   frontImage: string;
   url: string;
+  hideTitle?: boolean;
 }
 
 export const games: Game[] = [
@@ -35,6 +36,7 @@ export const games: Game[] = [
     backgroundImage: "/img/WarframeBackground.png",
     frontImage: "/img/WarframeOnly2.png",
     url: "/games/warframedle",
+    hideTitle: true,
   },
   // Generación dinámica de los 3 juegos "Próximamente" para mantener DRY
   ...Array.from({ length: 3 }).map((_, index) => ({

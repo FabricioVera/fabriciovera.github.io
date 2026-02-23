@@ -1,7 +1,7 @@
+import type { ReactNode } from "react";
 import { useStore } from "@nanostores/react";
 import { $playerName } from "@store/playerStore";
-import NameForm from "@components/NameForm";
-import type { ReactNode } from "react";
+import NameForm from "@components/auth/NameForm";
 
 interface RequirePlayerProps {
   children: ReactNode;

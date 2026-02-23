@@ -65,7 +65,11 @@ export default function AutocompleteInput<T extends Suggestion>({
             >
               {sug.wikiaThumbnail && (
                 <img
-                  src={sug.wikiaThumbnail}
+                  src={
+                    "https://wiki.warframe.com/images/" +
+                    sug.name.replace(" ", "") +
+                    "_Thumb.png"
+                  }
                   alt={sug.name}
                   className="w-8 h-8 object-contain rounded-md p-1"
                 />

@@ -1,5 +1,5 @@
 export * from "./games/Leaderboard";
-export * from "./NameForm";
+export * from "./auth/NameForm";
 export { default as MainMenu } from "./MainMenu.astro";
 export { default as GameCard } from "./GameCard.astro";
 export { default as Header } from "./Header.astro";
