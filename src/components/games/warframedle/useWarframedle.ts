@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { preWarframe, Warframe } from "src/types/warframe";
 import type { GameStatus } from "src/types/game";
 
@@ -16,8 +16,10 @@ export default function useWarframedle(rawData: preWarframe[]) {
       today.getFullYear() * 10000 +
       (today.getMonth() + 1) * 100 +
       today.getDate();
+    const randomIndex = Math.floor(Math.random() * warframes.length);
     const index = seed % warframes.length;
-    return warframes[index];
+    console.log("el index seleccionado es:" + randomIndex);
+    return warframes[randomIndex];
   }, [warframes]);
 
   const [guesses, setGuesses] = useState<Warframe[]>([]);
