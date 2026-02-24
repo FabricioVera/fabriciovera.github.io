@@ -121,6 +121,7 @@ export default function WarframedleGame() {
             onKeyDown={handleKeyDown}
             onSubmit={handleSubmit}
             onSuggestionClick={handleSuggestionClick}
+            placeholder="Escribe un Warframe"
           />
         )}
         {gameMode === "daily" && status === "playing" && (
