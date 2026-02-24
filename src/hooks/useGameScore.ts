@@ -17,7 +17,6 @@ export function useGameScore(gameId: string) {
       saveHighScore(gameId, currentPlayer, score);
     }
 
-    console.log(`Puntaje para ${currentPlayer} en ${gameId}: ${score}`);
     setScore(0);
   }, [score, gameId]);
 

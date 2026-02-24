@@ -1,8 +1,29 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { preWarframe, Warframe } from "src/types/warframe";
 import type { GameStatus } from "src/types/game";
+import { saveHighScore } from "src/services/scoreRepository";
 
-export default function useWarframedle(rawData: preWarframe[]) {
+export type GameMode = "daily" | "random";
+
+const MAX_DAILY_ATTEMPTS = 100;
+const DAILY_STORAGE_KEY = "warframedle_daily_state";
+
+const getTodayDateString = () => {
+  const today = new Date();
+  return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+};
+
+export default function useWarframedle(
+  rawData: preWarframe[],
+  gameId: string,
+  playerName: string | null,
+) {
+  const [gameMode, setGameMode] = useState<GameMode>("daily");
+  const [guesses, setGuesses] = useState<Warframe[]>([]);
+  const [status, setStatus] = useState<GameStatus>("playing");
+  const [selectedWarframe, setSelectedWarframe] = useState<string>("");
+  const [randomWarframe, setRandomWarframe] = useState<Warframe | null>(null);
+
   const warframes: Warframe[] = useMemo(() => {
     return rawData.map((wf) => ({
       ...wf,
@@ -10,35 +31,83 @@ export default function useWarframedle(rawData: preWarframe[]) {
     }));
   }, [rawData]);
 
-  const dailyWarframe = useMemo(() => {
+  const loadDailyProgress = useCallback(() => {
+    const savedState = localStorage.getItem(DAILY_STORAGE_KEY);
+    const todayStr = getTodayDateString();
+
+    if (savedState) {
+      const parsed = JSON.parse(savedState);
+      if (parsed.date === todayStr) {
+        const rehydratedGuesses = parsed.guesses
+          .map((name: string) => warframes.find((w) => w.name === name))
+          .filter(Boolean) as Warframe[];
+
+        setGuesses(rehydratedGuesses);
+        setStatus(parsed.status);
+        return;
+      }
+    }
+
+    setGuesses([]);
+    setStatus("playing");
+  }, [warframes]);
+
+  useEffect(() => {
+    loadDailyProgress();
+  }, [loadDailyProgress]);
+
+  useEffect(() => {
+    if (gameMode === "daily") {
+      const stateToSave = {
+        date: getTodayDateString(),
+        guesses: guesses.map((g) => g.name),
+        status: status,
+      };
+      localStorage.setItem(DAILY_STORAGE_KEY, JSON.stringify(stateToSave));
+    }
+  }, [guesses, status, gameMode]);
+
+  const dailyTarget = useMemo(() => {
     const today = new Date();
     const seed =
       today.getFullYear() * 10000 +
       (today.getMonth() + 1) * 100 +
       today.getDate();
-    const randomIndex = Math.floor(Math.random() * warframes.length);
-    const index = seed % warframes.length;
-    console.log("el index seleccionado es:" + randomIndex);
-    return warframes[randomIndex];
+
+    return warframes[seed % warframes.length];
   }, [warframes]);
 
-  const [guesses, setGuesses] = useState<Warframe[]>([]);
-  const [status, setStatus] = useState<GameStatus>("playing");
-  const [selectedWarframe, setSelectedWarframe] = useState<string>("");
+  const startDailyMode = useCallback(() => {
+    setGameMode("daily");
+    loadDailyProgress();
+  }, []);
+
+  const startRandomMode = useCallback(() => {
+    const randomIndex = Math.floor(Math.random() * warframes.length);
+    setRandomWarframe(warframes[randomIndex]);
+    setGameMode("random");
+    setGuesses([]);
+    setStatus("playing");
+  }, []);
+
+  const targetWarframe =
+    gameMode === "daily" ? dailyTarget : randomWarframe || dailyTarget;
 
   const handleGuess = (warframeName: string) => {
     setSelectedWarframe(warframeName);
-    if (status === "won") return;
+    if (status !== "playing") return;
 
     const guessedWf = warframes.find((w) => w.name === warframeName);
-    if (!guessedWf) return;
-
-    if (guesses.some((g) => g.name === guessedWf.name)) return;
+    if (!guessedWf || guesses.some((g) => g.name === guessedWf.name)) return;
 
     setGuesses((prev) => [guessedWf, ...prev]);
 
-    if (guessedWf.name === dailyWarframe.name) {
+    if (guessedWf.name === targetWarframe.name) {
       setStatus("won");
+      if (!playerName) return;
+      saveHighScore(gameId, playerName, MAX_DAILY_ATTEMPTS - guesses.length);
+    } else if (gameMode === "daily" && guesses.length > MAX_DAILY_ATTEMPTS) {
+      setStatus("lost");
     }
   };
 
@@ -53,10 +122,15 @@ export default function useWarframedle(rawData: preWarframe[]) {
   return {
     warframes,
     warframeNames,
-    dailyWarframe,
+    targetWarframe,
+    gameMode,
+    attemptsLeft:
+      gameMode === "daily" ? MAX_DAILY_ATTEMPTS - guesses.length : null,
     guesses,
     status,
-    handleGuess,
     selectedWarframe,
+    handleGuess,
+    startDailyMode,
+    startRandomMode,
   };
 }

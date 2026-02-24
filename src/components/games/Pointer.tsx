@@ -4,9 +4,11 @@ import { RemovePlayerName } from "@auth/index";
 export default function Pointer({
   playerName,
   score,
+  gameId,
 }: {
-  playerName: string;
+  playerName: string | null;
   score: number;
+  gameId: string;
 }) {
   return (
     <div className="flex w-[80%] justify-evenly items-center bg-primary p-4 rounded-xl shadow border border-accent text-text-primary mx-auto">
@@ -18,7 +20,7 @@ export default function Pointer({
         Puntos: <span className="text-white font-bold">{score}</span>
       </div>
 
-      <Leaderboard gameId="guess-mbti" />
+      <Leaderboard gameId={gameId} />
     </div>
   );
 }

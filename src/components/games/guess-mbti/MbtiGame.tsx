@@ -40,7 +40,7 @@ export default function MbtiGame() {
 
   return (
     <div className="max-w-4xl mx-auto flex flex-col gap-6 p-4">
-      <Pointer playerName={playerName} score={score} />
+      <Pointer playerName={playerName} score={score} gameId="guess-mbti" />
 
       <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 p-4">
         <CharacterCard

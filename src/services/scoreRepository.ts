@@ -39,6 +39,7 @@ export async function saveHighScore(
 export async function getTopScores(
   gameId: string,
   limit: number = 10,
+  timeLimit: string = "no-limit",
 ): Promise<ScoreEntry[]> {
   const { data, error } = await supabase
     .from("leaderboard")
@@ -54,3 +55,93 @@ export async function getTopScores(
 
   return data as ScoreEntry[];
 }
+
+export async function saveDailyScore(
+  gameId: string,
+  playerName: string,
+  score: number,
+): Promise<void> {
+  if (score <= 0) return;
+  const { start, end } = getTodayRange();
+
+  const { data: existingRecord, error: fetchError } = await supabase
+    .from("leaderboard")
+    .select("id, score")
+    .eq("game_id", gameId)
+    .eq("player_name", playerName)
+    .gte("created_at", start)
+    .lt("created_at", end)
+    .maybeSingle();
+
+  if (fetchError)
+    throw new Error(`Error al obtener el puntaje: ${fetchError.message}`);
+
+  if (existingRecord && existingRecord.score >= score) {
+    console.log("El puntaje no supera al récord de hoy. No se actualizará.");
+    return;
+  }
+  console.log("se encontró: " + existingRecord);
+
+  try {
+    if (existingRecord) {
+      const { error: updateError } = await supabase
+        .from("leaderboard")
+        .update({ score })
+        .eq("id", existingRecord.id);
+
+      if (updateError)
+        throw new Error(`Error al actualizar: ${updateError.message}`);
+    } else {
+      const { error: insertError } = await supabase.from("leaderboard").insert([
+        {
+          game_id: gameId,
+          player_name: playerName,
+          score,
+        },
+      ]);
+
+      if (insertError)
+        throw new Error(`Error al insertar: ${insertError.message}`);
+    }
+
+    console.log("Puntaje diario guardado exitosamente");
+  } catch (error) {
+    console.error("[LeaderboardService] Error en saveDailyScore:", error);
+  }
+}
+
+export interface DateRange {
+  start: string;
+  end: string;
+}
+
+export const getTodayRange = (): DateRange => {
+  const now = new Date();
+
+  // Establecemos las 00:00:00.000 de HOY (Hora local del jugador)
+  const startOfDay = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    0,
+    0,
+    0,
+    0,
+  );
+
+  // Establecemos las 00:00:00.000 de MAÑANA (Hora local del jugador)
+  const startOfNextDay = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() + 1,
+    0,
+    0,
+    0,
+    0,
+  );
+
+  return {
+    start: startOfDay.toISOString(), // Ej: "2026-02-24T03:00:00.000Z" (Si el cliente es UTC-3)
+    end: startOfNextDay.toISOString(),
+  };
+};
