@@ -63,8 +63,8 @@ export default function WarframedleGame() {
 
   return (
     <RequirePlayer>
-      <div className="w-full max-w-5xl mx-auto p-4 flex flex-col items-center gap-6">
-        <div className="flex gap-4 p-2 bg-primary/30 rounded-lg border border-secondary">
+      <div className="w-full max-w-[100vw] lg:max-w-5xl mx-auto p-4 flex flex-col lg:items-center gap-6 overflow-auto">
+        <div className="flex w-fit justify-center gap-4 p-2 mx-auto bg-primary/30 rounded-lg border border-secondary">
           <button
             onClick={startDailyMode}
             className={`px-4 py-2 rounded-md font-bold transition-colors ${gameMode === "daily" ? "bg-accent text-white" : "text-gray-400 hover:text-white"}`}
@@ -92,7 +92,7 @@ export default function WarframedleGame() {
           <div className="flex flex-col justify-center items-center bg-primary/50 border border-accent text-white p-4 rounded-lg text-center">
             <Pointer
               playerName={playerName}
-              score={attemptsLeft ? attemptsLeft : 0}
+              score={attemptsLeft ? attemptsLeft + 1 : 0}
               gameId="warframedle"
             />
             <HeroInput
@@ -131,8 +131,8 @@ export default function WarframedleGame() {
         )}
 
         {guesses.length > 0 && (
-          <div className="overflow-x-auto rounded-2xl border border-secondary mt-4">
-            <table className="w-full text-center text-white whitespace-nowrap">
+          <div className="overflow-x-auto justify-items-start rounded-2xl border border-secondary mt-4">
+            <table className="w-full text-center text-white ">
               <TableHeader
                 tableHeaderNames={tableHeaderNames}
                 classes="bg-secondary"

@@ -13,7 +13,7 @@ export default function TableHeader({
         {tableHeaderNames.map((title, index) => (
           <th
             key={index}
-            className={`${classes} p-3 border-r border-secondary`}
+            className={`${classes} p-1 lg:p-3 border-r border-secondary`}
           >
             {title}
           </th>

@@ -79,5 +79,7 @@ export default function TableCell({
     }
   };
 
-  return <td className={`px-4 p-2 ${getCellClass()}`}>{renderCell()}</td>;
+  return (
+    <td className={`px-1 lg:px-4 lg:p-2 ${getCellClass()}`}>{renderCell()}</td>
+  );
 }

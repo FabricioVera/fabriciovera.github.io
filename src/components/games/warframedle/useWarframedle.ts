@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { preWarframe, Warframe } from "src/types/warframe";
 import type { GameStatus } from "src/types/game";
 import { saveHighScore } from "src/services/scoreRepository";
+import Rand from "rand-seed";
 
 export type GameMode = "daily" | "random";
 
@@ -69,12 +70,16 @@ export default function useWarframedle(
 
   const dailyTarget = useMemo(() => {
     const today = new Date();
-    const seed =
+    const seed = (
       today.getFullYear() * 10000 +
       (today.getMonth() + 1) * 100 +
-      today.getDate();
+      today.getDate()
+    ).toString();
 
-    return warframes[seed % warframes.length];
+    const rand = new Rand(seed);
+    const randomValue = rand.next();
+
+    return warframes[Math.floor(randomValue * (warframes.length - 0 + 1))];
   }, [warframes]);
 
   const startDailyMode = useCallback(() => {
