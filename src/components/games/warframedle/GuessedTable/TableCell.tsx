@@ -1,7 +1,9 @@
 import type { Warframe } from "src/types/warframe";
+import { hasIntersection, haveSameElements } from "../../../../utils/array";
 
 interface TableCellProps {
   guess: Warframe;
+  guessImage: string;
   dailyWarframe: Warframe;
   columnCONF: {
     key: keyof Warframe;
@@ -11,6 +13,7 @@ interface TableCellProps {
 
 export default function TableCell({
   guess,
+  guessImage,
   dailyWarframe,
   columnCONF,
 }: TableCellProps) {
@@ -36,10 +39,13 @@ export default function TableCell({
       case "partial":
         if (!Array.isArray(guessValue))
           return guessValue + "(no está bien configurado esta variable)";
-        if (dailyValue === guessValue) return match;
-        else if (guessValue.some((value) => dailyValue.includes(value)))
+        if (haveSameElements(guessValue, dailyValue)) {
+          return match;
+        }
+        if (hasIntersection(guessValue, dailyValue)) {
           return partialMatch;
-        else return notMatch;
+        }
+        return notMatch;
       case "equal":
         if (guessValue === dailyValue) {
           return match;
@@ -54,11 +60,7 @@ export default function TableCell({
       case "image":
         return (
           <div className="flex justify-center items-center">
-            <img
-              src={guess.wikiaThumbnail}
-              alt=""
-              className="w-24 h-24 rounded-full"
-            />
+            <img src={guessImage} alt="" className="w-24 h-24 rounded-full" />
           </div>
         );
       case "boolean":

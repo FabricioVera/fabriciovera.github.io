@@ -5,7 +5,7 @@ export interface CharacterData {
   subcategory: string;
   four_letter: string;
   four_letter_votes: number;
-  image: string;
+  images: string[];
 }
 
 export type GameStatus = "loading" | "playing" | "won" | "lost";

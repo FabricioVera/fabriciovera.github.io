@@ -15,7 +15,7 @@ export function CharacterCard({ character, status, onNext }: Props) {
     <div className="flex flex-col items-center align-center text-center h-full min-h-100 bg-primary p-6 rounded-xl border border-accent">
       <div className="w-60 h-60 mb-4 overflow-hidden rounded-2xl border-4 border-accent bg-primary">
         <img
-          src={character.image || FALLBACK_IMAGE}
+          src={character.images[0] || character.images[1] || FALLBACK_IMAGE}
           alt={character.name}
           className="w-full h-full object-cover object-top"
           loading="lazy"

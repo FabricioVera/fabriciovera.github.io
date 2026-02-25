@@ -1,5 +1,5 @@
 import { useStore } from "@nanostores/react";
-import charactersData from "@data/mbti_characters.json";
+import charactersData from "@data/mbti_charactersv3.json";
 import { CharacterCard } from "./components/CharacterCard";
 import type { CharacterData } from "./types";
 import { useMbtiGame } from "./hooks/useMbtiGame";

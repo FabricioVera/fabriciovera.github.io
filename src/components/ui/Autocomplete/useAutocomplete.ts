@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useMemo } from "react";
 import type { Suggestion } from "src/types";
 import { normalizeString } from "src/utils/index";
 
-export function useGuessInput<T extends Suggestion>(
+export function useAutocomplete<T extends Suggestion>(
   onGuess: (guess: string) => void | Promise<void>,
   allElements: T[],
   guessedNames: string[],
@@ -19,11 +19,11 @@ export function useGuessInput<T extends Suggestion>(
   const [selectDirection, setSelectDirection] = useState(-1);
 
   // Limpiar sugerencias
-  const resetSuggestions = useCallback(() => {
+  const resetSuggestions = () => {
     setSuggestions([]);
     setShowSuggestions(false);
     setSelectedSuggestion(-1);
-  }, []);
+  };
 
   // Seleccion de sugerencias con teclado
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -106,88 +106,59 @@ export function useGuessInput<T extends Suggestion>(
     inputRef.current?.focus();
   };
 
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-      const value = inputValue.trim();
-      if (!value || disabled || isSubmitting) return;
+    const value = inputValue.trim();
+    if (!value || disabled || isSubmitting) return;
 
-      const normalizedValue = normalizeString(value);
-      const normalizedGuessedNames = guessedNames.map(normalizeString);
+    const normalizedValue = normalizeString(value);
+    const normalizedGuessedNames = guessedNames.map(normalizeString);
 
-      // Validar si existe
-      const match = allElements.find(
-        (item) => normalizeString(item.name) === normalizedValue,
-      );
-      if (!match) {
-        setErrorMessage(`${value} no es un elemento válido.`);
-        return;
-      }
+    // Validar si existe
+    const match = allElements.find(
+      (item) => normalizeString(item.name) === normalizedValue,
+    );
+    if (!match) {
+      setErrorMessage(`${value} no es un elemento válido.`);
+      return;
+    }
 
-      // Si ya fue adivinado
-      const alreadyGuessed = normalizedGuessedNames.includes(normalizedValue);
-      if (alreadyGuessed) {
-        setErrorMessage(`${match.name} ya fue adivinado.`);
-        return;
-      }
+    // Si ya fue adivinado
+    const alreadyGuessed = normalizedGuessedNames.includes(normalizedValue);
+    if (alreadyGuessed) {
+      setErrorMessage(`${match.name} ya fue adivinado.`);
+      return;
+    }
 
-      // enviar guess
-      setIsSubmitting(true);
-      try {
-        await onGuess(match.name);
-        setInputValue("");
-        resetSuggestions();
+    // enviar guess
+    setIsSubmitting(true);
+    try {
+      await onGuess(match.name);
+      setInputValue("");
+      resetSuggestions();
 
-        setTimeout(() => {
-          inputRef.current?.focus();
-        }, 50);
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-    [
-      inputValue,
-      onGuess,
-      disabled,
-      isSubmitting,
-      allElements,
-      guessedNames,
-      resetSuggestions,
-    ],
-  );
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-  // se usa useMemo para utilizar el hook solo cuando una dependencia cambia
-  return useMemo(
-    () => ({
-      inputRef,
-      inputValue,
-      isSubmitting,
-      suggestions,
-      showSuggestions,
-      selectedSuggestion,
-      selectDirection,
-      errorMessage,
-      handleChange,
-      handleClean,
-      handleSubmit,
-      handleSuggestionClick,
-      handleKeyDown,
-    }),
-    [
-      inputRef,
-      inputValue,
-      isSubmitting,
-      suggestions,
-      showSuggestions,
-      selectedSuggestion,
-      selectDirection,
-      errorMessage,
-      handleChange,
-      handleClean,
-      handleSubmit,
-      handleSuggestionClick,
-      handleKeyDown,
-    ],
-  );
+  return {
+    inputRef,
+    inputValue,
+    isSubmitting,
+    suggestions,
+    showSuggestions,
+    selectedSuggestion,
+    selectDirection,
+    errorMessage,
+    handleChange,
+    handleClean,
+    handleSubmit,
+    handleSuggestionClick,
+    handleKeyDown,
+  };
 }

@@ -22,14 +22,14 @@ import { getWikiThumbnail, getWarframeThumbnailName } from "@utils/index";
 import type { preWarframe } from "src/types/warframe";
 import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelector";
 
-export default function WarframedleGame() {
+export default function WarframedleAbilitiesGame() {
   const playerName = useStore($playerName);
 
   const renderWarframeSuggestion = (sug: any) => (
     <div className="flex flex-row items-center gap-3">
       {sug.wikiaThumbnail && (
         <img
-          src={getWikiThumbnail(getWarframeThumbnailName(sug.name))}
+          src={`https://wiki.warframe.com/images/${sug.name.replace(" ", "")}_Thumb.png`}
           alt={sug.name}
           className="w-8 h-8 object-contain rounded-md p-1 bg-slate-900/50"
         />
@@ -164,9 +164,6 @@ export default function WarframedleGame() {
                     {WARFRAMEDLECONFIG.map((col, index) => (
                       <TableCell
                         key={`${guess.name}-${index}`}
-                        guessImage={getWikiThumbnail(
-                          getWarframeThumbnailName(guess.name),
-                        )}
                         guess={guess}
                         dailyWarframe={targetWarframe}
                         columnCONF={col}

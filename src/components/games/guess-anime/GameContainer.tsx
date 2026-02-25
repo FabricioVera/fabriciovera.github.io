@@ -1,18 +1,17 @@
-import { useState } from "react";
-import { useAnimeGame } from "./hooks/useAnimeGame";
+// COMPONENTES
+import { RequirePlayer } from "@components/auth";
 import Pointer from "../Pointer";
+
+// HOOKS Y UTILS
+import { useAnimeGame } from "./hooks/useAnimeGame";
+import { useState } from "react";
 import { useStore } from "@nanostores/react";
-import { $playerName } from "../../../store/playerStore";
-import NameForm from "../../auth/NameForm";
+import { $playerName } from "@store/playerStore";
 
 export default function GameContainer() {
   const playerName = useStore($playerName);
   const { character, status, checkGuess, loadNewCharacter } = useAnimeGame();
   const [guess, setGuess] = useState("");
-
-  if (!playerName) {
-    return <NameForm />;
-  }
 
   const handleGuess = () => {
     if (guess.trim() === "") return;
@@ -44,7 +43,7 @@ export default function GameContainer() {
   }
 
   return (
-    <div>
+    <RequirePlayer>
       <div className="max-w-md mx-auto p-4 bg-primary rounded-xl shadow-lg border border-secondary">
         <div className="relative mb-4 overflow-hidden rounded-lg">
           <img
@@ -87,6 +86,6 @@ export default function GameContainer() {
           </div>
         )}
       </div>
-    </div>
+    </RequirePlayer>
   );
 }

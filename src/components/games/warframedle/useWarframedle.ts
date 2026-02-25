@@ -79,13 +79,13 @@ export default function useWarframedle(
     const rand = new Rand(seed);
     const randomValue = rand.next();
 
-    return warframes[Math.floor(randomValue * (warframes.length - 0 + 1))];
+    return warframes[Math.floor(randomValue * warframes.length)];
   }, [warframes]);
 
   const startDailyMode = useCallback(() => {
     setGameMode("daily");
     loadDailyProgress();
-  }, []);
+  }, [loadDailyProgress]);
 
   const startRandomMode = useCallback(() => {
     const randomIndex = Math.floor(Math.random() * warframes.length);
