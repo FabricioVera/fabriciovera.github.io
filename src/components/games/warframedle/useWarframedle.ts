@@ -2,17 +2,15 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { preWarframe, Warframe } from "src/types/warframe";
 import type { GameStatus } from "src/types/game";
 import { saveHighScore } from "src/services/scoreRepository";
-import Rand from "rand-seed";
+import {
+  loadDailyProgress,
+  saveDailyProgress,
+} from "@services/dailyStorageRepository";
+import { calculateDailyTarget, calculateRandomTarget } from "@utils/game";
 
 export type GameMode = "daily" | "random";
 
 const MAX_DAILY_ATTEMPTS = 100;
-const DAILY_STORAGE_KEY = "warframedle_daily_state";
-
-const getTodayDateString = () => {
-  const today = new Date();
-  return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
-};
 
 export default function useWarframedle(
   rawData: preWarframe[],
@@ -31,56 +29,38 @@ export default function useWarframedle(
       releaseYear: new Date(wf.releaseDate).getFullYear(),
     }));
   }, [rawData]);
+  const dailyTarget = useMemo(
+    () => calculateDailyTarget(warframes),
+    [warframes],
+  );
+  const targetWarframe =
+    gameMode === "daily" ? dailyTarget : randomWarframe || dailyTarget;
 
-  const loadDailyProgress = useCallback(() => {
-    const savedState = localStorage.getItem(DAILY_STORAGE_KEY);
-    const todayStr = getTodayDateString();
+  const initializeDailyMode = useCallback(() => {
+    const savedState = loadDailyProgress();
 
     if (savedState) {
-      const parsed = JSON.parse(savedState);
-      if (parsed.date === todayStr) {
-        const rehydratedGuesses = parsed.guesses
-          .map((name: string) => warframes.find((w) => w.name === name))
-          .filter(Boolean) as Warframe[];
+      const rehydratedGuesses = savedState.guesses
+        .map((name) => warframes.find((w) => w.name === name))
+        .filter(Boolean) as Warframe[];
 
-        setGuesses(rehydratedGuesses);
-        setStatus(parsed.status);
-        return;
-      }
+      setGuesses(rehydratedGuesses);
+      setStatus(savedState.status);
+    } else {
+      setGuesses([]);
+      setStatus("playing");
     }
-
-    setGuesses([]);
-    setStatus("playing");
   }, [warframes]);
 
   useEffect(() => {
-    loadDailyProgress();
-  }, [loadDailyProgress]);
+    initializeDailyMode();
+  }, [initializeDailyMode]);
 
   useEffect(() => {
     if (gameMode === "daily") {
-      const stateToSave = {
-        date: getTodayDateString(),
-        guesses: guesses.map((g) => g.name),
-        status: status,
-      };
-      localStorage.setItem(DAILY_STORAGE_KEY, JSON.stringify(stateToSave));
+      saveDailyProgress(guesses, status);
     }
   }, [guesses, status, gameMode]);
-
-  const dailyTarget = useMemo(() => {
-    const today = new Date();
-    const seed = (
-      today.getFullYear() * 10000 +
-      (today.getMonth() + 1) * 100 +
-      today.getDate()
-    ).toString();
-
-    const rand = new Rand(seed);
-    const randomValue = rand.next();
-
-    return warframes[Math.floor(randomValue * warframes.length)];
-  }, [warframes]);
 
   const startDailyMode = useCallback(() => {
     setGameMode("daily");
@@ -88,15 +68,11 @@ export default function useWarframedle(
   }, [loadDailyProgress]);
 
   const startRandomMode = useCallback(() => {
-    const randomIndex = Math.floor(Math.random() * warframes.length);
-    setRandomWarframe(warframes[randomIndex]);
+    setRandomWarframe(calculateRandomTarget(warframes));
     setGameMode("random");
     setGuesses([]);
     setStatus("playing");
-  }, []);
-
-  const targetWarframe =
-    gameMode === "daily" ? dailyTarget : randomWarframe || dailyTarget;
+  }, [warframes]);
 
   const handleGuess = (warframeName: string) => {
     setSelectedWarframe(warframeName);
@@ -110,7 +86,7 @@ export default function useWarframedle(
     if (guessedWf.name === targetWarframe.name) {
       setStatus("won");
       if (!playerName) return;
-      saveHighScore(gameId, playerName, MAX_DAILY_ATTEMPTS - guesses.length);
+      saveHighScore(gameId, playerName, guesses.length);
     } else if (gameMode === "daily" && guesses.length > MAX_DAILY_ATTEMPTS) {
       setStatus("lost");
     }

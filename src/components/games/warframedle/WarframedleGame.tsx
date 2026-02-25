@@ -16,7 +16,11 @@ import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
 //HOOKS + UTILS
 import useWarframedle from "./useWarframedle";
 import { useStore } from "@nanostores/react";
-import { getWikiThumbnail, getWarframeThumbnailName } from "@utils/index";
+import {
+  getWikiThumbnail,
+  getWarframeThumbnailName,
+  getWarframeImageName,
+} from "@utils/index";
 
 // TYPES
 import type { preWarframe } from "src/types/warframe";
@@ -165,7 +169,7 @@ export default function WarframedleGame() {
                       <TableCell
                         key={`${guess.name}-${index}`}
                         guessImage={getWikiThumbnail(
-                          getWarframeThumbnailName(guess.name),
+                          getWarframeImageName(guess.name),
                         )}
                         guess={guess}
                         dailyWarframe={targetWarframe}
