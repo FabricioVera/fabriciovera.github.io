@@ -16,8 +16,8 @@ const opacityClass = game.isAvailable
   style={`perspective: 1000px;`}
 >
   <a
-    href={game.isAvailable ? game.url : "#"}
-    class={`block w-full h-full relative transform-style-3d transition-all duration-300 ease-out ${opacityClass}`}
+    href={game.isAvailable ? game.url : ""}
+    class={`block w-full h-full relative transform-style-3d transition-all duration-300 ease-out ${opacityClass} ${game.isAvailable ? "" : "pointer-events-none"}`}
     tabindex={game.isAvailable ? "0" : "-1"}
     aria-disabled={!game.isAvailable}
   >
