@@ -87,16 +87,33 @@ export default function WarframedleAbilitiesGame() {
     { gameModeName: "random", gameModeHook: startRandomMode },
   ];
 
+  const abilityClasses = [
+    "blur-lg grayscale",
+    "blur-md grayscale",
+    "blur-sm grayscale",
+    "blur-xs grayscale",
+    "blur-none grayscale",
+  ];
+
   return (
     <RequirePlayer>
       <div className="min-h-screen w-full max-w-[100vw] lg:max-w-5xl mx-auto p-4 flex flex-col lg:items-center gap-6 overflow-auto">
+        {gameMode === "daily" && (
+          <Pointer
+            playerName={playerName}
+            score={guesses.length}
+            gameId="Abilitydle"
+            isDaily={true}
+            ascending={true}
+            pointsName="Intentos"
+          />
+        )}
         <GameModeSelector
           gameModeCONF={GameModeConfig}
           actualGameMode={gameMode}
         />
         <HeroInput
-          className={`blur-${guesses.length < 5 ? "xs" : "sm"}`}
-          key={target.abilityName}
+          className={`${abilityClasses[guesses.length] || "filter-none"}`}
           itemName={""}
           thumbnailUrl={getWikiThumbnail(
             target.cardImage ? target.cardImage : target.imageName,

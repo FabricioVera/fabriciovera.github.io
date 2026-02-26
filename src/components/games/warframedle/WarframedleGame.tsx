@@ -110,7 +110,7 @@ export default function WarframedleGame() {
           />
         )}
         <HeroInput
-          className=""
+          className="mask-b-from-70"
           key={currentHeroWf.name}
           itemName={currentHeroWf.name}
           thumbnailUrl={getWikiThumbnail(
@@ -122,7 +122,7 @@ export default function WarframedleGame() {
         {status !== "playing" && (
           <div className="flex flex-col justify-center items-center bg-primary/50 border border-accent text-white p-4 rounded-lg text-center">
             <HeroInput
-              className="p-0"
+              className="p-0 mask-b-from-70"
               key={targetWarframe.name}
               itemName={targetWarframe.name}
               thumbnailUrl={getWikiThumbnail(

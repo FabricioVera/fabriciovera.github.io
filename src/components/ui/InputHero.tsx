@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface HeroInputProps {
   className?: string;
-  itemName: string;
+  itemName?: string;
   thumbnailUrl: string | undefined;
   selectDirection: number;
   isDefault?: boolean;
@@ -10,7 +10,7 @@ interface HeroInputProps {
 
 export default function HeroInput({
   className,
-  itemName,
+  itemName = "default",
   thumbnailUrl,
   selectDirection,
   isDefault = false,
@@ -38,7 +38,7 @@ export default function HeroInput({
 
   return (
     <section
-      className={`${className} relative w-auto ${isDefault ? "h-20" : "h-[25vh] md:h-[35vh]"} flex justify-center mb-2 min-w-3xs aspect-square`}
+      className={`relative w-auto ${isDefault ? "h-20" : "h-[25vh] md:h-[35vh]"} flex justify-center mb-2 min-w-3xs aspect-square`}
     >
       <AnimatePresence custom={selectDirection}>
         <motion.div
@@ -56,7 +56,7 @@ export default function HeroInput({
               animate="animate"
               exit="exit"
               transition={{ duration: 0.3 }}
-              className={`${className} absolute inset-0 w-full h-full object-cover object-top brightness-75 mask-b-from-70`}
+              className={` absolute inset-0 w-full h-full object-cover object-top ${className}`}
               src={thumbnailUrl}
               alt=""
             />

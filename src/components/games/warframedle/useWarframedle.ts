@@ -7,6 +7,7 @@ import {
   saveDailyProgress,
 } from "@services/dailyStorageRepository";
 import { calculateDailyTarget, calculateRandomTarget } from "@utils/game";
+import { logger } from "@services/logger";
 
 export type GameMode = "daily" | "random";
 
@@ -37,18 +38,27 @@ export default function useWarframedle(
     gameMode === "daily" ? dailyTarget : randomWarframe || dailyTarget;
 
   const initializeDailyMode = useCallback(() => {
-    const savedState = loadDailyProgress("warframes");
+    try {
+      const savedState = loadDailyProgress("warframes");
 
-    if (savedState) {
-      const rehydratedGuesses = savedState.guesses
-        .map((name) => warframes.find((w) => w.name === name))
-        .filter(Boolean) as Warframe[];
+      if (savedState) {
+        const rehydratedGuesses = savedState.guesses
+          .map((name) => warframes.find((w) => w.name === name))
+          .filter(Boolean) as Warframe[];
 
-      console.log("guesses cargados: " + rehydratedGuesses);
+        logger.info("Estado diario cargado exitosamente", {
+          intentos: rehydratedGuesses.length,
+          status: savedState.status,
+        });
 
-      setGuesses(rehydratedGuesses);
-      setStatus(savedState.status);
-    } else {
+        setGuesses(rehydratedGuesses);
+        setStatus(savedState.status);
+      } else {
+        setGuesses([]);
+        setStatus("playing");
+      }
+    } catch (error) {
+      logger.error("Error al inicializar el modo diario", error);
       setGuesses([]);
       setStatus("playing");
     }
