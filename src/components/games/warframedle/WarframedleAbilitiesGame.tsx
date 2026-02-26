@@ -14,7 +14,11 @@ import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
 
 //HOOKS + UTILS
 import { useStore } from "@nanostores/react";
-import { getWikiThumbnail, getWarframeThumbnailName } from "@utils/index";
+import {
+  getWikiThumbnail,
+  getWarframeThumbnailName,
+  getWarframeImageName,
+} from "@utils/index";
 
 // TYPES
 import type { preWarframe, Warframe } from "src/types/warframe";
@@ -111,10 +115,10 @@ export default function WarframedleAbilitiesGame() {
           actualGameMode={gameMode}
         />
         <HeroInput
-          className={`${abilityClasses[guesses.length] || "filter-none"}`}
+          className={`${"rotate-90"}`}
           itemName={""}
           thumbnailUrl={getWikiThumbnail(
-            target.cardImage ? target.cardImage : target.imageName,
+            getWarframeImageName(target.abilityName + "130xWhite"),
           )}
           selectDirection={selectDirection}
           isDefault={false}
