@@ -1,6 +1,5 @@
 // DATA
 import warframeData from "@data/Warframes_final.json";
-import { WARFRAMEDLECONFIG } from "@data/warframedle";
 import { $playerName } from "../../../store/playerStore";
 
 // COMPONENTES
@@ -14,7 +13,6 @@ import { RequirePlayer } from "@auth/index";
 import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
 
 //HOOKS + UTILS
-import useWarframedle from "./useWarframedle";
 import { useStore } from "@nanostores/react";
 import { getWikiThumbnail, getWarframeThumbnailName } from "@utils/index";
 
