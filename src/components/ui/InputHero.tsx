@@ -56,7 +56,7 @@ export default function HeroInput({
               animate="animate"
               exit="exit"
               transition={{ duration: 0.3 }}
-              className="absolute inset-0 w-full h-full object-cover object-top brightness-75 mask-b-from-70"
+              className={`${className} absolute inset-0 w-full h-full object-cover object-top brightness-75 mask-b-from-70`}
               src={thumbnailUrl}
               alt=""
             />

@@ -7,8 +7,8 @@ import { $playerName } from "../../../store/playerStore";
 import AutocompleteInput from "@components/ui/Autocomplete/AutocompleteInput";
 import HeroInput from "@components/ui/InputHero";
 import { useAutocomplete } from "@components/ui/Autocomplete/useAutocomplete";
-import TableHeader from "./GuessedTable/TableHeader";
-import TableCell from "./GuessedTable/TableCell";
+import TableHeader from "../../ui/GuessedTable/TableHeader";
+import TableCell from "../../ui/GuessedTable/TableCell";
 import Pointer from "../Pointer";
 import { RequirePlayer } from "@auth/index";
 import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
@@ -25,6 +25,7 @@ import {
 // TYPES
 import type { preWarframe } from "src/types/warframe";
 import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelector";
+import { warframedleColumns } from "./GuessedTable/warframeColumns";
 
 export default function WarframedleGame() {
   const playerName = useStore($playerName);
@@ -98,6 +99,16 @@ export default function WarframedleGame() {
           gameModeCONF={GameModeConfig}
           actualGameMode={gameMode}
         />
+        {gameMode === "daily" && (
+          <Pointer
+            playerName={playerName}
+            score={guesses.length}
+            gameId="warframedle"
+            isDaily={true}
+            ascending={true}
+            pointsName="Intentos"
+          />
+        )}
         <HeroInput
           className=""
           key={currentHeroWf.name}
@@ -110,11 +121,6 @@ export default function WarframedleGame() {
         />
         {status !== "playing" && (
           <div className="flex flex-col justify-center items-center bg-primary/50 border border-accent text-white p-4 rounded-lg text-center">
-            <Pointer
-              playerName={playerName}
-              score={attemptsLeft ? attemptsLeft + 1 : 0}
-              gameId="warframedle"
-            />
             <HeroInput
               className="p-0"
               key={targetWarframe.name}
@@ -153,31 +159,30 @@ export default function WarframedleGame() {
         )}
 
         {guesses.length > 0 && (
-          <div className="overflow-x-auto justify-items-start rounded-2xl border border-secondary mt-4">
-            <table className="w-full text-center text-white ">
-              <TableHeader
-                tableHeaderNames={tableHeaderNames}
-                classes="bg-secondary"
-              />
-              <tbody className="bg-primary/80">
-                {guesses.map((guess) => (
-                  <tr
-                    key={guess.name}
-                    className="border-b border-accent animate-in fade-in slide-in-from-top-2"
-                  >
-                    {WARFRAMEDLECONFIG.map((col, index) => (
-                      <TableCell
-                        key={`${guess.name}-${index}`}
-                        guessImage={getWikiThumbnail(
-                          getWarframeImageName(guess.name),
-                        )}
-                        guess={guess}
-                        dailyWarframe={targetWarframe}
-                        columnCONF={col}
-                      />
-                    ))}
-                  </tr>
-                ))}
+          <div className="overflow-x-auto justify-items-start rounded-2xl border border-secondary bg-primary mt-4 text-white">
+            <table className="w-full">
+              <TableHeader columns={warframedleColumns} />
+              <tbody>
+                {guesses.map((guess, index) => {
+                  // Necesitas buscar el objeto completo basado en el string almacenado
+                  const guessObj = warframes.find((w) => w.name === guess.name);
+                  if (!guessObj) return null;
+
+                  return (
+                    <tr key={index} className="bg-secondary text-center">
+                      {warframedleColumns.map((col, colIndex) => (
+                        <TableCell
+                          key={colIndex}
+                          guess={guessObj}
+                          target={
+                            targetWarframe
+                          } /* Ajusta el tipo según tu target real */
+                          columnDef={col}
+                        />
+                      ))}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

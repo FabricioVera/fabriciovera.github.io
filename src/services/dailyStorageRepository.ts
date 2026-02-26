@@ -16,7 +16,8 @@ export const getTodayDateString = (): string => {
 };
 
 export const saveDailyProgress = (
-  guesses: Warframe[],
+  game_id: string,
+  guesses: any[],
   status: GameStatus,
 ): void => {
   const stateToSave: DailyGameState = {
@@ -24,11 +25,14 @@ export const saveDailyProgress = (
     guesses: guesses.map((g) => g.name),
     status,
   };
-  localStorage.setItem(DAILY_STORAGE_KEY, JSON.stringify(stateToSave));
+  localStorage.setItem(
+    DAILY_STORAGE_KEY + game_id,
+    JSON.stringify(stateToSave),
+  );
 };
 
-export const loadDailyProgress = (): DailyGameState | null => {
-  const savedState = localStorage.getItem(DAILY_STORAGE_KEY);
+export const loadDailyProgress = (game_id: string): DailyGameState | null => {
+  const savedState = localStorage.getItem(DAILY_STORAGE_KEY + game_id);
   if (!savedState) return null;
 
   try {

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { preWarframe, Warframe } from "src/types/warframe";
 import type { GameStatus } from "src/types/game";
-import { saveHighScore } from "src/services/scoreRepository";
+import { saveDailyScore, saveHighScore } from "src/services/scoreRepository";
 import {
   loadDailyProgress,
   saveDailyProgress,
@@ -10,7 +10,7 @@ import { calculateDailyTarget, calculateRandomTarget } from "@utils/game";
 
 export type GameMode = "daily" | "random";
 
-const MAX_DAILY_ATTEMPTS = 100;
+const MAX_DAILY_ATTEMPTS = 10;
 
 export default function useWarframedle(
   rawData: preWarframe[],
@@ -37,12 +37,14 @@ export default function useWarframedle(
     gameMode === "daily" ? dailyTarget : randomWarframe || dailyTarget;
 
   const initializeDailyMode = useCallback(() => {
-    const savedState = loadDailyProgress();
+    const savedState = loadDailyProgress("warframes");
 
     if (savedState) {
       const rehydratedGuesses = savedState.guesses
         .map((name) => warframes.find((w) => w.name === name))
         .filter(Boolean) as Warframe[];
+
+      console.log("guesses cargados: " + rehydratedGuesses);
 
       setGuesses(rehydratedGuesses);
       setStatus(savedState.status);
@@ -58,13 +60,13 @@ export default function useWarframedle(
 
   useEffect(() => {
     if (gameMode === "daily") {
-      saveDailyProgress(guesses, status);
+      saveDailyProgress("warframes", guesses, status);
     }
   }, [guesses, status, gameMode]);
 
   const startDailyMode = useCallback(() => {
     setGameMode("daily");
-    loadDailyProgress();
+    initializeDailyMode();
   }, [loadDailyProgress]);
 
   const startRandomMode = useCallback(() => {
@@ -83,12 +85,13 @@ export default function useWarframedle(
 
     setGuesses((prev) => [guessedWf, ...prev]);
 
+    if (!playerName) return;
     if (guessedWf.name === targetWarframe.name) {
       setStatus("won");
-      if (!playerName) return;
-      saveHighScore(gameId, playerName, guesses.length);
-    } else if (gameMode === "daily" && guesses.length > MAX_DAILY_ATTEMPTS) {
+      saveDailyScore(gameId, playerName, guesses.length + 1);
+    } else if (gameMode === "daily" && guesses.length >= MAX_DAILY_ATTEMPTS) {
       setStatus("lost");
+      saveDailyScore(gameId, playerName, guesses.length + 1);
     }
   };
 

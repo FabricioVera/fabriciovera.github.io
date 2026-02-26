@@ -7,8 +7,8 @@ import { $playerName } from "../../../store/playerStore";
 import AutocompleteInput from "@components/ui/Autocomplete/AutocompleteInput";
 import HeroInput from "@components/ui/InputHero";
 import { useAutocomplete } from "@components/ui/Autocomplete/useAutocomplete";
-import TableHeader from "./GuessedTable/TableHeader";
-import TableCell from "./GuessedTable/TableCell";
+import TableHeader from "../../ui/GuessedTable/TableHeader";
+import TableCell from "../../ui/GuessedTable/TableCell";
 import Pointer from "../Pointer";
 import { RequirePlayer } from "@auth/index";
 import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
@@ -19,8 +19,10 @@ import { useStore } from "@nanostores/react";
 import { getWikiThumbnail, getWarframeThumbnailName } from "@utils/index";
 
 // TYPES
-import type { preWarframe } from "src/types/warframe";
+import type { preWarframe, Warframe } from "src/types/warframe";
 import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelector";
+import useWarframedleAbilities from "./useWarframedleAbilities";
+import { abilitydleColumns } from "./GuessedTable/warframeColumns";
 
 export default function WarframedleAbilitiesGame() {
   const playerName = useStore($playerName);
@@ -41,7 +43,8 @@ export default function WarframedleAbilitiesGame() {
   // ESTADO DEL JUEGO
   const {
     warframes,
-    targetWarframe,
+    warframeNames,
+    target,
     attemptsLeft,
     gameMode,
     guesses,
@@ -49,7 +52,11 @@ export default function WarframedleAbilitiesGame() {
     handleGuess,
     startDailyMode,
     startRandomMode,
-  } = useWarframedle(warframeData as preWarframe[], "warframedle", playerName);
+  } = useWarframedleAbilities(
+    warframeData as preWarframe[],
+    "abilities",
+    playerName,
+  );
   const guessedNames = guesses.map((g) => g.name);
 
   const {
@@ -74,13 +81,6 @@ export default function WarframedleAbilitiesGame() {
   );
 
   const isDefaultState = selectedSuggestion < 0 || suggestions.length === 0;
-  const currentHeroWf = !isDefaultState
-    ? suggestions[selectedSuggestion]
-    : { name: "WARFRAMEDLE", wikiaThumbnail: undefined };
-
-  const tableHeaderNames = WARFRAMEDLECONFIG.map(
-    (conf) => conf.tableHeaderName,
-  );
 
   const GameModeConfig: GameModeCONF[] = [
     { gameModeName: "daily", gameModeHook: startDailyMode },
@@ -95,34 +95,15 @@ export default function WarframedleAbilitiesGame() {
           actualGameMode={gameMode}
         />
         <HeroInput
-          className=""
-          key={currentHeroWf.name}
-          itemName={currentHeroWf.name}
+          className={`blur-${guesses.length < 5 ? "xs" : "sm"}`}
+          key={target.abilityName}
+          itemName={""}
           thumbnailUrl={getWikiThumbnail(
-            getWarframeThumbnailName(currentHeroWf.name),
+            target.cardImage ? target.cardImage : target.imageName,
           )}
           selectDirection={selectDirection}
-          isDefault={isDefaultState}
+          isDefault={false}
         />
-        {status !== "playing" && (
-          <div className="flex flex-col justify-center items-center bg-primary/50 border border-accent text-white p-4 rounded-lg text-center">
-            <Pointer
-              playerName={playerName}
-              score={attemptsLeft ? attemptsLeft + 1 : 0}
-              gameId="warframedle"
-            />
-            <HeroInput
-              className="p-0"
-              key={targetWarframe.name}
-              itemName={targetWarframe.name}
-              thumbnailUrl={getWikiThumbnail(
-                getWarframeThumbnailName(targetWarframe.name),
-              )}
-              selectDirection={selectDirection}
-              isDefault={false}
-            />
-          </div>
-        )}
 
         {status === "playing" && (
           <AutocompleteInput
@@ -147,34 +128,33 @@ export default function WarframedleAbilitiesGame() {
             <span className="text-accent">{attemptsLeft}</span>
           </p>
         )}
+        <table className="w-full mt-4 bg-primary text-white">
+          <TableHeader columns={abilitydleColumns} />
+          <tbody>
+            {guesses.map((guess, index) => {
+              const guessObj = warframes.find((w) => w.name === guess.name);
+              const targetObj = warframes.find(
+                (w) => w.name === target.warframeName,
+              );
+              if (!guessObj) return null;
 
-        {guesses.length > 0 && (
-          <div className="overflow-x-auto justify-items-start rounded-2xl border border-secondary mt-4">
-            <table className="w-full text-center text-white ">
-              <TableHeader
-                tableHeaderNames={tableHeaderNames}
-                classes="bg-secondary"
-              />
-              <tbody className="bg-primary/80">
-                {guesses.map((guess) => (
-                  <tr
-                    key={guess.name}
-                    className="border-b border-accent animate-in fade-in slide-in-from-top-2"
-                  >
-                    {WARFRAMEDLECONFIG.map((col, index) => (
-                      <TableCell
-                        key={`${guess.name}-${index}`}
-                        guess={guess}
-                        dailyWarframe={targetWarframe}
-                        columnCONF={col}
-                      />
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+              return (
+                <tr key={index}>
+                  {abilitydleColumns.map((col, colIndex) => (
+                    <TableCell
+                      key={colIndex + "-" + col.header}
+                      guess={guessObj}
+                      target={
+                        targetObj as unknown as Warframe
+                      } /* Ajusta el tipo según tu target real */
+                      columnDef={col}
+                    />
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </RequirePlayer>
   );

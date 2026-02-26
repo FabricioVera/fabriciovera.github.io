@@ -5,3 +5,8 @@ export interface ScoreEntry {
   score: number;
   created_at: string;
 }
+
+export interface TopScore {
+  player_name: string;
+  score: number;
+}

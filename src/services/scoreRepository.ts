@@ -1,5 +1,5 @@
 import { supabase } from "@lib/supabase";
-import type { ScoreEntry } from "src/types/score";
+import type { ScoreEntry, TopScore } from "src/types/score";
 
 export async function saveHighScore(
   gameId: string,
@@ -40,10 +40,10 @@ export async function getTopScores(
   gameId: string,
   limit: number = 10,
   timeLimit: string = "no-limit",
-): Promise<ScoreEntry[]> {
+): Promise<TopScore[]> {
   const { data, error } = await supabase
     .from("leaderboard")
-    .select("id, player_name, score, created_at")
+    .select("player_name, score")
     .eq("game_id", gameId)
     .order("score", { ascending: false })
     .limit(limit);
@@ -53,7 +53,7 @@ export async function getTopScores(
     return [];
   }
 
-  return data as ScoreEntry[];
+  return data as TopScore[];
 }
 
 export async function saveDailyScore(
@@ -107,6 +107,35 @@ export async function saveDailyScore(
     console.log("Puntaje diario guardado exitosamente");
   } catch (error) {
     console.error("[LeaderboardService] Error en saveDailyScore:", error);
+  }
+}
+
+export async function getDailyTopScores(
+  gameId: string,
+  ascending: boolean,
+  limit: number = 10,
+): Promise<TopScore[]> {
+  const { start, end } = getTodayRange();
+
+  try {
+    const { data, error } = await supabase
+      .from("leaderboard")
+      .select("player_name, score")
+      .eq("game_id", gameId)
+      .gte("created_at", start)
+      .lt("created_at", end)
+      .order("score", { ascending: ascending })
+      .limit(limit);
+
+    if (error) throw new Error(error.message);
+
+    return data || [];
+  } catch (error) {
+    console.error(
+      "[LeaderboardService] Error al obtener el top diario:",
+      error,
+    );
+    return [];
   }
 }
 

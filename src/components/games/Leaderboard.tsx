@@ -1,20 +1,36 @@
 import { useState, useEffect, useCallback } from "react";
-import { getTopScores } from "../../services/scoreRepository";
-import type { ScoreEntry } from "src/types/score";
+import {
+  getDailyTopScores,
+  getTopScores,
+} from "../../services/scoreRepository";
+import type { TopScore } from "src/types/score";
 
 interface LeaderboardProps {
   gameId: string;
+  isDaily: boolean;
+  ascending: boolean;
+  pointsName: string;
 }
 
-export function Leaderboard({ gameId }: LeaderboardProps) {
+export function Leaderboard({
+  gameId,
+  isDaily = true,
+  ascending = false,
+  pointsName = "pts",
+}: LeaderboardProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [scores, setScores] = useState<ScoreEntry[]>([]);
+  const [scores, setScores] = useState<TopScore[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchScores = useCallback(async () => {
     setIsLoading(true);
     try {
-      const topScores = await getTopScores(gameId);
+      let topScores = [];
+      if (isDaily) {
+        topScores = await getDailyTopScores(gameId, ascending);
+      } else {
+        topScores = await getTopScores(gameId);
+      }
       setScores(topScores);
     } catch (error) {
       console.error("Error cargando puntajes", error);
@@ -87,7 +103,7 @@ export function Leaderboard({ gameId }: LeaderboardProps) {
             <ul className="space-y-3">
               {scores.map((entry, index) => (
                 <li
-                  key={entry.id}
+                  key={entry.score + "-" + index}
                   className={`flex items-center justify-between p-3 rounded-lg border ${index === 0 ? "bg-yellow-500/10 border-yellow-500/30" : index === 1 ? "bg-gray-400/10 border-gray-400/30" : index === 2 ? "bg-accent2/10 border-accent2/30" : "bg-primary border-secondary"}`}
                 >
                   <div className="flex items-center gap-3">
@@ -110,7 +126,7 @@ export function Leaderboard({ gameId }: LeaderboardProps) {
                     </span>
                   </div>
                   <span className="font-bold text-white">
-                    {entry.score} pts
+                    {entry.score} {pointsName}
                   </span>
                 </li>
               ))}

@@ -40,13 +40,13 @@ export const games: Game[] = [
   },
   {
     id: "warframedleabilities",
-    name: "Warframe DLE",
-    title: "Warframe DLE",
+    name: "ability DLE",
+    title: "Ability DLE",
     isAvailable: true,
     backgroundImage: "/img/WarframeBackground.png",
     frontImage: "/img/WarframeOnly2.png",
-    url: "/games/warframedle",
-    hideTitle: true,
+    url: "/games/warframedleabilities",
+    hideTitle: false,
   },
   // Generación dinámica de los 3 juegos "Próximamente" para mantener DRY
   ...Array.from({ length: 2 }).map((_, index) => ({
