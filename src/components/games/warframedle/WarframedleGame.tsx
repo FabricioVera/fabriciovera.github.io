@@ -1,6 +1,5 @@
 // DATA
 import warframeData from "@data/Warframes_final.json";
-import { WARFRAMEDLECONFIG } from "@data/warframedle";
 import { $playerName } from "../../../store/playerStore";
 
 // COMPONENTES
@@ -82,10 +81,6 @@ export default function WarframedleGame() {
   const currentHeroWf = !isDefaultState
     ? suggestions[selectedSuggestion]
     : { name: "WARFRAMEDLE", wikiaThumbnail: undefined };
-
-  const tableHeaderNames = WARFRAMEDLECONFIG.map(
-    (conf) => conf.tableHeaderName,
-  );
 
   const GameModeConfig: GameModeCONF[] = [
     { gameModeName: "daily", gameModeHook: startDailyMode },
