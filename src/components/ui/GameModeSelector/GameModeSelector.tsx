@@ -14,8 +14,9 @@ export default function GameModeSelector({
 }: GameModeSelectorProps) {
   return (
     <div className="flex w-fit justify-center gap-4 p-2 mx-auto bg-primary/30 rounded-lg border border-secondary">
-      {gameModeCONF.map((config) => (
+      {gameModeCONF.map((config, index) => (
         <button
+          key={config.gameModeName + "-" + index}
           onClick={config.gameModeHook}
           className={`px-4 py-2 rounded-md font-bold transition-colors ${config.gameModeName === actualGameMode ? "bg-accent text-white" : "text-gray-400 hover:text-white"}`}
         >
