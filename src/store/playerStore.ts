@@ -11,7 +11,7 @@ const getInitialPlayer = (): string | null => {
   if (typeof window === "undefined") return null;
 
   try {
-    logger.error("Obteniendo el nombre de usuario");
+    logger.info("Obteniendo el nombre de usuario");
     return localStorage.getItem(STORAGE_KEY);
   } catch (error) {
     logger.error(
