@@ -33,7 +33,7 @@ export const games: Game[] = [
     name: "Warframe DLE",
     title: "Warframe DLE",
     isAvailable: true,
-    backgroundImage: "/img/WarframeBackground.png",
+    backgroundImage: "/img/bg-warframedle.webp",
     frontImage: "/img/WarframeOnly2.png",
     url: "/games/warframedle",
     hideTitle: true,
