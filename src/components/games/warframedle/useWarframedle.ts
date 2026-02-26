@@ -8,6 +8,7 @@ import {
 } from "@services/dailyStorageRepository";
 import { calculateDailyTarget, calculateRandomTarget } from "@utils/game";
 import { logger } from "@services/logger";
+import { useDailyGame } from "@hooks/useDailyGame";
 
 export type GameMode = "daily" | "random";
 
@@ -18,11 +19,8 @@ export default function useWarframedle(
   gameId: string,
   playerName: string | null,
 ) {
-  const [gameMode, setGameMode] = useState<GameMode>("daily");
-  const [guesses, setGuesses] = useState<Warframe[]>([]);
-  const [status, setStatus] = useState<GameStatus>("playing");
   const [selectedWarframe, setSelectedWarframe] = useState<string>("");
-  const [randomWarframe, setRandomWarframe] = useState<Warframe | null>(null);
+  const [randomTarget, setRandomTarget] = useState<Warframe | null>(null);
 
   const warframes: Warframe[] = useMemo(() => {
     return rawData.map((wf) => ({
@@ -30,61 +28,35 @@ export default function useWarframedle(
       releaseYear: new Date(wf.releaseDate).getFullYear(),
     }));
   }, [rawData]);
+
+  const {
+    gameMode,
+    guesses,
+    setGuesses,
+    status,
+    setStatus,
+    startDailyMode,
+    startRandomMode: baseStartRandomMode,
+  } = useDailyGame(gameId, warframes);
+
+  // * calculate daily target and decide witch isthe target based on gamemode
   const dailyTarget = useMemo(
     () => calculateDailyTarget(warframes),
     [warframes],
   );
   const targetWarframe =
-    gameMode === "daily" ? dailyTarget : randomWarframe || dailyTarget;
+    gameMode === "daily" ? dailyTarget : randomTarget || dailyTarget;
 
-  const initializeDailyMode = useCallback(() => {
-    try {
-      const savedState = loadDailyProgress("warframes");
-
-      if (savedState) {
-        const rehydratedGuesses = savedState.guesses
-          .map((name) => warframes.find((w) => w.name === name))
-          .filter(Boolean) as Warframe[];
-
-        logger.info("Estado diario cargado exitosamente", {
-          intentos: rehydratedGuesses.length,
-          status: savedState.status,
-        });
-
-        setGuesses(rehydratedGuesses);
-        setStatus(savedState.status);
-      } else {
-        setGuesses([]);
-        setStatus("playing");
-      }
-    } catch (error) {
-      logger.error("Error al inicializar el modo diario", error);
-      setGuesses([]);
-      setStatus("playing");
-    }
-  }, [warframes]);
-
-  useEffect(() => {
-    initializeDailyMode();
-  }, [initializeDailyMode]);
+  const startRandomMode = useCallback(() => {
+    setRandomTarget(calculateRandomTarget(warframes));
+    baseStartRandomMode();
+  }, [warframes, baseStartRandomMode]);
 
   useEffect(() => {
     if (gameMode === "daily") {
       saveDailyProgress("warframes", guesses, status);
     }
   }, [guesses, status, gameMode]);
-
-  const startDailyMode = useCallback(() => {
-    setGameMode("daily");
-    initializeDailyMode();
-  }, [loadDailyProgress]);
-
-  const startRandomMode = useCallback(() => {
-    setRandomWarframe(calculateRandomTarget(warframes));
-    setGameMode("random");
-    setGuesses([]);
-    setStatus("playing");
-  }, [warframes]);
 
   const handleGuess = (warframeName: string) => {
     setSelectedWarframe(warframeName);

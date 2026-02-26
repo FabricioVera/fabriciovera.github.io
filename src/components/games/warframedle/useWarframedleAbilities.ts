@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { preWarframe, Warframe, Ability } from "src/types/warframe";
 import type { GameStatus } from "src/types/game";
-import { saveHighScore } from "src/services/scoreRepository";
-import Rand from "rand-seed";
+import { saveDailyScore, saveHighScore } from "src/services/scoreRepository";
 import {
   extractAbilitiesPool,
   type AbilityTarget,
@@ -12,19 +11,17 @@ import {
   loadDailyProgress,
   saveDailyProgress,
 } from "../../../services/dailyStorageRepository";
+import { useDailyGame } from "@hooks/useDailyGame";
 
 export type GameMode = "daily" | "random";
 
-const MAX_DAILY_ATTEMPTS = 100;
+const MAX_DAILY_ATTEMPTS = 10;
 
 export default function useWarframedleAbilities(
   rawData: preWarframe[],
   gameId: string,
   playerName: string | null,
 ) {
-  const [gameMode, setGameMode] = useState<GameMode>("daily");
-  const [guesses, setGuesses] = useState<Warframe[]>([]);
-  const [status, setStatus] = useState<GameStatus>("playing");
   const [randomTarget, setRandomTarget] = useState<AbilityTarget | null>(null);
 
   const warframes: Warframe[] = useMemo(() => {
@@ -33,6 +30,17 @@ export default function useWarframedleAbilities(
       releaseYear: new Date(wf.releaseDate).getFullYear(),
     }));
   }, [rawData]);
+
+  const {
+    gameMode,
+    guesses,
+    setGuesses,
+    status,
+    setStatus,
+    startDailyMode,
+    startRandomMode: baseStartRandomMode,
+  } = useDailyGame(gameId, warframes);
+
   const abilitiesPool = useMemo(() => extractAbilitiesPool(rawData), [rawData]);
   const dailyTarget = useMemo(
     () => calculateDailyTarget(abilitiesPool),
@@ -42,50 +50,16 @@ export default function useWarframedleAbilities(
   const target: AbilityTarget =
     gameMode === "daily" ? dailyTarget : randomTarget || dailyTarget;
 
-  const warframeNames = useMemo(() => {
-    return warframes
-      .filter((wf) => !guesses.some((g) => g.name === wf.name))
-      .map((wf) => ({
-        name: wf.name,
-      }));
-  }, [warframes, guesses]);
-
-  const initializeDailyMode = useCallback(() => {
-    const savedState = loadDailyProgress(gameId); // Asumiendo que adaptaste el storage para recibir gameId
-    if (savedState) {
-      const rehydratedGuesses = savedState.guesses
-        .map((name) => warframes.find((w) => w.name === name))
-        .filter(Boolean) as Warframe[];
-
-      setGuesses(rehydratedGuesses);
-      setStatus(savedState.status);
-    } else {
-      setGuesses([]);
-      setStatus("playing");
-    }
-  }, []);
-
-  useEffect(() => {
-    initializeDailyMode();
-  }, [initializeDailyMode]);
-
   useEffect(() => {
     if (gameMode === "daily") {
       saveDailyProgress(gameId, guesses, status);
     }
   }, [guesses, status, gameMode]);
 
-  const startDailyMode = useCallback(() => {
-    setGameMode("daily");
-    initializeDailyMode();
-  }, [loadDailyProgress]);
-
   const startRandomMode = useCallback(() => {
     setRandomTarget(calculateRandomTarget(abilitiesPool));
-    setGameMode("random");
-    setGuesses([]);
-    setStatus("playing");
-  }, []);
+    baseStartRandomMode();
+  }, [abilitiesPool, baseStartRandomMode]);
 
   const handleGuess = (warframe: string) => {
     if (status !== "playing") return;
@@ -99,11 +73,18 @@ export default function useWarframedleAbilities(
     if (guessedWf.name === target.warframeName) {
       setStatus("won");
       if (!playerName) return;
-      saveHighScore(gameId, playerName, MAX_DAILY_ATTEMPTS - guesses.length);
+      saveDailyScore(gameId, playerName, MAX_DAILY_ATTEMPTS - guesses.length);
     } else if (gameMode === "daily" && guesses.length > MAX_DAILY_ATTEMPTS) {
       setStatus("lost");
     }
   };
+  const warframeNames = useMemo(() => {
+    return warframes
+      .filter((wf) => !guesses.some((g) => g.name === wf.name))
+      .map((wf) => ({
+        name: wf.name,
+      }));
+  }, [warframes, guesses]);
 
   return {
     warframes,

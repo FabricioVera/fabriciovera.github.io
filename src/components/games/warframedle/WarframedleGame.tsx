@@ -1,13 +1,13 @@
 // DATA
 import warframeData from "@data/Warframes_final.json";
-import { $playerName } from "../../../store/playerStore";
+import { $playerName } from "@store/playerStore";
 
 // COMPONENTES
 import AutocompleteInput from "@components/ui/Autocomplete/AutocompleteInput";
 import HeroInput from "@components/ui/InputHero";
 import { useAutocomplete } from "@components/ui/Autocomplete/useAutocomplete";
-import TableHeader from "../../ui/GuessedTable/TableHeader";
-import TableCell from "../../ui/GuessedTable/TableCell";
+import TableHeader from "@components/ui/GuessedTable/TableHeader";
+import TableCell from "@components/ui/GuessedTable/TableCell";
 import Pointer from "../Pointer";
 import { RequirePlayer } from "@auth/index";
 import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
