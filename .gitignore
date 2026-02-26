@@ -21,3 +21,10 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+
+scrap_descriptions.py
+scrap_iamges_2.py
+scrap_images.py
+
+__pycache__/
