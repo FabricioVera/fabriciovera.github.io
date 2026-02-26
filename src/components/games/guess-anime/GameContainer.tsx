@@ -1,6 +1,6 @@
 // COMPONENTES
 import { RequirePlayer } from "@components/auth";
-import Pointer from "../Pointer";
+import Pointer from "../../ui/Pointer";
 
 // HOOKS Y UTILS
 import { useAnimeGame } from "./hooks/useAnimeGame";

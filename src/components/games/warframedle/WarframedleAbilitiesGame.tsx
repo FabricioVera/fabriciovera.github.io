@@ -8,7 +8,7 @@ import HeroInput from "@components/ui/InputHero";
 import { useAutocomplete } from "@components/ui/Autocomplete/useAutocomplete";
 import TableHeader from "@components/ui/GuessedTable/TableHeader";
 import TableCell from "@components/ui/GuessedTable/TableCell";
-import Pointer from "../Pointer";
+import Pointer from "../../ui/Pointer";
 import { RequirePlayer } from "@auth/index";
 import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
 
@@ -26,7 +26,11 @@ import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelec
 import useWarframedleAbilities from "./useWarframedleAbilities";
 import { abilitydleColumns } from "./GuessedTable/warframeColumns";
 
-export default function WarframedleAbilitiesGame() {
+interface AbilitydleProps {
+  gameId: string;
+}
+
+export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
   const playerName = useStore($playerName);
 
   const renderWarframeSuggestion = (sug: any) => (
@@ -56,7 +60,7 @@ export default function WarframedleAbilitiesGame() {
     startRandomMode,
   } = useWarframedleAbilities(
     warframeData as preWarframe[],
-    "abilities",
+    gameId,
     playerName,
   );
   const guessedNames = guesses.map((g) => g.name);
@@ -82,19 +86,9 @@ export default function WarframedleAbilitiesGame() {
     status !== "playing",
   );
 
-  const isDefaultState = selectedSuggestion < 0 || suggestions.length === 0;
-
   const GameModeConfig: GameModeCONF[] = [
     { gameModeName: "daily", gameModeHook: startDailyMode },
     { gameModeName: "random", gameModeHook: startRandomMode },
-  ];
-
-  const abilityClasses = [
-    "blur-lg grayscale",
-    "blur-md grayscale",
-    "blur-sm grayscale",
-    "blur-xs grayscale",
-    "blur-none grayscale",
   ];
 
   return (
@@ -104,7 +98,7 @@ export default function WarframedleAbilitiesGame() {
           <Pointer
             playerName={playerName}
             score={guesses.length}
-            gameId="Abilitydle"
+            gameId={gameId}
             isDaily={true}
             ascending={true}
             pointsName="Intentos"

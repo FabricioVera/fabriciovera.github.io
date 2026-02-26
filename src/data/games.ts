@@ -30,8 +30,8 @@ export const games: Game[] = [
   },
   {
     id: "warframedle",
-    name: "Warframe DLE",
-    title: "Warframe DLE",
+    name: "WarframeDLE: Warframes",
+    title: "WarframeDLE: Warframes",
     isAvailable: true,
     backgroundImage: "/img/bg-warframedle.webp",
     frontImage: "/img/WarframeOnly2.png",
@@ -40,8 +40,8 @@ export const games: Game[] = [
   },
   {
     id: "warframedleabilities",
-    name: "ability DLE",
-    title: "Ability DLE",
+    name: "WarframeDLE: Habilidades",
+    title: "WarframeDLE: Habilidades",
     isAvailable: true,
     backgroundImage: "/img/bg-abilitydle.webp",
     frontImage: "/img/fg-abilitydle.webp",

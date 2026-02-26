@@ -8,7 +8,7 @@ import HeroInput from "@components/ui/InputHero";
 import { useAutocomplete } from "@components/ui/Autocomplete/useAutocomplete";
 import TableHeader from "@components/ui/GuessedTable/TableHeader";
 import TableCell from "@components/ui/GuessedTable/TableCell";
-import Pointer from "../Pointer";
+import Pointer from "../../ui/Pointer";
 import { RequirePlayer } from "@auth/index";
 import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
 
@@ -26,7 +26,11 @@ import type { preWarframe } from "src/types/warframe";
 import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelector";
 import { warframedleColumns } from "./GuessedTable/warframeColumns";
 
-export default function WarframedleGame() {
+interface WarframedleGameProps {
+  gameId: string;
+}
+
+export default function WarframedleGame({ gameId }: WarframedleGameProps) {
   const playerName = useStore($playerName);
 
   const renderWarframeSuggestion = (sug: any) => (
@@ -53,7 +57,7 @@ export default function WarframedleGame() {
     handleGuess,
     startDailyMode,
     startRandomMode,
-  } = useWarframedle(warframeData as preWarframe[], "warframedle", playerName);
+  } = useWarframedle(warframeData as preWarframe[], gameId, playerName);
   const guessedNames = guesses.map((g) => g.name);
 
   const {
@@ -98,7 +102,7 @@ export default function WarframedleGame() {
           <Pointer
             playerName={playerName}
             score={guesses.length}
-            gameId="warframedle"
+            gameId={gameId}
             isDaily={true}
             ascending={true}
             pointsName="Intentos"

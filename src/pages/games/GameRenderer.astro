@@ -16,11 +16,15 @@ const { gameId } = Astro.props;
 
 {gameId === "character-by-image" && <AnimeGame client:load />}
 
-{gameId === "warframedle" && <WarframedleGame client:only="React" />}
+{
+  gameId === "warframedle" && (
+    <WarframedleGame client:only="React" gameId={gameId} />
+  )
+}
 
 {
   gameId === "warframedleabilities" && (
-    <WarframedleAbilitiesGame client:only="React" />
+    <WarframedleAbilitiesGame client:only="React" gameId={gameId} />
   )
 }
 

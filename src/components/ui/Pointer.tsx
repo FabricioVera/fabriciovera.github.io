@@ -1,4 +1,4 @@
-import { Leaderboard } from "@components/index";
+import { Leaderboard } from "@components/ui/Leaderboard";
 import { RemovePlayerName } from "@auth/index";
 
 export default function Pointer({
