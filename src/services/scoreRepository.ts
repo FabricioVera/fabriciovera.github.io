@@ -1,5 +1,6 @@
 import { supabase } from "@lib/supabase";
-import type { ScoreEntry, TopScore } from "src/types/score";
+import type { TopScore } from "src/types/score";
+import { logger } from "./logger";
 
 export async function saveHighScore(
   gameId: string,
@@ -14,12 +15,12 @@ export async function saveHighScore(
     .eq("player_name", playerName);
 
   if (fetchError) {
-    console.error("Error al obtener el puntaje existente:", fetchError);
+    logger.error("Error al obtener el puntaje existente:", fetchError);
     return;
   }
   for (let i = 0; i < existingScore.length; i++) {
     if (existingScore[i].score >= score) {
-      console.log(
+      logger.warn(
         "El puntaje no es mayor a los existentes, no se actualizará.",
       );
       return;
@@ -30,16 +31,15 @@ export async function saveHighScore(
     .insert([{ game_id: gameId, player_name: playerName, score }]);
 
   if (error) {
-    console.error("Error al guardar el puntaje:", error);
+    logger.error("Error al guardar el puntaje:", error);
     // Aquí podrías implementar un sistema de telemetría o manejo de errores global
   }
-  console.log("Puntaje guardado exitosamente");
+  logger.info("Puntaje guardado exitosamente");
 }
 
 export async function getTopScores(
   gameId: string,
   limit: number = 10,
-  timeLimit: string = "no-limit",
 ): Promise<TopScore[]> {
   const { data, error } = await supabase
     .from("leaderboard")
@@ -49,7 +49,7 @@ export async function getTopScores(
     .limit(limit);
 
   if (error) {
-    console.error("Error al obtener el leaderboard:", error);
+    logger.error("Error al obtener el leaderboard: ", error);
     return [];
   }
 
@@ -73,14 +73,15 @@ export async function saveDailyScore(
     .lt("created_at", end)
     .maybeSingle();
 
-  if (fetchError)
+  if (fetchError) {
+    logger.error(`Error al obtener el puntaje: ${fetchError.message}`);
     throw new Error(`Error al obtener el puntaje: ${fetchError.message}`);
-
+  }
   if (existingRecord && existingRecord.score >= score) {
-    console.log("El puntaje no supera al récord de hoy. No se actualizará.");
+    logger.warn("El puntaje no supera al récord de hoy. No se actualizará.");
     return;
   }
-  console.log("se encontró: " + existingRecord);
+  logger.info("se encontró: " + existingRecord);
 
   try {
     if (existingRecord) {
@@ -89,8 +90,10 @@ export async function saveDailyScore(
         .update({ score })
         .eq("id", existingRecord.id);
 
-      if (updateError)
+      if (updateError) {
+        logger.error(`Error al actualizar: ${updateError.message}`);
         throw new Error(`Error al actualizar: ${updateError.message}`);
+      }
     } else {
       const { error: insertError } = await supabase.from("leaderboard").insert([
         {
@@ -100,13 +103,15 @@ export async function saveDailyScore(
         },
       ]);
 
-      if (insertError)
+      if (insertError) {
+        logger.error(`Error al insertar: ${insertError.message}`);
         throw new Error(`Error al insertar: ${insertError.message}`);
+      }
     }
 
-    console.log("Puntaje diario guardado exitosamente");
+    logger.info("Puntaje diario guardado exitosamente");
   } catch (error) {
-    console.error("[LeaderboardService] Error en saveDailyScore:", error);
+    logger.error("[LeaderboardService] Error en saveDailyScore: ", error);
   }
 }
 
@@ -131,10 +136,7 @@ export async function getDailyTopScores(
 
     return data || [];
   } catch (error) {
-    console.error(
-      "[LeaderboardService] Error al obtener el top diario:",
-      error,
-    );
+    logger.error("[LeaderboardService] Error al obtener el top diario:", error);
     return [];
   }
 }

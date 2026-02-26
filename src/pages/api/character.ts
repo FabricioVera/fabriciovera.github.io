@@ -1,6 +1,10 @@
 import type { APIRoute } from "astro";
 import { getRandomCharacterByAnime, getRandomTopAnime } from "@lib/jikan";
 
+/**
+ * ! NO UTILIZAR ESTA FUNCION, NO FUNCIONA CON GITHUB PAGES
+ * @returns
+ */
 export const GET: APIRoute = async () => {
   try {
     console.log("Fetching random top anime...");
