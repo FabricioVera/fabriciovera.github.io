@@ -4,6 +4,7 @@ interface HeroInputProps {
   className?: string;
   itemName?: string;
   thumbnailUrl: string | undefined;
+  fallbackImage?: string;
   selectDirection: number;
   isDefault?: boolean;
 }
@@ -12,6 +13,7 @@ export default function HeroInput({
   className,
   itemName = "default",
   thumbnailUrl,
+  fallbackImage,
   selectDirection,
   isDefault = false,
 }: HeroInputProps) {
@@ -57,7 +59,7 @@ export default function HeroInput({
               exit="exit"
               transition={{ duration: 0.3 }}
               className={` absolute inset-0 w-full h-full object-cover object-top ${className}`}
-              src={thumbnailUrl}
+              src={thumbnailUrl || fallbackImage}
               alt=""
             />
           )}

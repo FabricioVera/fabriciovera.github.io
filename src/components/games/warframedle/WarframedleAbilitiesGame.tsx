@@ -1,6 +1,6 @@
 // DATA
 import warframeData from "@data/Warframes_final.json";
-import { $playerName } from "../../../store/playerStore";
+import { $playerName } from "@store/playerStore";
 
 // COMPONENTES
 import AutocompleteInput from "@components/ui/Autocomplete/AutocompleteInput";
@@ -11,20 +11,18 @@ import TableCell from "@components/ui/GuessedTable/TableCell";
 import Pointer from "../../ui/Pointer";
 import { RequirePlayer } from "@auth/index";
 import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
+import { abilitydleColumns } from "./GuessedTable/warframeColumns";
 
 //HOOKS + UTILS
 import { useStore } from "@nanostores/react";
-import {
-  getWikiThumbnail,
-  getWarframeThumbnailName,
-  getWarframeImageName,
-} from "@utils/index";
+import { getWikiThumbnail, getWarframeImageName } from "@utils/index";
+import { useAbilityVisuals } from "@utils/game";
+import useWarframedleAbilities from "./useWarframedleAbilities";
 
 // TYPES
 import type { preWarframe, Warframe } from "src/types/warframe";
 import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelector";
-import useWarframedleAbilities from "./useWarframedleAbilities";
-import { abilitydleColumns } from "./GuessedTable/warframeColumns";
+import { useEffect } from "react";
 
 interface AbilitydleProps {
   gameId: string;
@@ -91,6 +89,12 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
     { gameModeName: "random", gameModeHook: startRandomMode },
   ];
 
+  const imageVisualStyles = useAbilityVisuals(
+    target?.abilityName || "default",
+    guesses.length,
+    status,
+  );
+
   return (
     <RequirePlayer>
       <div className="min-h-screen w-full max-w-[100vw] lg:max-w-5xl mx-auto p-4 flex flex-col lg:items-center gap-6 overflow-auto">
@@ -108,15 +112,25 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
           gameModeCONF={GameModeConfig}
           actualGameMode={gameMode}
         />
-        <HeroInput
-          className={`${"rotate-90"}`}
-          itemName={""}
-          thumbnailUrl={getWikiThumbnail(
-            getWarframeImageName(target.abilityName + "130xWhite"),
-          )}
-          selectDirection={selectDirection}
-          isDefault={false}
-        />
+        <div className="relative w-40 h-40 md:w-48 md:h-48 overflow-hidden rounded-xl bg-primary shadow-lg border border-secondary flex items-center justify-center">
+          <div
+            style={imageVisualStyles}
+            className="w-full h-full flex items-center justify-center pointer-events-none"
+          >
+            <HeroInput
+              className={`w-full h-full object-cover`}
+              itemName={""}
+              thumbnailUrl={getWikiThumbnail(
+                getWarframeImageName(target.abilityName + "130xWhite"),
+              )}
+              fallbackImage={getWikiThumbnail(
+                getWarframeImageName(target.abilityName),
+              )}
+              selectDirection={selectDirection}
+              isDefault={false}
+            />
+          </div>
+        </div>
 
         {status === "playing" && (
           <AutocompleteInput
