@@ -14,7 +14,7 @@ export const extractAbilitiesPool = (
   const pool: AbilityTarget[] = [];
 
   warframes
-    .filter((wf) => !wf.isPrime)
+    .filter((wf) => !wf.isPrime && wf.name !== "Excalibur Umbra")
     .forEach((wf) => {
       wf.abilities.forEach((ability) => {
         pool.push({

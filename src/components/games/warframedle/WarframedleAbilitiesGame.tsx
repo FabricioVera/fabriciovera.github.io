@@ -62,6 +62,9 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
     playerName,
   );
   const guessedNames = guesses.map((g) => g.name);
+  const warframesNoPrime = warframes.filter(
+    (wf) => !wf.isPrime && wf.name !== "Excalibur Umbra",
+  );
 
   const {
     inputRef,
@@ -79,7 +82,7 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
     handleKeyDown,
   } = useAutocomplete(
     handleGuess,
-    warframes,
+    warframesNoPrime,
     guessedNames,
     status !== "playing",
   );
@@ -91,6 +94,7 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
 
   const imageVisualStyles = useAbilityVisuals(
     target?.abilityName || "default",
+    getWikiThumbnail(getWarframeImageName(target.abilityName + "130xWhite")),
     guesses.length,
     status,
   );
@@ -116,20 +120,7 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
           <div
             style={imageVisualStyles}
             className="w-full h-full flex items-center justify-center pointer-events-none"
-          >
-            <HeroInput
-              className={`w-full h-full object-cover`}
-              itemName={""}
-              thumbnailUrl={getWikiThumbnail(
-                getWarframeImageName(target.abilityName + "130xWhite"),
-              )}
-              fallbackImage={getWikiThumbnail(
-                getWarframeImageName(target.abilityName),
-              )}
-              selectDirection={selectDirection}
-              isDefault={false}
-            />
-          </div>
+          />
         </div>
 
         {status === "playing" && (

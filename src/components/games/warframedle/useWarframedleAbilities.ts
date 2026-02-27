@@ -69,20 +69,25 @@ export default function useWarframedleAbilities(
 
     const newGuesses = [guessedWf, ...guesses];
     setGuesses(newGuesses);
+    if (!playerName) return;
 
     if (guessedWf.name === target.warframeName) {
       setStatus("won");
-      if (!playerName) return;
-      saveDailyScore(gameId, playerName, MAX_DAILY_ATTEMPTS - guesses.length);
-    } else if (gameMode === "daily" && guesses.length > MAX_DAILY_ATTEMPTS) {
+      if (gameMode === "daily") {
+        saveDailyScore(gameId, playerName, MAX_DAILY_ATTEMPTS - guesses.length);
+      }
+    } else if (gameMode === "daily" && guesses.length >= MAX_DAILY_ATTEMPTS) {
       setStatus("lost");
+      if (gameMode === "daily") {
+        saveDailyScore(gameId, playerName, MAX_DAILY_ATTEMPTS - guesses.length);
+      }
     }
   };
   const warframeNames = useMemo(() => {
-    return warframes
-      .filter((wf) => !guesses.some((g) => g.name === wf.name))
+    return abilitiesPool
+      .filter((wf) => !guesses.some((g) => g.name === wf.warframeName))
       .map((wf) => ({
-        name: wf.name,
+        name: wf.warframeName,
       }));
   }, [warframes, guesses]);
 
