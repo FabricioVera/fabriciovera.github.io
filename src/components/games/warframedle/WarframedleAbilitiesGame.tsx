@@ -4,11 +4,10 @@ import { $playerName } from "@store/playerStore";
 
 // COMPONENTES
 import AutocompleteInput from "@components/ui/Autocomplete/AutocompleteInput";
-import HeroInput from "@components/ui/InputHero";
 import { useAutocomplete } from "@components/ui/Autocomplete/useAutocomplete";
 import TableHeader from "@components/ui/GuessedTable/TableHeader";
 import TableCell from "@components/ui/GuessedTable/TableCell";
-import Pointer from "../../ui/Pointer";
+import Pointer from "@components/ui/Pointer";
 import { RequirePlayer } from "@auth/index";
 import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
 import { abilitydleColumns } from "./GuessedTable/warframeColumns";
@@ -22,7 +21,6 @@ import useWarframedleAbilities from "./useWarframedleAbilities";
 // TYPES
 import type { preWarframe, Warframe } from "src/types/warframe";
 import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelector";
-import { useEffect } from "react";
 
 interface AbilitydleProps {
   gameId: string;
