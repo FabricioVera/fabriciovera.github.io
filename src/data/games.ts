@@ -48,8 +48,18 @@ export const games: Game[] = [
     url: "/games/warframedleabilities",
     hideTitle: false,
   },
+  {
+    id: "arknightdle",
+    name: "Arknightdle",
+    title: "Arknightdle",
+    isAvailable: true,
+    backgroundImage: "/img/bg-abilitydle.webp",
+    frontImage: "/img/fg-abilitydle.webp",
+    url: "/games/arknightdle",
+    hideTitle: false,
+  },
   // Generación dinámica de los 3 juegos "Próximamente" para mantener DRY
-  ...Array.from({ length: 2 }).map((_, index) => ({
+  ...Array.from({ length: 1 }).map((_, index) => ({
     id: `coming-soon-${index + 3}`,
     name: `coming-soon-${index + 3}`,
     title: "Próximamente",

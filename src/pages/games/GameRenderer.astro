@@ -4,6 +4,7 @@ import MbtiGame from "@components/games/guess-mbti/MbtiGame";
 import AnimeGame from "@components/games/guess-anime/GameContainer";
 import WarframedleGame from "@components/games/warframedle/WarframedleGame";
 import WarframedleAbilitiesGame from "@components/games/warframedle/WarframedleAbilitiesGame";
+import { RandomOperator } from "src/components/games/arknights/Arknightdle.tsx";
 
 interface Props {
   gameId: string;
@@ -27,6 +28,8 @@ const { gameId } = Astro.props;
     <WarframedleAbilitiesGame client:only="React" gameId={gameId} />
   )
 }
+
+{gameId === "arknightdle" && <RandomOperator client:only="React" />}
 
 {/* Manejo de Errores: Fallback visual si el ID no está mapeado */}
 {
