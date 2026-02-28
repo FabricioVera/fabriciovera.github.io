@@ -64,7 +64,7 @@ export const useAbilityVisuals = (
   const randomValue = rand.next();
 
   // Rotación aleatoria completa (0 a 359 grados)
-  const rotation = Math.floor(randomValue * 360);
+  const rotation = [0, 90, 180, 270][Math.floor(randomValue * 4)];
 
   // Espejado horizontal aleatorio (50% de probabilidad)
   const scaleX = randomValue > 0.5 ? -1 : 1;
