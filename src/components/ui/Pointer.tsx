@@ -1,29 +1,35 @@
 import { Leaderboard } from "@components/ui/Leaderboard";
 import { RemovePlayerName } from "@auth/index";
 
-export default function Pointer({
-  playerName,
-  score,
-  gameId,
-  pointsName = "Puntos",
-  isDaily = false,
-  ascending = false,
-}: {
+interface PointerProps {
+  className?: string;
   playerName: string | null;
   score: number;
   gameId: string;
   pointsName?: string;
   isDaily?: boolean;
   ascending?: boolean;
-}) {
+}
+
+export default function Pointer({
+  className = "bg-primary border-accent text-white",
+  playerName,
+  score,
+  gameId,
+  pointsName = "Puntos",
+  isDaily = false,
+  ascending = false,
+}: PointerProps) {
   return (
-    <div className="flex w-[80%] justify-evenly items-center bg-primary p-4 rounded-xl shadow border border-accent text-text-primary mx-auto">
+    <div
+      className={`flex w-full justify-evenly items-center p-4 rounded-xl shadow border mx-auto ${className}`}
+    >
       <div className="hidden sm:block">
-        Jugador: <span className="text-white font-bold">{playerName}</span>
+        <span className="font-bold">{playerName}</span>
         <RemovePlayerName />
       </div>
       <div className="text-center">
-        {pointsName}: <span className="text-white font-bold">{score}</span>
+        {pointsName}: <span className="font-bold">{score}</span>
       </div>
 
       <Leaderboard

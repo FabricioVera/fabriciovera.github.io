@@ -1,7 +1,7 @@
 import type { OperatorDTO } from "src/types/index";
 import { logger } from "@services/logger";
 
-const API_ARKNIGHTS = "https://awedtan.ca/api/operator?include=data.name";
+const API_ARKNIGHTS = "https://awedtan.ca/api/";
 
 /**
  * Obtiene la lista completa de operadores desde la API remota.
@@ -11,7 +11,7 @@ const API_ARKNIGHTS = "https://awedtan.ca/api/operator?include=data.name";
  * @sideEffects Realiza una petición HTTP (fetch) al endpoint externo de Arknights.
  */
 export const fetchOperators = async (): Promise<OperatorDTO[]> => {
-  const response = await fetch(API_ARKNIGHTS);
+  const response = await fetch(API_ARKNIGHTS + "operator?include=data.name");
 
   if (!response.ok) {
     logger.error(

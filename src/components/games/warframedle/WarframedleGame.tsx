@@ -13,13 +13,9 @@ import { RequirePlayer } from "@auth/index";
 import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
 
 //HOOKS + UTILS
-import useWarframedle from "./useWarframedle";
+import useWarframedle from "./hooks/useWarframedle";
 import { useStore } from "@nanostores/react";
-import {
-  getWikiThumbnail,
-  getWarframeThumbnailName,
-  getWarframeImageName,
-} from "@utils/index";
+import { getWikiThumbnail, getWarframeThumbnailName } from "@utils/index";
 
 // TYPES
 import type { preWarframe } from "src/types/warframe";
@@ -94,12 +90,9 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
   return (
     <RequirePlayer>
       <div className="min-h-screen w-full max-w-[100vw] lg:max-w-5xl mx-auto p-4 flex flex-col lg:items-center gap-6 overflow-auto">
-        <GameModeSelector
-          gameModeCONF={GameModeConfig}
-          actualGameMode={gameMode}
-        />
         {gameMode === "daily" && (
           <Pointer
+            className="bg-sky-200/50 border border-sky-50 text-white shadow-sky-200"
             playerName={playerName}
             score={guesses.length}
             gameId={gameId}
@@ -108,6 +101,10 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
             pointsName="Intentos"
           />
         )}
+        <GameModeSelector
+          gameModeCONF={GameModeConfig}
+          actualGameMode={gameMode}
+        />
         <HeroInput
           className="mask-b-from-70"
           key={currentHeroWf.name}

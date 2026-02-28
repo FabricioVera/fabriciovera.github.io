@@ -1,12 +1,13 @@
 // --- src/components/layout/Sidebar.tsx ---
 import { useState, useEffect } from "react";
 import type { NavigationLink } from "../types/navigation";
+import { games } from "../data/games";
 
-interface SidebarProps {
-  links: NavigationLink[];
-}
+const links = games
+  .filter((g) => g.url)
+  .map((g) => ({ name: g.name, url: g.url }));
 
-export function Sidebar({ links }: SidebarProps) {
+export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
@@ -27,22 +28,74 @@ export function Sidebar({ links }: SidebarProps) {
       {/* Botón Toggle Flotante (Hamburger Menu) */}
       <button
         onClick={toggleSidebar}
-        className="fixed top-6 left-4 z-60 p-2 bg-primary text-white rounded-md border border-accent hover:bg-accent transition-colors focus:outline-hidden focus:ring-2 focus:ring-accent"
+        className="w-fit h-fit z-60 p-2 text-white rounded-md border border-accent hover:bg-accent transition-colors focus:outline-hidden focus:ring-2 focus:ring-accent"
         aria-label="Alternar menú de navegación"
         aria-expanded={isOpen}
       >
         <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={2}
+          fill="currentColor"
+          viewBox="0 0 100 100"
+          width="30"
           stroke="currentColor"
-          className="w-6 h-6"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
+          {/* Fila Superior (Top) */}
+          <rect
+            className={`transition-all duration-300 origin-[30px_20px] ${
+              isOpen ? "translate-y-[10px] rotate-45" : ""
+            }`}
+            width="40"
+            height="10"
+            x="10"
+            y="15"
+          />
+          <rect
+            className={`transition-all duration-300 origin-[70px_20px] ${
+              isOpen ? " translate-y-[10px] -rotate-45" : ""
+            }`}
+            width="40"
+            height="10"
+            x="50"
+            y="15"
+          />
+
+          {/* Fila Central (Middle) - Se esconden hacia los lados */}
+          <rect
+            className={`transition-all duration-300 ${
+              isOpen ? "-translate-x-[40px] opacity-0" : ""
+            }`}
+            width="40"
+            height="10"
+            x="10"
+            y="45"
+          />
+          <rect
+            className={`transition-all duration-300 ${
+              isOpen ? "translate-x-[40px] opacity-0" : ""
+            }`}
+            width="40"
+            height="10"
+            x="50"
+            y="45"
+          />
+
+          {/* Fila Inferior (Bottom) */}
+          <rect
+            className={`transition-all duration-300 origin-[30px_80px] ${
+              isOpen ? "-translate-y-[10px] -rotate-45" : ""
+            }`}
+            width="40"
+            height="10"
+            x="10"
+            y="75"
+          />
+          <rect
+            className={`transition-all duration-300 origin-[70px_80px] ${
+              isOpen ? "-translate-y-[10px] rotate-45" : ""
+            }`}
+            width="40"
+            height="10"
+            x="50"
+            y="75"
           />
         </svg>
       </button>
@@ -50,7 +103,7 @@ export function Sidebar({ links }: SidebarProps) {
       {/* Overlay Oscuro (Cierra el menú al hacer clic fuera) */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity"
+          className="fixed top-0 h-screen w-screen bg-black/60 backdrop-blur-sm z-50 transition-opacity"
           onClick={toggleSidebar}
           aria-hidden="true"
         />
@@ -58,7 +111,7 @@ export function Sidebar({ links }: SidebarProps) {
 
       {/* Panel del Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full w-64 bg-primary border-r border-secondary z-55 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 h-screen w-64 bg-primary border-r border-secondary z-55 transform transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
         } flex flex-col`}
       >

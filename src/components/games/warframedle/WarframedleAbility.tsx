@@ -16,7 +16,7 @@ import { abilitydleColumns } from "./GuessedTable/warframeColumns";
 import { useStore } from "@nanostores/react";
 import { getWikiThumbnail, getWarframeImageName } from "@utils/index";
 import { useAbilityVisuals } from "@utils/game";
-import useWarframedleAbilities from "./useWarframedleAbilities";
+import useWarframedleAbilities from "./hooks/useWarframedleAbilities";
 
 // TYPES
 import type { preWarframe, Warframe } from "src/types/warframe";

@@ -10,7 +10,7 @@ import { calculateDailyTarget, calculateRandomTarget } from "@utils/game";
 import {
   loadDailyProgress,
   saveDailyProgress,
-} from "../../../services/dailyStorageRepository";
+} from "@services/dailyStorageRepository";
 import { useDailyGame } from "@hooks/useDailyGame";
 
 export type GameMode = "daily" | "random";

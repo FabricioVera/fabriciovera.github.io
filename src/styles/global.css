@@ -66,13 +66,33 @@
 .css-3d-text {
   letter-spacing: 3px;
   text-shadow:
-    0px 1px 0 #5a0202,
-    0px 2px 0 #4a0101,
-    0px 3px 0 #3b0101,
-    0px 4px 0 #2a0101,
-    0px 5px 0 #1a0000,
+    0px 1px 0 hsl(192, 96%, 18%),
+    0px 2px 0 hsl(194, 97.33%, 14.71%),
+    0px 3px 0 hsl(194, 96.67%, 11.76%),
+    0px 4px 0 hsl(194, 95.35%, 8.43%),
+    0px 5px 0 hsl(194, 100%, 5.1%),
     /* Sombra de caída (Drop shadow) para separar del fondo */ 0px 8px 10px
       rgba(0, 0, 0, 0.7),
     /* Un ligero resplandor (Glow) del color accent para que parezca caliente */
-    0px 0px 15px rgba(255, 69, 0, 0.4);
+    0px 0px 15px hsl(194, 96%, 20%);
+}
+
+[data-theme="warframedle"],
+[data-theme="warframedleabilities"] {
+  --color-primary: var(--color-sky-900);
+  --color-secondary: #9ed7fd;
+  --color-accent: var(--color-sky-200);
+  --color-accent2: var(--color-yellow-500);
+
+  /* Correct / success */
+  --color-success: #57b18b;
+  /* Incorrect */
+  --color-error: #808080;
+  /* Partial / hint */
+  --color-warning: #ddc57d;
+  /* Locked */
+  --color-disabled: var(--neutral-600);
+
+  --font-game: "Orbitron", sans-serif;
+  font-family: var(--font-game);
 }
