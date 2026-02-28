@@ -92,7 +92,7 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
       <div className="min-h-screen w-full max-w-[100vw] lg:max-w-5xl mx-auto p-4 flex flex-col lg:items-center gap-6 overflow-auto">
         {gameMode === "daily" && (
           <Pointer
-            className="bg-sky-200/50 border border-sky-50 text-white shadow-sky-200"
+            className="bg-primary/60 border border-accent text-white shadow-[0_0_25px_var(--color-accent)]"
             playerName={playerName}
             score={guesses.length}
             gameId={gameId}
@@ -155,7 +155,7 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
         )}
 
         {guesses.length > 0 && (
-          <div className="overflow-x-auto justify-items-start rounded-2xl border border-secondary bg-primary mt-4 text-white">
+          <div className="overflow-x-auto justify-items-start rounded-2xl border border-(--border) bg-primary shadow-[0_0_30px_rgba(0,0,0,0.6)] mt-4 text-white">
             <table className="w-full">
               <TableHeader columns={warframedleColumns} />
               <tbody>
@@ -165,7 +165,10 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
                   if (!guessObj) return null;
 
                   return (
-                    <tr key={index} className="bg-secondary text-center">
+                    <tr
+                      key={index}
+                      className="bg-secondary hover:bg-primary transition-colors text-center"
+                    >
                       {warframedleColumns.map((col, colIndex) => (
                         <TableCell
                           key={colIndex}

@@ -79,19 +79,47 @@
 
 [data-theme="warframedle"],
 [data-theme="warframedleabilities"] {
-  --color-primary: var(--color-sky-900);
+  --color-primary: oklch(0.4305 0.0873 233.56);
+  --color-primary: oklch(0.6 0.22 230);
   --color-secondary: #9ed7fd;
-  --color-accent: var(--color-sky-200);
-  --color-accent2: var(--color-yellow-500);
+  --color-accent: oklch(0.76 0.1 233);
+  --color-accent: oklch(0.72 0.2 195);
+  --color-accent2: oklch(0.76 0.1 53);
+  --color-accent2: oklch(0.75 0.18 75);
 
-  /* Correct / success */
-  --color-success: #57b18b;
-  /* Incorrect */
-  --color-error: #808080;
-  /* Partial / hint */
-  --color-warning: #ddc57d;
-  /* Locked */
-  --color-disabled: var(--neutral-600);
+  --bg-dark: oklch(0.1 0.045 233);
+  --bg: oklch(0.15 0.045 233);
+  --bg-light: oklch(0.2 0.045 233);
+
+  --text: oklch(0.96 0.01 233);
+  --text-muted: oklch(0.75 0.01 233);
+  --highlight: oklch(0.5 0.09 233);
+
+  --border: oklch(0.4 0.09 233);
+  --border-muted: oklch(0.3 0.09 233);
+
+  --bg-dark: oklch(0.04 0.01 250);
+  --bg: oklch(0.08 0.015 250);
+  --bg-light: oklch(0.12 0.02 250);
+
+  /* === SUPERFICIES === */
+  --color-primary: oklch(0.14 0.025 250); /* panel base */
+  --color-secondary: oklch(0.2 0.035 250); /* tabla / filas */
+
+  /* === NEON CORE (como la imagen) === */
+  --color-accent: oklch(0.75 0.22 195); /* cyan neón */
+  --color-accent2: oklch(0.62 0.3 320); /* magenta neón */
+
+  /* === OROKIN === */
+  --highlight: oklch(0.82 0.18 85);
+
+  /* === TEXTO === */
+  --text: oklch(0.96 0.01 250);
+  --text-muted: oklch(0.75 0.02 250);
+
+  /* === BORDES === */
+  --border: oklch(0.28 0.03 250);
+  --border-muted: oklch(0.2 0.02 250);
 
   --font-game: "Orbitron", sans-serif;
   font-family: var(--font-game);

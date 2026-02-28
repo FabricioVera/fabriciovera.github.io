@@ -13,12 +13,12 @@ export default function GameModeSelector({
   actualGameMode,
 }: GameModeSelectorProps) {
   return (
-    <div className="flex w-fit justify-center gap-4 p-2 mx-auto bg-primary/30 rounded-lg border border-secondary">
+    <div className="flex w-fit justify-center gap-4 p-2 mx-auto bg-primary/60 backdrop-blur-md rounded-lg border border-accent/30">
       {gameModeCONF.map((config, index) => (
         <button
           key={config.gameModeName + "-" + index}
           onClick={config.gameModeHook}
-          className={`px-4 py-2 rounded-md font-bold transition-colors ${config.gameModeName === actualGameMode ? "bg-accent text-white" : "text-gray-400 hover:text-white"}`}
+          className={`px-4 py-2 rounded-md font-bold transition-colors ${config.gameModeName === actualGameMode ? "bg-accent text-black" : "text-gray-400 hover:text-white"}`}
         >
           {config.gameModeName}
         </button>

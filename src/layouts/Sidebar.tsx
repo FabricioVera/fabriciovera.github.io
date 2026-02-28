@@ -41,7 +41,7 @@ export function Sidebar() {
           {/* Fila Superior (Top) */}
           <rect
             className={`transition-all duration-300 origin-[30px_20px] ${
-              isOpen ? "translate-y-[10px] rotate-45" : ""
+              isOpen ? "translate-y-2.5 rotate-45" : ""
             }`}
             width="40"
             height="10"
@@ -50,7 +50,7 @@ export function Sidebar() {
           />
           <rect
             className={`transition-all duration-300 origin-[70px_20px] ${
-              isOpen ? " translate-y-[10px] -rotate-45" : ""
+              isOpen ? " translate-y-2.5 -rotate-45" : ""
             }`}
             width="40"
             height="10"
@@ -61,7 +61,7 @@ export function Sidebar() {
           {/* Fila Central (Middle) - Se esconden hacia los lados */}
           <rect
             className={`transition-all duration-300 ${
-              isOpen ? "-translate-x-[40px] opacity-0" : ""
+              isOpen ? "-translate-x-10 opacity-0" : ""
             }`}
             width="40"
             height="10"
@@ -70,7 +70,7 @@ export function Sidebar() {
           />
           <rect
             className={`transition-all duration-300 ${
-              isOpen ? "translate-x-[40px] opacity-0" : ""
+              isOpen ? "translate-x-10 opacity-0" : ""
             }`}
             width="40"
             height="10"
@@ -81,7 +81,7 @@ export function Sidebar() {
           {/* Fila Inferior (Bottom) */}
           <rect
             className={`transition-all duration-300 origin-[30px_80px] ${
-              isOpen ? "-translate-y-[10px] -rotate-45" : ""
+              isOpen ? "-translate-y-2.5 -rotate-45" : ""
             }`}
             width="40"
             height="10"
@@ -90,7 +90,7 @@ export function Sidebar() {
           />
           <rect
             className={`transition-all duration-300 origin-[70px_80px] ${
-              isOpen ? "-translate-y-[10px] rotate-45" : ""
+              isOpen ? "-translate-y-2.5 rotate-45" : ""
             }`}
             width="40"
             height="10"

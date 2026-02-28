@@ -43,10 +43,15 @@ export default function AutocompleteInput<T extends Suggestion>({
   onSuggestionClick,
 }: GuessInputProps<T>) {
   const inputClasses =
-    theme.input || "bg-primary text-white border-secondary focus:ring-accent";
-  const listClasses = theme.list || "bg-primary";
+    theme.input ||
+    "bg-primary border border-secondary text-white focus:ring-2 focus:ring-[var(--color-accent)] focus:border-[var(--color-accent)]";
+
+  const listClasses = theme.list || "bg-primary border border-secondary";
+
   const itemClasses = theme.item || "hover:bg-secondary text-white";
-  const activeItemClasses = theme.itemActive || "bg-accent text-white";
+  const activeItemClasses =
+    theme.itemActive ||
+    "bg-accent text-black shadow-[0_0_15px_var(--color-accent)]";
   const errorClasses = theme.error || "text-red-500";
 
   return (

@@ -10,24 +10,19 @@ const PARTIAL_MATCH = "bg-warning text-center";
 // Definimos la configuración de las columnas específicas para este juego
 export const warframedleColumns: ColumnDef<Warframe>[] = [
   {
-    header: "Imagen",
+    header: "Warframe",
     getCellClass: (guess, target) =>
       guess.name === target.name ? MATCH : NOT_MATCH,
     renderCell: (guess) => (
-      <div className="flex justify-center items-center">
+      <div className="flex flex-row gap-4 justify-center items-center">
         <img
           src={getWikiThumbnail(getWarframeImageName(guess.name))}
           alt={guess.name}
           className="w-24 h-24 rounded-full"
         />
+        {guess.name}
       </div>
     ),
-  },
-  {
-    header: "Warframe",
-    getCellClass: (guess, target) =>
-      guess.name === target.name ? MATCH : NOT_MATCH,
-    renderCell: (guess) => guess.name,
   },
   {
     header: "Género",

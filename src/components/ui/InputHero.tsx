@@ -76,8 +76,8 @@ export default function HeroInput({
             }}
             className={`relative bottom-5 z-10 text-2xl md:text-4xl font-bold text-center px-4 drop-shadow-lg tracking-wider transition-colors duration-300 ${
               isDefault
-                ? "bg-linear-to-r from-accent to-accent2 bg-clip-text text-transparent"
-                : "text-white css-3d-text"
+                ? "bg-linear-to-r from-(--color-accent) via-accent2 to-(--highlight) bg-clip-text text-transparent drop-shadow-[0_0_20px_var(--color-accent)]"
+                : "text-white drop-shadow-[0_0_15px_var(--color-accent)] css-3d-text"
             }`}
           >
             {itemName}
