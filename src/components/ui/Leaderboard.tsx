@@ -4,6 +4,7 @@ import {
   getTopScores,
 } from "../../services/scoreRepository";
 import type { TopScore } from "src/types/score";
+import Button from "@components/ui/General/Button";
 
 interface LeaderboardProps {
   gameId: string;
@@ -57,13 +58,13 @@ export function Leaderboard({
   return (
     <>
       {/* Botón Discreto en la UI */}
-      <button
+      <Button
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 px-3 py-1.5 bg-accent/50 hover:bg-accent text-white rounded-lg transition-colors border border-accent/30 font-medium text-sm"
+        className="flex items-center gap-2 px-3 py-1.5 font-medium text-sm"
         aria-label="Ver Ranking"
       >
         Ranking
-      </button>
+      </Button>
 
       {/* Overlay oscuro para enfocar el panel */}
       {isOpen && (

@@ -32,9 +32,8 @@
   --bg-elevated: var(--neutral-700);
 
   /* Text */
-  --color-text-primary: var(--neutral-100);
-  --text-secondary: var(--neutral-300);
-  --text-muted: var(--neutral-500);
+  --color-neutral-primary: var(--neutral-100);
+  --color-muted: var(--neutral-300);
 
   /* Brand */
   --brand-primary: var(--red-600);

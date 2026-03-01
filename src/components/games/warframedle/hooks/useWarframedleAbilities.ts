@@ -74,12 +74,12 @@ export default function useWarframedleAbilities(
     if (guessedWf.name === target.warframeName) {
       setStatus("won");
       if (gameMode === "daily") {
-        saveDailyScore(gameId, playerName, MAX_DAILY_ATTEMPTS - guesses.length);
+        saveDailyScore(gameId, playerName, guesses.length);
       }
     } else if (gameMode === "daily" && guesses.length >= MAX_DAILY_ATTEMPTS) {
       setStatus("lost");
       if (gameMode === "daily") {
-        saveDailyScore(gameId, playerName, MAX_DAILY_ATTEMPTS - guesses.length);
+        saveDailyScore(gameId, playerName, guesses.length);
       }
     }
   };

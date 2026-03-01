@@ -1,11 +1,12 @@
 import { $playerName } from "@store/playerStore";
+import Button from "@components/ui/General/Button";
 export default function NameForm() {
   return (
-    <div className="max-w-md mx-auto p-8 bg-primary border border-accent rounded-xl shadow-lg mt-10 my-4 text-center">
-      <h2 className="text-2xl font-bold text-white mb-4">
+    <div className="max-w-2xl mx-auto p-8 bg-linear-to-br from-primary to-secondary border border-accent rounded-xl shadow-lg mt-10 my-4 text-center">
+      <h2 className="text-xl font-bold text-neutral-primary">
         Para empezar a jugar dime tu nombre o apodo
       </h2>
-      <h3 className="font-light text-gray-300 mb-4">
+      <h3 className="font-light text-muted mb-4">
         Este apodo servirá para el ranking
       </h3>
       <form
@@ -17,18 +18,13 @@ export default function NameForm() {
         }}
       >
         <input
-          className="w-full p-3 rounded bg-secondary text-white border border-secondary focus:outline-none focus:border-accent mb-4"
+          className="w-full mb-4 p-3 rounded bg-primary text-neutral-primary border border-accent/70 focus:outline-none focus:border-accent"
           type="text"
           name="name"
           required
-          placeholder="Ingresa tu nombre o apodo"
+          placeholder="Momazos Diego, Giacomino Guardiano delle Galassie e dell'Iperspazio..."
         />
-        <button
-          type="submit"
-          className="w-full bg-secondary hover:bg-accent text-white font-bold py-3 rounded transition-colors"
-        >
-          Comenzar a Jugar
-        </button>
+        <Button type="submit">Jugar</Button>
       </form>
     </div>
   );
