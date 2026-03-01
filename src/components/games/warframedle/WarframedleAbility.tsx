@@ -15,12 +15,13 @@ import { abilitydleColumns } from "./GuessedTable/warframeColumns";
 //HOOKS + UTILS
 import { useStore } from "@nanostores/react";
 import { getWikiThumbnail, getWarframeImageName } from "@utils/index";
-import { useAbilityVisuals } from "@utils/game";
+import { abilityVisuals } from "@utils/ability";
 import useWarframedleAbilities from "./hooks/useWarframedleAbilities";
 
 // TYPES
 import type { preWarframe, Warframe } from "src/types/warframe";
 import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelector";
+import { useEffect, useState } from "react";
 
 interface AbilitydleProps {
   gameId: string;
@@ -28,6 +29,7 @@ interface AbilitydleProps {
 
 export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
   const playerName = useStore($playerName);
+  const [abilityImage, setAbilityImage] = useState<string>();
 
   const renderWarframeSuggestion = (sug: any) => (
     <div className="flex flex-row items-center gap-3">
@@ -90,7 +92,7 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
     { gameModeName: "random", gameModeHook: startRandomMode },
   ];
 
-  const imageVisualStyles = useAbilityVisuals(
+  const imageVisualStyles = abilityVisuals(
     target?.abilityName || "default",
     getWikiThumbnail(getWarframeImageName(target.abilityName + "130xWhite")),
     guesses.length,
