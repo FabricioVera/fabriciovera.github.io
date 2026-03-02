@@ -4,8 +4,6 @@ import { $playerName } from "@store/playerStore";
 
 // COMPONENTES
 import AutocompleteInput from "@components/ui/Autocomplete/AutocompleteInput";
-import HeroInput from "@components/ui/InputHero";
-import { useAutocomplete } from "@components/ui/Autocomplete/useAutocomplete";
 import TableHeader from "@components/ui/GuessedTable/TableHeader";
 import TableCell from "@components/ui/GuessedTable/TableCell";
 import Pointer from "../../ui/Pointer";

@@ -34,7 +34,7 @@ export default function HeroInput({
 
   return (
     <section
-      className={`relative w-auto ${isDefault ? "h-[25vh]" : "h-[25vh] md:h-[35vh]"} flex justify-center mb-2 min-w-3xs aspect-square`}
+      className={`relative w-auto ${isDefault ? "h-[25vh]" : "h-[25vh] md:h-[35vh]"} flex justify-center min-w-3xs aspect-square`}
     >
       <AnimatePresence custom={selectDirection}>
         <motion.div

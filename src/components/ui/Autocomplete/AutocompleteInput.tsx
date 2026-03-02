@@ -33,15 +33,15 @@ export default function AutocompleteInput<T extends Suggestion>({
   } = useAutocomplete(onGuess, suggestionList, guessedNames, disabled);
 
   return (
-    <div className={`relative w-full max-w-md mx-auto `}>
-      <div className="flex flex-column gap-2 justify-center">
+    <div className={`relative w-full max-w-md mx-auto`}>
+      <div className="flex flex-column gap-2 justify-center mb-2">
         {/* Mensaje de error */}
         {errorMessage && (
           <p className={`text-sm mt-1 absolute -top-6 left-0 text-red-500`}>
             {errorMessage}
           </p>
         )}
-        {selectedSuggestion !== -1 && (
+        {selectedSuggestion !== -1 ? (
           <HeroInput
             className="mask-b-from-70"
             key={suggestions[selectedSuggestion].name}
@@ -50,6 +50,8 @@ export default function AutocompleteInput<T extends Suggestion>({
             selectDirection={selectDirection}
             isDefault={false}
           />
+        ) : (
+          <div className="h-[25vh] md:h-[35vh]"></div>
         )}
       </div>
 
