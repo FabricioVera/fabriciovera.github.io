@@ -24,6 +24,8 @@ import { useStore } from "@nanostores/react";
 import { ArknightdleColumns } from "@config/gameTableColumns";
 import type { GameModeCONF } from "../../ui/GameModeSelector/GameModeSelector";
 import GameModeSelector from "../../ui/GameModeSelector/GameModeSelector";
+import type { GameStatus } from "../../../types/game";
+import CorrectBanner from "../CorrectBanner";
 
 interface ArknightDLEProps {
   gameId: string;
@@ -36,46 +38,60 @@ function useGetTarget(
 ) {
   const target = useMemo(() => {
     if (!operatorNames?.length) return undefined;
-    if (gameMode === "random") return calculateRandomTarget(operatorNames);
-
-    return calculateDailyTarget(operatorNames, gameId);
+    if (gameMode === "daily") {
+      return calculateDailyTarget(operatorNames, gameId);
+    } else {
+      return calculateRandomTarget(operatorNames);
+    }
   }, [operatorNames, gameMode]);
 
   return { target };
 }
 
-export default function ArknightDLE({ gameId }: ArknightDLEProps) {
-  const playerName = useStore($playerName);
-  const { operators, getOperators } = useOperators();
-  const [gameMode, setGameMode] = useState<string>("daily");
-  const { target } = useGetTarget(operators, gameId, gameMode);
+function useSuggestions(operators: any[] | undefined) {
   const [suggestions, setSuggestions] = useState<
     { name: string; imageURL: string }[] | undefined
   >([{ name: "cargando ops....", imageURL: "" }]);
+  useEffect(() => {
+    setSuggestions(
+      operators?.map((op) => ({ name: op.name, imageURL: op.imageURL })),
+    );
+  }, [operators]);
+  return { suggestions };
+}
+
+export default function ArknightDLE({ gameId }: ArknightDLEProps) {
+  const playerName = useStore($playerName);
+  const [gameStatus, setGameStatus] = useState<GameStatus>("loading");
+
+  const [gameMode, setGameMode] = useState<string>("daily");
+  const GameModeConfig: GameModeCONF[] = [
+    { gameModeName: "daily", gameModeHook: () => setGameMode("daily") },
+    { gameModeName: "random", gameModeHook: () => setGameMode("random") },
+  ];
+
+  const { operators } = useOperators(setGameStatus);
+  const { target } = useGetTarget(operators, gameId, gameMode);
+  const { suggestions } = useSuggestions(operators);
 
   const { guesses, handleGuess } = useHandleGuess(
     target,
     operators,
     playerName,
     gameId,
-    "daily",
+    gameMode,
+    gameStatus,
+    setGameStatus,
   );
   const guessedNames = guesses.map((g) => g.name);
 
-  useEffect(() => {
-    getOperators();
-  }, []);
-
-  useEffect(() => {
-    setSuggestions(
-      operators?.map((op) => ({ name: op.name, imageURL: op.iconURL })),
+  if (gameStatus === "loading") {
+    return (
+      <div className="w-full text-white text-2xl text-center">
+        Cargando juego....
+      </div>
     );
-  }, [operators]);
-
-  const GameModeConfig: GameModeCONF[] = [
-    { gameModeName: "daily", gameModeHook: () => setGameMode("daily") },
-    { gameModeName: "random", gameModeHook: () => setGameMode("random") },
-  ];
+  }
 
   return (
     <RequirePlayer>
@@ -92,12 +108,17 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
           gameModeCONF={GameModeConfig}
           actualGameMode={gameMode}
         />
-        <AutocompleteInput
-          onGuess={handleGuess}
-          guessedNames={guessedNames}
-          suggestionList={suggestions || [{ name: "", imageURL: "" }]}
-          placeholder="Amiya, Utage, Pozemka..."
-        />
+        {gameStatus === "playing" ? (
+          <AutocompleteInput
+            onGuess={handleGuess}
+            guessedNames={guessedNames}
+            suggestionList={suggestions || [{ name: "", imageURL: "" }]}
+            placeholder="Amiya, Utage, Pozemka..."
+          />
+        ) : (
+          <CorrectBanner imageURL={target.imageURL} name={target.name} />
+        )}
+
         <table className="w-fit mt-4 bg-primary text-white">
           <TableHeader columns={ArknightdleColumns} />
           <tbody>

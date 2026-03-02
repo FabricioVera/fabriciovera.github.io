@@ -28,5 +28,7 @@ pnpm-debug.log*
 scrap_descriptions.py
 scrap_iamges_2.py
 scrap_images.py
+scrap_operators.py
+operadores_arknightsV1.json
 
 __pycache__/

@@ -25,6 +25,7 @@ import useWarframedleAbilities from "./hooks/useWarframedleAbilities";
 // TYPES
 import type { preWarframe, Warframe } from "src/types/warframe";
 import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelector";
+import CorrectBanner from "../CorrectBanner";
 
 // CONFIG
 
@@ -112,21 +113,12 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
             )}
           </div>
         ) : (
-          <div className="relative w-auto mx-auto flex flex-col justify-center items-center text-center">
-            <img
-              className={`w-full h-[35vh] object-cover object-top pointer-events-none bg-primary/50 border border-accent text-white rounded-lg p-4`}
-              src={getWikiThumbnail(
-                getWarframeThumbnailName(target.warframeName),
-              )}
-              alt=""
-            />
-            <h1
-              className={`bottom-5 text-2xl md:text-4xl font-bold text-center px-4 tracking-wider transition-colors duration-300 "absolute text-white drop-shadow-[0_0_15px_var(--color-accent)] css-3d-text"
-            `}
-            >
-              {target.warframeName}
-            </h1>
-          </div>
+          <CorrectBanner
+            imageURL={getWikiThumbnail(
+              getWarframeThumbnailName(target.warframeName),
+            )}
+            name={target.name}
+          />
         )}
 
         <table className="w-fit mt-4 bg-primary text-white">

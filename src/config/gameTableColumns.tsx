@@ -79,10 +79,9 @@ export const ArknightdleColumns: ColumnDef<OperatorDTO>[] = [
     renderCell: (guess) => (
       <div className="flex flex-row gap-4 justify-start items-center">
         <img
-          src={guess.iconURL}
-          alt={guess.name}
-          className="w-24 h-24 rounded-full"
-        />
+          src={guess.imageURL}
+          className="w-24 h-24 rounded-full object-cover"
+        ></img>
         <div className="m-auto">{guess.name}</div>
       </div>
     ),
@@ -93,7 +92,7 @@ export const ArknightdleColumns: ColumnDef<OperatorDTO>[] = [
     renderCell: (guess) => guess.sex,
   },
   {
-    header: "affiliation",
+    header: "Afiliación",
     getCellClass: createExactMatchClass<OperatorDTO>("affiliation"),
     renderCell: (guess) => guess.affiliation,
   },
@@ -117,7 +116,7 @@ export const ArknightdleColumns: ColumnDef<OperatorDTO>[] = [
     },
   },
   {
-    header: "Playstyle",
+    header: "Tags",
     getCellClass: createArrayMatchClass<OperatorDTO>("tagList"),
     renderCell: (guess) => {
       if (!Array.isArray(guess.tagList)) return "Error de config";

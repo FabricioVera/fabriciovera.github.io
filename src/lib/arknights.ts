@@ -1,6 +1,7 @@
 import type { OperatorDTO } from "src/types/index";
 import { logger } from "@services/logger";
-import { getWikiIcon } from "@utils/index";
+import { getWikiImageURL, getWikiSpriteURL } from "@utils/index";
+import ArknightsOperatorsData from "@data/operadores_arknights.json";
 
 const API_ARKNIGHTS_awedtan = "https://awedtan.ca/api/";
 const API_ARKNIGHTS = "https://api.rhodesapi.com/api/";
@@ -16,13 +17,13 @@ export const fetchOperators_awedtan = async (): Promise<OperatorDTO[]> => {
 
     return json.map((item: any) => ({
       name: item.value.data.name,
-      iconURL: getWikiIcon(item.value.data.name + "_icon"),
-      archetype: item.value.archetype,
-      nationId: item.value.data.nationId,
-      position: item.value.data.position,
-      rarity: item.value.data.rarity,
+      imageURL: getWikiImageURL(item.value.data.name + "_icon"),
+      spriteURL: getWikiSpriteURL(item.value.data.name),
+      rarity: item.value.data.rarity.split("_")[1],
+      race: item.lore.race,
+      affiliation: item.value.data.nationId,
       tagList: item.value.data.tagList,
-      profession: item.value.data.profession,
+      class: item.value.data.profession,
     }));
   } catch (e) {
     const errorMsg = `Error fetching operators: ${e}`;
@@ -31,22 +32,57 @@ export const fetchOperators_awedtan = async (): Promise<OperatorDTO[]> => {
   }
 };
 
-export const fetchOperators = async (): Promise<OperatorDTO[]> => {
+export const fetchOperators_rhodesapi = async (): Promise<OperatorDTO[]> => {
   try {
-    logger.info("Fetching operators...");
     const response = await fetch(API_ARKNIGHTS + "operator");
     const json = await response.json();
+    logger.info("Operators fetched : response " + response.status);
 
-    return json.map((item: any) => ({
-      name: item.name,
-      iconURL: getWikiIcon(item.name + "_icon"),
-      rarity: item.rarity,
-      sex: item.lore.gender,
-      race: item.lore.race,
-      affiliation: item.affiliation[0],
-      tagList: item.tags,
-      class: item.class[0],
-    }));
+    return json
+      .map((item: any) => ({
+        name: item.name,
+        imageURL: getWikiImageURL(item.name + "_icon"),
+        spriteURL: getWikiSpriteURL(item.name),
+        rarity: item.rarity,
+        sex: item.lore.gender,
+        race: item.lore.race,
+        affiliation: item.affiliation[0],
+        tagList: item.tags.filter(
+          (tag: string) => tag !== item.class[0] && tag !== "Top Operator",
+        ),
+        class: item.class[0],
+      }))
+      .filter((item: any) => !item.name.includes("Reserve"));
+  } catch (e) {
+    const errorMsg = `Error fetching operators: ${e}`;
+    logger.error(errorMsg);
+    throw new Error(errorMsg);
+  }
+};
+
+const removeBrackets = (text: string): string => {
+  return text.replace(/[\[\]]/g, "");
+};
+export const fetchOperators = async (): Promise<OperatorDTO[]> => {
+  try {
+    const json = ArknightsOperatorsData;
+
+    return json
+      .map((item: any) => ({
+        name: item.value.data.name,
+        imageURL: getWikiImageURL(item.value.data.name + "_icon"),
+        spriteURL: getWikiSpriteURL(item.value.data.name),
+        rarity: item.wiki_rarity,
+        sex: item.wiki_gender,
+        race: item.wiki_race ? removeBrackets(item.wiki_race) : "",
+        affiliation: item.wiki_faction,
+        tagList: item.value.data.tagList.filter(
+          (tag: string) => tag !== item.wiki_class && tag !== "Top Operator",
+        ),
+        class: item.wiki_class,
+        branch: item.wiki_branch,
+      }))
+      .filter((item: any) => !item.name.includes("Reserve"));
   } catch (e) {
     const errorMsg = `Error fetching operators: ${e}`;
     logger.error(errorMsg);

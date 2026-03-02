@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { GameStatus } from "src/types/game";
 import { saveDailyScore } from "@services/scoreRepository";
 
@@ -10,12 +10,13 @@ export function useHandleGuess(
   playerName: string | null,
   gameId: string,
   gameMode: string = "daily",
+  gameStatus: GameStatus,
+  setGameStatus: (gameStatus: GameStatus) => void,
 ) {
   const [guesses, setGuesses] = useState<any[]>([]);
-  const [status, setStatus] = useState<GameStatus>("playing");
 
   const handleGuess = (name: string): void => {
-    if (status !== "playing" || !operators || !target) return;
+    if (gameStatus !== "playing" || !operators || !target) return;
 
     const guessedOp = operators.find((op) => op.name === name);
 
@@ -29,17 +30,21 @@ export function useHandleGuess(
     const isWin = guessedOp.name === target?.name;
 
     if (isWin) {
-      setStatus("won");
+      setGameStatus("won");
       if (gameMode === "daily" && playerName) {
         saveDailyScore(gameId, playerName, newGuesses.length);
       }
     } else if (newGuesses.length >= MAX_DAILY_ATTEMPTS) {
-      setStatus("lost");
+      setGameStatus("lost");
       if (gameMode === "daily" && playerName) {
         saveDailyScore(gameId, playerName, newGuesses.length);
       }
     }
   };
 
-  return { guesses, status, handleGuess };
+  useEffect(() => {
+    setGuesses([]);
+  }, [gameMode]);
+
+  return { guesses, gameStatus, setGameStatus, handleGuess };
 }
