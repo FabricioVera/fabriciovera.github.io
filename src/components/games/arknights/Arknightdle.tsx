@@ -1,26 +1,45 @@
-import { RequirePlayer } from "@auth/index";
-import { useEffect, useMemo, useState } from "react";
+// REACT
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+// COMPONENTS
+import Pointer from "@components/ui/Pointer";
+import AutocompleteInput from "@components/ui/Autocomplete/AutocompleteInput";
+import TableHeader from "@components/ui/GuessedTable/TableHeader";
+import TableCell from "@components/ui/GuessedTable/TableCell";
+
+// TYPES
+import type { OperatorDTO, Suggestion } from "src/types/index";
+
+// HOOKS UTILS
 import { useOperators } from "@hooks/useOperators";
 import { calculateDailyTarget, calculateRandomTarget } from "@utils/game";
-import Pointer from "@components/ui/Pointer";
-import { $playerName } from "@store/playerStore";
-import { useStore } from "@nanostores/react";
-import AutocompleteInput from "../../ui/Autocomplete/AutocompleteInput";
 import { useHandleGuess } from "@hooks/useHandleGuess";
-import type { OperatorDTO, Suggestion } from "../../../types";
-import TableHeader from "../../ui/GuessedTable/TableHeader";
-import { ArknightdleColumns } from "../../../config/gameTableColumns";
-import TableCell from "../../ui/GuessedTable/TableCell";
+
+// AUTH
+import { $playerName } from "@store/playerStore";
+import { RequirePlayer } from "@auth/index";
+import { useStore } from "@nanostores/react";
+
+// CONFIG
+import { ArknightdleColumns } from "@config/gameTableColumns";
+import type { GameModeCONF } from "../../ui/GameModeSelector/GameModeSelector";
+import GameModeSelector from "../../ui/GameModeSelector/GameModeSelector";
 
 interface ArknightDLEProps {
   gameId: string;
 }
 
-function useGetTarget(operatorNames: any[] | undefined, gameId: string) {
+function useGetTarget(
+  operatorNames: any[] | undefined,
+  gameId: string,
+  gameMode: string | undefined,
+) {
   const target = useMemo(() => {
     if (!operatorNames?.length) return undefined;
+    if (gameMode === "random") return calculateRandomTarget(operatorNames);
+
     return calculateDailyTarget(operatorNames, gameId);
-  }, [operatorNames]);
+  }, [operatorNames, gameMode]);
 
   return { target };
 }
@@ -28,10 +47,11 @@ function useGetTarget(operatorNames: any[] | undefined, gameId: string) {
 export default function ArknightDLE({ gameId }: ArknightDLEProps) {
   const playerName = useStore($playerName);
   const { operators, getOperators } = useOperators();
-  const { target } = useGetTarget(operators, gameId);
+  const [gameMode, setGameMode] = useState<string>("daily");
+  const { target } = useGetTarget(operators, gameId, gameMode);
   const [suggestions, setSuggestions] = useState<
     { name: string; imageURL: string }[] | undefined
-  >();
+  >([{ name: "cargando ops....", imageURL: "" }]);
 
   const { guesses, handleGuess } = useHandleGuess(
     target,
@@ -52,6 +72,11 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
     );
   }, [operators]);
 
+  const GameModeConfig: GameModeCONF[] = [
+    { gameModeName: "daily", gameModeHook: () => setGameMode("daily") },
+    { gameModeName: "random", gameModeHook: () => setGameMode("random") },
+  ];
+
   return (
     <RequirePlayer>
       <div className="min-h-screen w-full max-w-[100vw] lg:max-w-5xl mx-auto p-4 flex flex-col lg:items-center gap-6 overflow-auto">
@@ -62,6 +87,10 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
           isDaily={true}
           ascending={true}
           pointsName="Intentos"
+        />
+        <GameModeSelector
+          gameModeCONF={GameModeConfig}
+          actualGameMode={gameMode}
         />
         <AutocompleteInput
           onGuess={handleGuess}

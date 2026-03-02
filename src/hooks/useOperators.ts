@@ -9,7 +9,6 @@ export function useOperators() {
   const getOperators = useCallback(async () => {
     const newoperators = await fetchOperators();
     setOperators(newoperators);
-    logger.info("Operadores obtenidos: ", newoperators);
   }, []);
 
   return { operators, getOperators };

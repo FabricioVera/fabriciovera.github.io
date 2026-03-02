@@ -90,9 +90,14 @@ export function useAutocomplete<T extends Suggestion>(
     setSelectedSuggestion(filtered.length > 0 ? 0 : -1);
   };
 
-  const handleSuggestionClick = (name: string) => {
+  const handleSuggestionClick = async (name: string) => {
     setInputValue(name);
+    await processGuess(name);
     resetSuggestions();
+  };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await processGuess(inputValue.trim());
   };
 
   // Limpieza de input y sugerencias
@@ -103,10 +108,8 @@ export function useAutocomplete<T extends Suggestion>(
     inputRef.current?.focus();
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const value = inputValue.trim();
+  const processGuess = async (guess: string) => {
+    const value = guess.trim();
     if (!value || disabled || isSubmitting) return;
 
     const normalizedValue = normalizeString(value);
