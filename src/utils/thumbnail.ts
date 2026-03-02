@@ -20,3 +20,10 @@ export function getWarframeThumbnailName(warframeName: string) {
 export function getWarframeImageName(warframeName: string) {
   return cleanName(warframeName) + ".png";
 }
+
+export function getWikiIcon(name: string) {
+  const pattern = new RegExp("[ -]", "g");
+  return (
+    "https://arknights.wiki.gg/images/" + name.replace(pattern, "_") + ".png"
+  );
+}

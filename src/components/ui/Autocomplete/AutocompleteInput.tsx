@@ -1,80 +1,67 @@
 import type { Suggestion } from "src/types";
 import Button from "@components/ui/General/Button";
-
-export interface AutocompleteTheme {
-  inputWrapper?: string;
-  input?: string;
-  list?: string;
-  item?: string;
-  itemActive?: string;
-  error?: string;
-}
+import { useAutocomplete } from "./useAutocomplete";
+import HeroInput from "../InputHero";
 
 interface GuessInputProps<T extends Suggestion> {
-  inputRef: React.RefObject<HTMLInputElement | null>;
-  inputValue: string;
-  suggestions: T[];
-  showSuggestions: boolean;
-  selectedSuggestion: number;
+  onGuess: (guess: string) => void | Promise<void>;
+  suggestionList: T[];
+  guessedNames: string[];
   disabled?: boolean;
   placeholder?: string;
-  errorMessage?: string | null;
-  theme?: AutocompleteTheme;
-  renderSuggestion?: (suggestion: T) => React.ReactNode;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  onSubmit: (e: React.FormEvent) => void;
-  onSuggestionClick: (name: string) => void;
 }
 
 export default function AutocompleteInput<T extends Suggestion>({
-  inputRef,
-  inputValue,
-  suggestions,
-  showSuggestions,
-  selectedSuggestion,
+  onGuess,
+  suggestionList,
+  guessedNames,
   disabled,
   placeholder,
-  errorMessage,
-  theme = {},
-  renderSuggestion,
-  onChange,
-  onKeyDown,
-  onSubmit,
-  onSuggestionClick,
 }: GuessInputProps<T>) {
-  const inputClasses =
-    theme.input ||
-    "bg-primary border border-secondary text-white focus:ring-2 focus:ring-[var(--color-accent)] focus:border-[var(--color-accent)]";
-
-  const listClasses = theme.list || "bg-primary border border-secondary";
-
-  const itemClasses = theme.item || "hover:bg-secondary text-white";
-  const activeItemClasses =
-    theme.itemActive ||
-    "bg-accent text-black shadow-[0_0_15px_var(--color-accent)]";
-  const errorClasses = theme.error || "text-red-500";
+  const {
+    inputRef,
+    inputValue,
+    suggestions,
+    showSuggestions,
+    selectedSuggestion,
+    errorMessage,
+    selectDirection,
+    handleChange,
+    handleSubmit,
+    handleSuggestionClick,
+    handleKeyDown,
+  } = useAutocomplete(onGuess, suggestionList, guessedNames, disabled);
 
   return (
-    <div
-      className={`relative w-full max-w-md mx-auto ${theme.inputWrapper || ""}`}
-    >
-      {/* Mensaje de error */}
-      {errorMessage && (
-        <p className={`text-sm mt-1 absolute -top-6 left-0 ${errorClasses}`}>
-          {errorMessage}
-        </p>
-      )}
+    <div className={`relative w-full max-w-md mx-auto `}>
+      <div className="flex flex-column gap-2 justify-center">
+        {/* Mensaje de error */}
+        {errorMessage && (
+          <p className={`text-sm mt-1 absolute -top-6 left-0 text-red-500`}>
+            {errorMessage}
+          </p>
+        )}
+        {selectedSuggestion !== -1 && (
+          <HeroInput
+            className="mask-b-from-70"
+            key={suggestions[selectedSuggestion].name}
+            itemName={suggestions[selectedSuggestion].name}
+            thumbnailUrl={suggestions[selectedSuggestion].imageURL}
+            selectDirection={selectDirection}
+            isDefault={false}
+          />
+        )}
+      </div>
 
       {/* FORMULARIO DEL INPUT */}
-      <form onSubmit={onSubmit} className="relative flex flex-row gap-2">
+      <form onSubmit={handleSubmit} className="relative flex flex-row gap-2">
         <input
-          className={`w-full p-2 rounded border focus:outline-none focus:ring-2 transition-colors ${inputClasses}`}
+          className={`w-full p-2 rounded border focus:outline-none transition-colors bg-primary border-secondary text-white focus:ring-2 focus:ring-(--color-accent) focus:border-(--color-accent)`}
           ref={inputRef}
           type="text"
           value={inputValue}
-          onChange={onChange}
-          onKeyDown={onKeyDown}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
           disabled={disabled}
           placeholder={placeholder}
         />
@@ -93,17 +80,26 @@ export default function AutocompleteInput<T extends Suggestion>({
       {/* SUGERENCIAS */}
       {suggestions.length > 0 && showSuggestions && (
         <ul
-          className={`absolute top-full z-10 w-full rounded mt-1 max-h-48 overflow-y-auto ${listClasses}`}
+          className={`absolute top-full z-10 w-full rounded mt-1 h-fit overflow-y-auto bg-primary border border-secondary`}
         >
           {suggestions.map((sug, index) => (
             <li
               key={sug.name + "-" + index}
-              onMouseDown={() => onSuggestionClick(sug.name)}
-              className={`flex flex-row items-center gap-3 px-4 py-2 cursor-pointer transition-colors ${
-                index === selectedSuggestion ? activeItemClasses : itemClasses
+              onMouseDown={() => handleSuggestionClick(sug.name)}
+              className={`flex flex-row items-center gap-3 px-4 py-2 cursor-pointer transition-all ${
+                index === selectedSuggestion
+                  ? "bg-accent text-black shadow-[0_0_15px_var(--color-accent)]"
+                  : "hover:bg-secondary text-white"
               }`}
             >
-              {renderSuggestion ? renderSuggestion(sug) : sug.name}
+              <div className="flex flex-row items-center gap-3">
+                <img
+                  src={sug.imageURL}
+                  alt=""
+                  className="w-8 h-8 object-contain rounded-md p-1 bg-secondary/50"
+                />
+                {sug.name}
+              </div>
             </li>
           ))}
         </ul>

@@ -7,10 +7,7 @@ import {
   type AbilityTarget,
 } from "@services/abilitydleService";
 import { calculateDailyTarget, calculateRandomTarget } from "@utils/game";
-import {
-  loadDailyProgress,
-  saveDailyProgress,
-} from "@services/dailyStorageRepository";
+import { saveDailyProgress } from "@services/dailyStorageRepository";
 import { useDailyGame } from "@hooks/useDailyGame";
 
 export type GameMode = "daily" | "random";
@@ -43,11 +40,11 @@ export default function useWarframedleAbilities(
 
   const abilitiesPool = useMemo(() => extractAbilitiesPool(rawData), [rawData]);
   const dailyTarget = useMemo(
-    () => calculateDailyTarget(abilitiesPool),
+    () => calculateDailyTarget(abilitiesPool, gameId),
     [abilitiesPool],
   );
 
-  const target: AbilityTarget =
+  const target =
     gameMode === "daily" ? dailyTarget : randomTarget || dailyTarget;
 
   useEffect(() => {
@@ -62,25 +59,20 @@ export default function useWarframedleAbilities(
   }, [abilitiesPool, baseStartRandomMode]);
 
   const handleGuess = (warframe: string) => {
-    if (status !== "playing") return;
-
     const guessedWf = warframes.find((w) => w.name === warframe);
     if (!guessedWf) return;
 
     const newGuesses = [guessedWf, ...guesses];
     setGuesses(newGuesses);
-    if (!playerName) return;
 
     if (guessedWf.name === target.warframeName) {
       setStatus("won");
-      if (gameMode === "daily") {
-        saveDailyScore(gameId, playerName, guesses.length);
-      }
     } else if (gameMode === "daily" && guesses.length >= MAX_DAILY_ATTEMPTS) {
       setStatus("lost");
-      if (gameMode === "daily") {
-        saveDailyScore(gameId, playerName, guesses.length);
-      }
+    }
+    if (gameMode === "daily") {
+      if (!playerName) return;
+      saveDailyScore(gameId, playerName, guesses.length);
     }
   };
   const warframeNames = useMemo(() => {

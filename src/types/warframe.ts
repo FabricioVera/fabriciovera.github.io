@@ -24,5 +24,5 @@ export interface Warframe extends Omit<preWarframe, "releaseDate"> {
 
 export interface Suggestion {
   name: string;
-  wikiaThumbnail: string;
+  imageURL: string;
 }

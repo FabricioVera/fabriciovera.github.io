@@ -32,32 +32,26 @@ export default function HeroInput({
     }),
   };
 
-  const bgVariants = {
-    initial: { opacity: 0 },
-    animate: { opacity: 1 },
-    exit: { opacity: 0 },
-  };
-
   return (
     <section
-      className={`relative w-auto ${isDefault ? "h-20" : "h-[25vh] md:h-[35vh]"} flex justify-center mb-2 min-w-3xs aspect-square`}
+      className={`relative w-auto ${isDefault ? "h-[25vh]" : "h-[25vh] md:h-[35vh]"} flex justify-center mb-2 min-w-3xs aspect-square`}
     >
       <AnimatePresence custom={selectDirection}>
         <motion.div
           key={itemName}
           className="absolute inset-0 flex items-end justify-center w-full h-full"
         >
-          {false && (
-            <div className="absolute inset-0 bg-linear-to-t from-red-500/30 via-white/20 to-transparent rounded-2xl" />
-          )}
-
           {thumbnailUrl && !isDefault && (
             <motion.img
-              variants={bgVariants}
+              custom={selectDirection}
+              variants={h1Variants}
               initial="initial"
-              animate="animate"
+              animate="center"
               exit="exit"
-              transition={{ duration: 0.3 }}
+              transition={{
+                ease: [0.25, 0.8, 0.25, 1],
+                duration: 0.4,
+              }}
               className={` absolute inset-0 w-full h-full object-cover object-top ${className}`}
               src={thumbnailUrl || fallbackImage}
               alt=""
@@ -72,7 +66,7 @@ export default function HeroInput({
             exit="exit"
             transition={{
               duration: 0.4,
-              ease: [0.25, 0.8, 0.25, 1],
+              ease: "anticipate",
             }}
             className={`relative bottom-5 z-10 text-2xl md:text-4xl font-bold text-center px-4 drop-shadow-lg tracking-wider transition-colors duration-300 ${
               isDefault

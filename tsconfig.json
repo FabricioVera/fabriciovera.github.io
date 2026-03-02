@@ -16,7 +16,8 @@
       "@types/*": ["src/types/*"],
       "@services/*": ["src/services/*"],
       "@utils/*": ["src/utils/*"],
-      "@auth/*": ["src/components/auth/*"]
+      "@auth/*": ["src/components/auth/*"],
+      "@config/*": ["src/config/*"]
     }
   }
 }

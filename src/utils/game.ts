@@ -1,12 +1,13 @@
 import Rand from "rand-seed";
 
-export const calculateDailyTarget = (listTarget: any[]) => {
+export const calculateDailyTarget = (listTarget: any[], gameId: string) => {
   const today = new Date();
-  const seed = (
-    today.getFullYear() * 10000 +
-    (today.getMonth() + 1) * 100 +
-    today.getDate()
-  ).toString();
+  const seed =
+    (
+      today.getFullYear() * 10000 +
+      (today.getMonth() + 1) * 100 +
+      today.getDate()
+    ).toString() + gameId;
 
   const rand = new Rand(seed);
   const randomValue = rand.next();

@@ -53,10 +53,7 @@ export function useAutocomplete<T extends Suggestion>(
     setInputValue(value);
     setErrorMessage(null);
 
-    if (!value.trim()) {
-      resetSuggestions();
-      return;
-    }
+    if (!value.trim()) return resetSuggestions();
 
     const normalizedValue = normalizeString(value);
     const normalizedGuessedNames = guessedNames.map(normalizeString);

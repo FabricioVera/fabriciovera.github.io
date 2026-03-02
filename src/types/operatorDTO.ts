@@ -1,8 +1,10 @@
 export interface OperatorDTO {
-  _id: string;
-  value: {
-    data: {
-      name: string;
-    };
-  };
+  name: string;
+  iconURL: string;
+  rarity: string;
+  sex: string;
+  race: string;
+  affiliation: string;
+  tagList: string[];
+  class: string;
 }

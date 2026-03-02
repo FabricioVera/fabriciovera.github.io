@@ -41,7 +41,7 @@ export default function useWarframedle(
 
   // * calculate daily target and decide witch isthe target based on gamemode
   const dailyTarget = useMemo(
-    () => calculateDailyTarget(warframes),
+    () => calculateDailyTarget(warframes, gameId),
     [warframes],
   );
   const targetWarframe =

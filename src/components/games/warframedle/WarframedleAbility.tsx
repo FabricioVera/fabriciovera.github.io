@@ -10,18 +10,23 @@ import TableCell from "@components/ui/GuessedTable/TableCell";
 import Pointer from "@components/ui/Pointer";
 import { RequirePlayer } from "@auth/index";
 import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
-import { abilitydleColumns } from "./GuessedTable/warframeColumns";
+import { abilitydleColumns } from "../../../config/gameTableColumns";
 
 //HOOKS + UTILS
 import { useStore } from "@nanostores/react";
-import { getWikiThumbnail, getWarframeImageName } from "@utils/index";
+import {
+  getWikiThumbnail,
+  getWarframeImageName,
+  getWarframeThumbnailName,
+} from "@utils/index";
 import { abilityVisuals } from "@utils/ability";
 import useWarframedleAbilities from "./hooks/useWarframedleAbilities";
 
 // TYPES
 import type { preWarframe, Warframe } from "src/types/warframe";
 import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelector";
-import { useEffect, useState } from "react";
+
+// CONFIG
 
 interface AbilitydleProps {
   gameId: string;
@@ -29,20 +34,6 @@ interface AbilitydleProps {
 
 export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
   const playerName = useStore($playerName);
-  const [abilityImage, setAbilityImage] = useState<string>();
-
-  const renderWarframeSuggestion = (sug: any) => (
-    <div className="flex flex-row items-center gap-3">
-      {sug.wikiaThumbnail && (
-        <img
-          src={`https://wiki.warframe.com/images/${sug.name.replace(" ", "")}_Thumb.png`}
-          alt={sug.name}
-          className="w-8 h-8 object-contain rounded-md p-1 bg-slate-900/50"
-        />
-      )}
-      <span>{sug.name}</span>
-    </div>
-  );
 
   // ESTADO DEL JUEGO
   const {
@@ -62,30 +53,12 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
     playerName,
   );
   const guessedNames = guesses.map((g) => g.name);
-  const warframesNoPrime = warframes.filter(
-    (wf) => !wf.isPrime && wf.name !== "Excalibur Umbra",
-  );
-
-  const {
-    inputRef,
-    inputValue,
-    isSubmitting,
-    suggestions,
-    showSuggestions,
-    selectedSuggestion,
-    selectDirection,
-    errorMessage,
-    handleChange,
-    handleClean,
-    handleSubmit,
-    handleSuggestionClick,
-    handleKeyDown,
-  } = useAutocomplete(
-    handleGuess,
-    warframesNoPrime,
-    guessedNames,
-    status !== "playing",
-  );
+  const suggestions = warframes
+    .filter((wf) => !wf.isPrime && wf.name !== "Excalibur Umbra")
+    .map((wf) => ({
+      name: wf.name,
+      imageURL: getWikiThumbnail(getWarframeThumbnailName(wf.name)),
+    }));
 
   const GameModeConfig: GameModeCONF[] = [
     { gameModeName: "daily", gameModeHook: startDailyMode },
@@ -123,30 +96,40 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
           />
         </div>
 
-        {status === "playing" && (
-          <AutocompleteInput
-            inputRef={inputRef}
-            inputValue={inputValue}
-            suggestions={suggestions}
-            showSuggestions={showSuggestions}
-            selectedSuggestion={selectedSuggestion}
-            disabled={false}
-            renderSuggestion={renderWarframeSuggestion}
-            errorMessage={errorMessage}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            onSubmit={handleSubmit}
-            onSuggestionClick={handleSuggestionClick}
-            placeholder="Escribe un Warframe"
-          />
+        {status === "playing" ? (
+          <div>
+            <AutocompleteInput
+              onGuess={handleGuess}
+              suggestionList={suggestions}
+              guessedNames={guessedNames}
+              placeholder="Ash, Mirage, Zephyr..."
+            />
+            {gameMode === "daily" && (
+              <p className="text-secondary font-semibold">
+                Intentos restantes:{" "}
+                <span className="text-accent">{attemptsLeft}</span>
+              </p>
+            )}
+          </div>
+        ) : (
+          <div className="relative w-auto mx-auto flex flex-col justify-center items-center text-center">
+            <img
+              className={`w-full h-[35vh] object-cover object-top pointer-events-none bg-primary/50 border border-accent text-white rounded-lg p-4`}
+              src={getWikiThumbnail(
+                getWarframeThumbnailName(target.warframeName),
+              )}
+              alt=""
+            />
+            <h1
+              className={`bottom-5 text-2xl md:text-4xl font-bold text-center px-4 tracking-wider transition-colors duration-300 "absolute text-white drop-shadow-[0_0_15px_var(--color-accent)] css-3d-text"
+            `}
+            >
+              {target.warframeName}
+            </h1>
+          </div>
         )}
-        {gameMode === "daily" && status === "playing" && (
-          <p className="text-secondary font-semibold">
-            Intentos restantes:{" "}
-            <span className="text-accent">{attemptsLeft}</span>
-          </p>
-        )}
-        <table className="w-full mt-4 bg-primary text-white">
+
+        <table className="w-fit mt-4 bg-primary text-white">
           <TableHeader columns={abilitydleColumns} />
           <tbody>
             {guesses.map((guess, index) => {

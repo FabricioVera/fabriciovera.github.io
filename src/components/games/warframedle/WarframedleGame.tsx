@@ -20,7 +20,9 @@ import { getWikiThumbnail, getWarframeThumbnailName } from "@utils/index";
 // TYPES
 import type { preWarframe } from "src/types/warframe";
 import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelector";
-import { warframedleColumns } from "./GuessedTable/warframeColumns";
+
+// CONFIGS
+import { warframedleColumns } from "@config/gameTableColumns";
 
 interface WarframedleGameProps {
   gameId: string;
@@ -28,19 +30,6 @@ interface WarframedleGameProps {
 
 export default function WarframedleGame({ gameId }: WarframedleGameProps) {
   const playerName = useStore($playerName);
-
-  const renderWarframeSuggestion = (sug: any) => (
-    <div className="flex flex-row items-center gap-3">
-      {sug.wikiaThumbnail && (
-        <img
-          src={getWikiThumbnail(getWarframeThumbnailName(sug.name))}
-          alt={sug.name}
-          className="w-8 h-8 object-contain rounded-md p-1 bg-slate-900/50"
-        />
-      )}
-      <span>{sug.name}</span>
-    </div>
-  );
 
   // ESTADO DEL JUEGO
   const {
@@ -56,36 +45,25 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
   } = useWarframedle(warframeData as preWarframe[], gameId, playerName);
   const guessedNames = guesses.map((g) => g.name);
 
-  const {
-    inputRef,
-    inputValue,
-    isSubmitting,
-    suggestions,
-    showSuggestions,
-    selectedSuggestion,
-    selectDirection,
-    errorMessage,
-    handleChange,
-    handleClean,
-    handleSubmit,
-    handleSuggestionClick,
-    handleKeyDown,
-  } = useAutocomplete(
-    handleGuess,
-    warframes,
-    guessedNames,
-    status !== "playing",
-  );
-
-  const isDefaultState = selectedSuggestion < 0 || suggestions.length === 0;
-  const currentHeroWf = !isDefaultState
-    ? suggestions[selectedSuggestion]
-    : { name: "WARFRAMEDLE", wikiaThumbnail: undefined };
+  const currentHeroWf =
+    status === "playing"
+      ? { name: "WARFRAMEDLE", wikiaThumbnail: undefined }
+      : {
+          name: targetWarframe.name,
+          imageURL: getWikiThumbnail(
+            getWarframeThumbnailName(targetWarframe.name),
+          ),
+        };
 
   const GameModeConfig: GameModeCONF[] = [
     { gameModeName: "daily", gameModeHook: startDailyMode },
     { gameModeName: "random", gameModeHook: startRandomMode },
   ];
+
+  const suggestions = warframes.map((wf) => ({
+    name: wf.name,
+    imageURL: getWikiThumbnail(getWarframeThumbnailName(wf.name)),
+  }));
 
   return (
     <RequirePlayer>
@@ -105,53 +83,40 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
           gameModeCONF={GameModeConfig}
           actualGameMode={gameMode}
         />
-        <HeroInput
-          className="mask-b-from-70"
-          key={currentHeroWf.name}
-          itemName={currentHeroWf.name}
-          thumbnailUrl={getWikiThumbnail(
-            getWarframeThumbnailName(currentHeroWf.name),
-          )}
-          selectDirection={selectDirection}
-          isDefault={isDefaultState}
-        />
-        {status !== "playing" && (
-          <div className="flex flex-col justify-center items-center bg-primary/50 border border-accent text-white p-4 rounded-lg text-center">
-            <HeroInput
-              className="p-0 mask-b-from-70"
-              key={targetWarframe.name}
-              itemName={targetWarframe.name}
-              thumbnailUrl={getWikiThumbnail(
-                getWarframeThumbnailName(targetWarframe.name),
-              )}
-              selectDirection={selectDirection}
-              isDefault={false}
+        <div className="relative w-auto mx-auto flex flex-col justify-center items-center text-center">
+          {currentHeroWf.imageURL && (
+            <img
+              className={`w-full h-[35vh] object-cover object-top pointer-events-none bg-primary/50 border border-accent text-white rounded-lg p-4`}
+              src={currentHeroWf.imageURL}
+              alt=""
             />
-          </div>
-        )}
+          )}
+          <h1
+            className={`bottom-5 text-2xl md:text-4xl font-bold text-center px-4 drop-shadow-lg tracking-wider transition-colors duration-300 ${
+              status === "playing"
+                ? "bg-linear-to-r from-(--color-accent) via-accent2 to-(--highlight) bg-clip-text text-transparent drop-shadow-[0_0_20px_var(--color-accent)]"
+                : "absolute text-white drop-shadow-[0_0_15px_var(--color-accent)] css-3d-text"
+            }`}
+          >
+            {currentHeroWf.name}
+          </h1>
+        </div>
 
         {status === "playing" && (
-          <AutocompleteInput
-            inputRef={inputRef}
-            inputValue={inputValue}
-            suggestions={suggestions}
-            showSuggestions={showSuggestions}
-            selectedSuggestion={selectedSuggestion}
-            disabled={false}
-            renderSuggestion={renderWarframeSuggestion}
-            errorMessage={errorMessage}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            onSubmit={handleSubmit}
-            onSuggestionClick={handleSuggestionClick}
-            placeholder="Escribe un Warframe"
-          />
-        )}
-        {gameMode === "daily" && status === "playing" && (
-          <p className="text-secondary font-semibold">
-            Intentos restantes:{" "}
-            <span className="text-accent">{attemptsLeft}</span>
-          </p>
+          <div>
+            <AutocompleteInput
+              onGuess={handleGuess}
+              suggestionList={suggestions}
+              guessedNames={guessedNames}
+              placeholder="Ash, Mirage, Zephyr..."
+            />
+            {gameMode === "daily" && (
+              <p className="text-secondary font-semibold">
+                Intentos restantes:{" "}
+                <span className="text-accent">{attemptsLeft}</span>
+              </p>
+            )}
+          </div>
         )}
 
         {guesses.length > 0 && (
