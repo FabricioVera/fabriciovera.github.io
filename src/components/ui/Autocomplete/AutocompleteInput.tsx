@@ -67,7 +67,7 @@ export default function AutocompleteInput<T extends Suggestion>({
           disabled={disabled}
           placeholder={placeholder}
         />
-        <Button type="submit">
+        <Button type="submit" className="p-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
