@@ -1,7 +1,7 @@
 // --- src/components/layout/Sidebar.tsx ---
 import { useState, useEffect } from "react";
 import type { NavigationLink } from "../types/navigation";
-import { games } from "../data/games";
+import { games } from "@data/games";
 
 const links = games
   .filter((g) => g.url)
@@ -13,11 +13,7 @@ export function Sidebar() {
   const toggleSidebar = () => setIsOpen(!isOpen);
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
+    document.body.style.overflow = isOpen ? "hidden" : "auto";
     return () => {
       document.body.style.overflow = "auto";
     };
@@ -28,7 +24,9 @@ export function Sidebar() {
       {/* Botón Toggle Flotante (Hamburger Menu) */}
       <button
         onClick={toggleSidebar}
-        className="w-fit h-fit z-60 p-2 text-white rounded-md border border-accent hover:bg-accent transition-colors focus:outline-hidden focus:ring-2 focus:ring-accent"
+        className="relative w-fit h-fit z-60 p-2
+         text-white rounded-md border border-accent hover:bg-accent transition-colors 
+         focus:outline-hidden focus:ring-2 focus:ring-accent"
         aria-label="Alternar menú de navegación"
         aria-expanded={isOpen}
       >
@@ -103,7 +101,7 @@ export function Sidebar() {
       {/* Overlay Oscuro (Cierra el menú al hacer clic fuera) */}
       {isOpen && (
         <div
-          className="fixed top-0 h-screen w-screen bg-black/60 backdrop-blur-sm z-50 transition-opacity"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity"
           onClick={toggleSidebar}
           aria-hidden="true"
         />

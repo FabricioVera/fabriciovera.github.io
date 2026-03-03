@@ -58,14 +58,14 @@ export const games: Game[] = [
     url: "/games/arknightdle",
     hideTitle: false,
   },
-  // Generación dinámica de los 3 juegos "Próximamente" para mantener DRY
-  ...Array.from({ length: 1 }).map((_, index) => ({
-    id: `coming-soon-${index + 3}`,
-    name: `coming-soon-${index + 3}`,
-    title: "Próximamente",
-    isAvailable: false,
-    backgroundImage: "/img/bg-anime-character.jpg",
-    frontImage: "/img/fg-placeholder.png",
-    url: "",
-  })),
+  {
+    id: "arknightdlevoicelines",
+    name: "Arknightdle: VoiceLine",
+    title: "Arknightdle: VoiceLine",
+    isAvailable: true,
+    backgroundImage: "/img/bg-abilitydle.webp",
+    frontImage: "/img/fg-placeholder",
+    url: "/games/arknightdlevoicelines",
+    hideTitle: false,
+  },
 ];

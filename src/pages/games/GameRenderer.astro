@@ -5,6 +5,7 @@ import AnimeGame from "@components/games/guess-anime/GameContainer";
 import WarframedleGame from "@components/games/warframedle/WarframedleGame";
 import WarframedleAbilitiesGame from "@components/games/warframedle/WarframedleAbility";
 import ArknightDLE from "src/components/games/arknights/Arknightdle.tsx";
+import ArknightDLEVoiceline from "../../components/games/arknights/ArknightdleVoiceline";
 
 interface Props {
   gameId: string;
@@ -34,6 +35,11 @@ const { gameId } = Astro.props;
     <ArknightDLE client:only="React" gameId={gameId} />
   )
 }
+{
+  gameId === "arknightdlevoicelines" && (
+    <ArknightDLEVoiceline client:only="React" gameId={gameId} />
+  )
+}
 
 {/* Manejo de Errores: Fallback visual si el ID no está mapeado */}
 {
@@ -42,6 +48,8 @@ const { gameId } = Astro.props;
     "character-by-image",
     "warframedle",
     "warframedleabilities",
+    "arknightdle",
+    "arknightdlevoicelines",
   ].includes(gameId) && (
     <div class="flex flex-col items-center justify-center p-10 text-center bg-primary/80 rounded-xl border border-secondary/50">
       <h2 class="text-2xl font-bold text-accent2 mb-2">

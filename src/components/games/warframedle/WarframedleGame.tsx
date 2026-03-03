@@ -21,6 +21,7 @@ import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelec
 
 // CONFIGS
 import { warframedleColumns } from "@config/gameTableColumns";
+import CorrectBanner from "../CorrectBanner";
 
 interface WarframedleGameProps {
   gameId: string;
@@ -65,7 +66,7 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
 
   return (
     <RequirePlayer>
-      <div className="min-h-screen w-full max-w-[100vw] lg:max-w-5xl mx-auto p-4 flex flex-col lg:items-center gap-6 overflow-auto">
+      <div className="flex flex-col items-center p-4 gap-6">
         {gameMode === "daily" && (
           <Pointer
             className="bg-primary/60 border border-accent text-white shadow-[0_0_25px_var(--color-accent)]"
@@ -81,26 +82,8 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
           gameModeCONF={GameModeConfig}
           actualGameMode={gameMode}
         />
-        <div className="relative w-auto mx-auto flex flex-col justify-center items-center text-center">
-          {currentHeroWf.imageURL && (
-            <img
-              className={`w-full h-[35vh] object-cover object-top pointer-events-none bg-primary/50 border border-accent text-white rounded-lg p-4`}
-              src={currentHeroWf.imageURL}
-              alt=""
-            />
-          )}
-          <h1
-            className={`bottom-5 text-2xl md:text-4xl font-bold text-center px-4 drop-shadow-lg tracking-wider transition-colors duration-300 ${
-              status === "playing"
-                ? "bg-linear-to-r from-(--color-accent) via-accent2 to-(--highlight) bg-clip-text text-transparent drop-shadow-[0_0_20px_var(--color-accent)]"
-                : "absolute text-white drop-shadow-[0_0_15px_var(--color-accent)] css-3d-text"
-            }`}
-          >
-            {currentHeroWf.name}
-          </h1>
-        </div>
 
-        {status === "playing" && (
+        {status === "playing" ? (
           <div>
             <AutocompleteInput
               onGuess={handleGuess}
@@ -115,6 +98,11 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
               </p>
             )}
           </div>
+        ) : (
+          <CorrectBanner
+            imageURL={currentHeroWf.imageURL || ""}
+            name={currentHeroWf.name}
+          />
         )}
 
         {guesses.length > 0 && (

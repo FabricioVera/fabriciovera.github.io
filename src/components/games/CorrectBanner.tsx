@@ -13,7 +13,7 @@ export default function CorrectBanner({
         alt=""
       />
       <h1
-        className={`bottom-5 text-2xl md:text-4xl font-bold text-center px-4 tracking-wider transition-colors duration-300 "absolute text-white drop-shadow-[0_0_15px_var(--color-accent)] css-3d-text"
+        className={`absolute bottom-5 text-2xl md:text-4xl font-bold text-center px-4 tracking-wider transition-colors duration-300 "absolute text-white drop-shadow-[0_0_15px_var(--color-accent)] css-3d-text"
                 `}
       >
         {name}

@@ -124,3 +124,19 @@ export const ArknightdleColumns: ColumnDef<OperatorDTO>[] = [
     },
   },
 ];
+
+export const ArknightdleVoiceColumns: ColumnDef<OperatorDTO>[] = [
+  {
+    header: "Operator",
+    getCellClass: createExactMatchClass<OperatorDTO>("name"),
+    renderCell: (guess) => (
+      <div className="flex flex-row gap-4 justify-start items-center">
+        <img
+          src={guess.imageURL}
+          className="w-24 h-24 rounded-full object-cover"
+        ></img>
+        <div className="m-auto">{guess.name}</div>
+      </div>
+    ),
+  },
+];

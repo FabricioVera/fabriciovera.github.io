@@ -1,5 +1,5 @@
 // REACT
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // COMPONENTS
 import Pointer from "@components/ui/Pointer";
@@ -8,11 +8,10 @@ import TableHeader from "@components/ui/GuessedTable/TableHeader";
 import TableCell from "@components/ui/GuessedTable/TableCell";
 
 // TYPES
-import type { OperatorDTO, Suggestion } from "src/types/index";
+import type { OperatorDTO } from "src/types/index";
 
 // HOOKS UTILS
 import { useOperators } from "@hooks/useOperators";
-import { calculateDailyTarget, calculateRandomTarget } from "@utils/game";
 import { useHandleGuess } from "@hooks/useHandleGuess";
 
 // AUTH
@@ -22,59 +21,34 @@ import { useStore } from "@nanostores/react";
 
 // CONFIG
 import { ArknightdleColumns } from "@config/gameTableColumns";
-import type { GameModeCONF } from "../../ui/GameModeSelector/GameModeSelector";
-import GameModeSelector from "../../ui/GameModeSelector/GameModeSelector";
-import type { GameStatus } from "../../../types/game";
+import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelector";
+import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
+import type { GameStatus } from "src/types/game";
 import CorrectBanner from "../CorrectBanner";
+import { useGetTarget, useSuggestions } from "./hooks/useGameHelpers";
+import {
+  loadDailyProgress,
+  saveDailyProgress,
+} from "../../../services/dailyStorageRepository";
+import { logger } from "../../../services/logger";
 
 interface ArknightDLEProps {
   gameId: string;
 }
 
-function useGetTarget(
-  operatorNames: any[] | undefined,
-  gameId: string,
-  gameMode: string | undefined,
-) {
-  const target = useMemo(() => {
-    if (!operatorNames?.length) return undefined;
-    if (gameMode === "daily") {
-      return calculateDailyTarget(operatorNames, gameId);
-    } else {
-      return calculateRandomTarget(operatorNames);
-    }
-  }, [operatorNames, gameMode]);
-
-  return { target };
-}
-
-function useSuggestions(operators: any[] | undefined) {
-  const [suggestions, setSuggestions] = useState<
-    { name: string; imageURL: string }[] | undefined
-  >([{ name: "cargando ops....", imageURL: "" }]);
-  useEffect(() => {
-    setSuggestions(
-      operators?.map((op) => ({ name: op.name, imageURL: op.imageURL })),
-    );
-  }, [operators]);
-  return { suggestions };
-}
-
 export default function ArknightDLE({ gameId }: ArknightDLEProps) {
+  // ESTADOS GLOBALES
   const playerName = useStore($playerName);
   const [gameStatus, setGameStatus] = useState<GameStatus>("loading");
-
   const [gameMode, setGameMode] = useState<string>("daily");
-  const GameModeConfig: GameModeCONF[] = [
-    { gameModeName: "daily", gameModeHook: () => setGameMode("daily") },
-    { gameModeName: "random", gameModeHook: () => setGameMode("random") },
-  ];
 
+  // CUSTOM HOOKS
   const { operators } = useOperators(setGameStatus);
   const { target } = useGetTarget(operators, gameId, gameMode);
   const { suggestions } = useSuggestions(operators);
 
-  const { guesses, handleGuess } = useHandleGuess(
+  //* ------------- HANDLE GUESS HOOK --------------------
+  const { guesses, setGuesses, handleGuess } = useHandleGuess(
     target,
     operators,
     playerName,
@@ -83,6 +57,80 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
     gameStatus,
     setGameStatus,
   );
+
+  // * ------------- Callbacks -----------
+  /**
+   * Inicializa modo diario y carga estado.
+   */
+  const initializeDailyMode = useCallback(() => {
+    try {
+      const savedState = loadDailyProgress(gameId);
+
+      if (savedState) {
+        const rehydratedGuesses = savedState.guesses
+          .map((name: string) => operators?.find((op) => op.name === name))
+          .filter(Boolean) as OperatorDTO[];
+
+        logger.info(`Estado diario cargado exitosamente para ${gameId}`, {
+          intentos: rehydratedGuesses.length,
+          status: savedState.status,
+        });
+
+        setGuesses(rehydratedGuesses);
+        setGameStatus(savedState.status);
+      } else {
+        setGuesses([]);
+        setGameStatus("playing");
+      }
+    } catch (error) {
+      logger.error(`Error al inicializar el modo diario en ${gameId}`, error);
+      setGuesses([]);
+      setGameStatus("playing");
+    }
+  }, [gameId, operators, setGuesses]);
+
+  /**
+   * Activa modo diario y lo inicializa.
+   */
+  const startDailyMode = useCallback(() => {
+    setGameMode("daily");
+    initializeDailyMode();
+  }, [initializeDailyMode]);
+
+  /**
+   * Activa modo aleatorio y limpia intentos.
+   */
+  const startRandomMode = useCallback(() => {
+    setGameMode("random");
+    setGuesses([]);
+    setGameStatus("playing");
+  }, []);
+
+  // * --------- Effects ---------
+  useEffect(() => {
+    if (gameMode === "daily") {
+      saveDailyProgress(gameId, guesses, gameStatus);
+    }
+  }, [gameId, guesses, gameStatus, gameMode]);
+
+  useEffect(() => {
+    if (operators) {
+      initializeDailyMode();
+    }
+  }, [initializeDailyMode, operators]);
+
+  // * Variables y configuraciones derivadas
+  const GameModeConfig: GameModeCONF[] = [
+    {
+      gameModeName: "daily",
+      gameModeHook: startDailyMode,
+    },
+    {
+      gameModeName: "random",
+      gameModeHook: startRandomMode,
+    },
+  ];
+
   const guessedNames = guesses.map((g) => g.name);
 
   if (gameStatus === "loading") {
@@ -95,7 +143,7 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
 
   return (
     <RequirePlayer>
-      <div className="min-h-screen w-full max-w-[100vw] lg:max-w-5xl mx-auto p-4 flex flex-col lg:items-center gap-6 overflow-auto">
+      <div className="flex flex-col items-center p-4 gap-6">
         <Pointer
           playerName={playerName}
           score={guesses.length}
@@ -108,6 +156,14 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
           gameModeCONF={GameModeConfig}
           actualGameMode={gameMode}
         />
+        {gameMode === "random" && (
+          <button
+            className="text-white text-2xl bg-primary border border-accent"
+            onClick={() => setGameStatus("lost")}
+          >
+            Rendirse
+          </button>
+        )}
         {gameStatus === "playing" ? (
           <AutocompleteInput
             onGuess={handleGuess}
@@ -118,34 +174,37 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
         ) : (
           <CorrectBanner imageURL={target.imageURL} name={target.name} />
         )}
+        {guesses.length > 0 && (
+          <div className="w-full overflow-x-auto flex justify-center">
+            <table className="w-fit mt-4 bg-primary text-white">
+              <TableHeader columns={ArknightdleColumns} />
+              <tbody>
+                {guesses.map((guess, index) => {
+                  const guessObj = operators?.find(
+                    (operator) => operator.name === guess.name,
+                  );
+                  const targetObj = operators?.find(
+                    (operator) => operator.name === target.name,
+                  );
+                  if (!guessObj) return null;
 
-        <table className="w-fit mt-4 bg-primary text-white">
-          <TableHeader columns={ArknightdleColumns} />
-          <tbody>
-            {guesses.map((guess, index) => {
-              const guessObj = operators?.find(
-                (operator) => operator.name === guess.name,
-              );
-              const targetObj = operators?.find(
-                (operator) => operator.name === target.name,
-              );
-              if (!guessObj) return null;
-
-              return (
-                <tr key={index}>
-                  {ArknightdleColumns.map((col, colIndex) => (
-                    <TableCell
-                      key={colIndex + "-" + col.header}
-                      guess={guessObj}
-                      target={targetObj as unknown as OperatorDTO}
-                      columnDef={col}
-                    />
-                  ))}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                  return (
+                    <tr key={index}>
+                      {ArknightdleColumns.map((col, colIndex) => (
+                        <TableCell
+                          key={colIndex + "-" + col.header}
+                          guess={guessObj}
+                          target={targetObj as unknown as OperatorDTO}
+                          columnDef={col}
+                        />
+                      ))}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </RequirePlayer>
   );

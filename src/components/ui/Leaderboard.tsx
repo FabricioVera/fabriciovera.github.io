@@ -76,7 +76,7 @@ export function Leaderboard({
 
       {/* Panel Lateral Deslizante */}
       <div
-        className={`fixed top-0 right-0 h-full w-full sm:w-80 bg-primary border-l border-secondary shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col ${isOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed top-0 right-0 h-screen w-64 sm:w-80 bg-primary border-l border-secondary z-50 transform transition-transform duration-300 ease-in-out flex flex-col ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         <div className="flex justify-between items-center p-6 border-b border-secondary">
           <h3 className="text-xl font-bold text-white flex items-center gap-2">

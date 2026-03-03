@@ -46,5 +46,5 @@ export function useHandleGuess(
     setGuesses([]);
   }, [gameMode]);
 
-  return { guesses, gameStatus, setGameStatus, handleGuess };
+  return { guesses, setGuesses, gameStatus, setGameStatus, handleGuess };
 }

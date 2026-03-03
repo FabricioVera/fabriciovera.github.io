@@ -75,7 +75,7 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
 
   return (
     <RequirePlayer>
-      <div className="min-h-screen w-full max-w-[100vw] lg:max-w-5xl mx-auto p-4 flex flex-col lg:items-center gap-6 overflow-auto">
+      <div className="flex flex-col items-center p-4 gap-6">
         {gameMode === "daily" && (
           <Pointer
             playerName={playerName}
