@@ -42,9 +42,5 @@ export function useHandleGuess(
     }
   };
 
-  useEffect(() => {
-    setGuesses([]);
-  }, [gameMode]);
-
   return { guesses, setGuesses, gameStatus, setGameStatus, handleGuess };
 }

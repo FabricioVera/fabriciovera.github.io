@@ -1,5 +1,5 @@
 // REACT
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 // COMPONENTS
 import Pointer from "@components/ui/Pointer";
@@ -36,16 +36,57 @@ interface ArknightDLEProps {
   gameId: string;
 }
 
+export function useDailyStorage({
+  gameId,
+  operators,
+}: {
+  gameId: string;
+  operators: OperatorDTO[] | undefined;
+}) {
+  /**
+   * Carga intentos desde BD.
+   * @returns Estado guardado.
+   */
+  const loadProgress = useCallback(() => {
+    if (!operators) return null;
+    const savedState = loadDailyProgress(gameId);
+    if (!savedState) return null;
+
+    const guesses = savedState.guesses
+      .map((name: string) => operators.find((op) => op.name === name))
+      .filter(Boolean) as OperatorDTO[];
+
+    return { guesses, status: savedState.status };
+  }, [gameId, operators]);
+
+  /**
+   * Guarda progreso en BD.
+   * @param guesses Intentos.
+   */
+  const saveProgress = useCallback(
+    (guesses: OperatorDTO[], status: GameStatus) => {
+      saveDailyProgress(gameId, guesses, status);
+    },
+    [gameId],
+  );
+
+  return { loadProgress, saveProgress };
+}
+
 export default function ArknightDLE({ gameId }: ArknightDLEProps) {
   // ESTADOS GLOBALES
   const playerName = useStore($playerName);
   const [gameStatus, setGameStatus] = useState<GameStatus>("loading");
   const [gameMode, setGameMode] = useState<string>("daily");
 
+  const isHydrating = useRef(true);
+
   // CUSTOM HOOKS
   const { operators } = useOperators(setGameStatus);
   const { target } = useGetTarget(operators, gameId, gameMode);
   const { suggestions } = useSuggestions(operators);
+
+  const { loadProgress, saveProgress } = useDailyStorage({ gameId, operators });
 
   //* ------------- HANDLE GUESS HOOK --------------------
   const { guesses, setGuesses, handleGuess } = useHandleGuess(
@@ -60,42 +101,31 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
 
   // * ------------- Callbacks -----------
   /**
-   * Inicializa modo diario y carga estado.
+   * Activa modo diario y lo inicializa.
    */
-  const initializeDailyMode = useCallback(() => {
+  const startDailyMode = useCallback(() => {
+    setGameMode("daily");
+    isHydrating.current = true;
     try {
-      const savedState = loadDailyProgress(gameId);
-
-      if (savedState) {
-        const rehydratedGuesses = savedState.guesses
-          .map((name: string) => operators?.find((op) => op.name === name))
-          .filter(Boolean) as OperatorDTO[];
-
-        logger.info(`Estado diario cargado exitosamente para ${gameId}`, {
-          intentos: rehydratedGuesses.length,
-          status: savedState.status,
-        });
-
-        setGuesses(rehydratedGuesses);
-        setGameStatus(savedState.status);
+      const saved = loadProgress();
+      if (saved) {
+        setGuesses(saved.guesses);
+        setGameStatus(saved.status);
       } else {
         setGuesses([]);
         setGameStatus("playing");
       }
     } catch (error) {
-      logger.error(`Error al inicializar el modo diario en ${gameId}`, error);
+      logger.error(`Error de inicialización`, error);
       setGuesses([]);
       setGameStatus("playing");
+    } finally {
+      // Liberamos el bloqueo en el siguiente ciclo de render
+      setTimeout(() => {
+        isHydrating.current = false;
+      }, 0);
     }
-  }, [gameId, operators, setGuesses]);
-
-  /**
-   * Activa modo diario y lo inicializa.
-   */
-  const startDailyMode = useCallback(() => {
-    setGameMode("daily");
-    initializeDailyMode();
-  }, [initializeDailyMode]);
+  }, [loadProgress, setGuesses]);
 
   /**
    * Activa modo aleatorio y limpia intentos.
@@ -108,16 +138,20 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
 
   // * --------- Effects ---------
   useEffect(() => {
-    if (gameMode === "daily") {
-      saveDailyProgress(gameId, guesses, gameStatus);
+    if (operators) {
+      startDailyMode();
     }
-  }, [gameId, guesses, gameStatus, gameMode]);
+  }, [startDailyMode, operators]);
 
   useEffect(() => {
-    if (operators) {
-      initializeDailyMode();
+    if (
+      gameMode === "daily" &&
+      gameStatus !== "loading" &&
+      !isHydrating.current
+    ) {
+      saveProgress(guesses, gameStatus);
     }
-  }, [initializeDailyMode, operators]);
+  }, [guesses, gameStatus, gameMode, saveProgress]);
 
   // * Variables y configuraciones derivadas
   const GameModeConfig: GameModeCONF[] = [
