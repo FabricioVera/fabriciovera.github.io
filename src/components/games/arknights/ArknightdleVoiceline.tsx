@@ -41,6 +41,7 @@ import {
 import { logger } from "../../../services/logger";
 import Button from "../../ui/General/Button";
 import { CalendarIcon, InfinityIcon } from "../../Icons";
+import { useGameModeStorage } from "../../../hooks/useGameModeStorage";
 
 interface ArknightDLEProps {
   gameId: string;
@@ -219,7 +220,7 @@ function useDailyStorage({
 export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
   const playerName = useStore($playerName);
   const [gameStatus, setGameStatus] = useState<GameStatus>("loading");
-  const [gameMode, setGameMode] = useState<string>("daily");
+  const { gameMode, setGameModeValue } = useGameModeStorage({ gameId });
 
   const isHydrating = useRef(true);
 
@@ -244,7 +245,7 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
    * Activa modo diario y lo inicializa.
    */
   const startDailyMode = useCallback(() => {
-    setGameMode("daily");
+    setGameModeValue("daily");
     isHydrating.current = true;
     try {
       const saved = loadProgress();
@@ -271,7 +272,7 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
    * Activa modo aleatorio y limpia intentos.
    */
   const startRandomMode = useCallback(() => {
-    setGameMode("random");
+    setGameModeValue("random");
     setGuesses([]);
     setGameStatus("playing");
   }, []);
@@ -288,7 +289,7 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
   }, [guesses, gameStatus, gameMode, saveProgress]);
 
   useEffect(() => {
-    if (operators) {
+    if (operators && gameMode === "daily") {
       startDailyMode();
     }
   }, [startDailyMode, operators]);

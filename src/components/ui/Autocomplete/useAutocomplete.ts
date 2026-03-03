@@ -80,8 +80,7 @@ export function useAutocomplete<T extends Suggestion>(
         // Prioridad 3: Ambos empiezan o ninguno empieza
         // Ordenar alfabéticamente como desempate
         return nameA.localeCompare(nameB);
-      })
-      .slice(0, 5);
+      });
 
     setSuggestions(filtered);
     // Mostrar solo si existen sugerencias

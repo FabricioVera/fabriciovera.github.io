@@ -82,7 +82,7 @@ export default function AutocompleteInput<T extends Suggestion>({
       {/* SUGERENCIAS */}
       {suggestions.length > 0 && showSuggestions && (
         <ul
-          className={`absolute top-full z-10 w-full rounded mt-1 h-fit overflow-y-auto bg-primary border border-secondary`}
+          className={`absolute top-full z-10 w-full rounded mt-1 max-h-60 overflow-y-auto bg-primary border border-secondary`}
         >
           {suggestions.map((sug, index) => (
             <li
