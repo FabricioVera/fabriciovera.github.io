@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { calculateDailyTarget, calculateRandomTarget } from "@utils/game";
 import type { BaseGameEntity } from "src/types/game";
 
@@ -7,16 +7,22 @@ export function useGetTarget<T extends BaseGameEntity>(
   gameMode?: string | undefined,
   items?: T[],
 ) {
-  const target = useMemo(() => {
+  const [target, setTarget] = useState<T | undefined>(undefined);
+
+  const refreshTarget = useCallback(() => {
     if (!items?.length) return;
     if (gameMode === "daily") {
-      return calculateDailyTarget(items, gameId);
+      setTarget(calculateDailyTarget(items, gameId));
     } else {
-      return calculateRandomTarget(items);
+      setTarget(calculateRandomTarget(items));
     }
   }, [items, gameMode]);
 
-  return { target };
+  useEffect(() => {
+    refreshTarget();
+  }, [items, gameMode, gameId]);
+
+  return { target, refreshTarget };
 }
 
 export function useSuggestions<T extends BaseGameEntity>(items?: T[]) {

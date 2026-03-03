@@ -1,3 +1,5 @@
+import type { DiceIconProps } from "./ui/General/DiceRoller";
+
 export const CalendarIcon = ({ size = 18, color = "currentColor" }) => {
   return (
     <svg viewBox="0 0 24 24" fill={color} width={size} height={size}>
@@ -17,3 +19,82 @@ export const InfinityIcon = ({ size = 18, color = "currentColor" }) => {
     </svg>
   );
 };
+
+const DiceBase: React.FC<DiceIconProps & { children: React.ReactNode }> = ({
+  size = 18,
+  color = "currentColor",
+  children,
+}) => (
+  <svg viewBox="0 0 100 100" fill={color} width={size} height={size}>
+    {children}
+  </svg>
+);
+
+/** Cara 1. P:size(num|str)tam, color(str)color.
+ * R:JSX(Dado 1 punto). 0 excepciones / 0 efectos sec.
+ * @param {DiceIconProps} props @returns {JSX.Element} */
+export const D1Icon: React.FC<DiceIconProps> = (props) => (
+  <DiceBase {...props}>
+    <circle cx="50" cy="50" r="12" />
+  </DiceBase>
+);
+
+/** Cara 2. P:size(num|str)tam, color(str)color.
+ * R:JSX(Dado 2 puntos). 0 excepciones / 0 efectos sec.
+ * @param {DiceIconProps} props @returns {JSX.Element} */
+export const D2Icon: React.FC<DiceIconProps> = (props) => (
+  <DiceBase {...props}>
+    <circle cx="25" cy="25" r="12" />
+    <circle cx="75" cy="75" r="12" />
+  </DiceBase>
+);
+
+/** Cara 3. P:size(num|str)tam, color(str)color.
+ * R:JSX(Dado 3 puntos). 0 excepciones / 0 efectos sec.
+ * @param {DiceIconProps} props @returns {JSX.Element} */
+export const D3Icon: React.FC<DiceIconProps> = (props) => (
+  <DiceBase {...props}>
+    <circle cx="25" cy="75" r="12" />
+    <circle cx="50" cy="50" r="12" />
+    <circle cx="75" cy="25" r="12" />
+  </DiceBase>
+);
+
+/** Cara 4. P:size(num|str)tam, color(str)color.
+ * R:JSX(Dado 4 puntos). 0 excepciones / 0 efectos sec.
+ * @param {DiceIconProps} props @returns {JSX.Element} */
+export const D4Icon: React.FC<DiceIconProps> = (props) => (
+  <DiceBase {...props}>
+    <circle cx="25" cy="25" r="12" />
+    <circle cx="75" cy="25" r="12" />
+    <circle cx="25" cy="75" r="12" />
+    <circle cx="75" cy="75" r="12" />
+  </DiceBase>
+);
+
+/** Cara 5. P:size(num|str)tam, color(str)color.
+ * R:JSX(Dado 5 puntos). 0 excepciones / 0 efectos sec.
+ * @param {DiceIconProps} props @returns {JSX.Element} */
+export const D5Icon: React.FC<DiceIconProps> = (props) => (
+  <DiceBase {...props}>
+    <circle cx="25" cy="25" r="12" />
+    <circle cx="75" cy="25" r="12" />
+    <circle cx="50" cy="50" r="12" />
+    <circle cx="25" cy="75" r="12" />
+    <circle cx="75" cy="75" r="12" />
+  </DiceBase>
+);
+
+/** Cara 6. P:size(num|str)tam, color(str)color.
+ * R:JSX(Dado 6 puntos). 0 excepciones / 0 efectos sec.
+ * @param {DiceIconProps} props @returns {JSX.Element} */
+export const D6Icon: React.FC<DiceIconProps> = (props) => (
+  <DiceBase {...props}>
+    <circle cx="25" cy="20" r="12" />
+    <circle cx="75" cy="20" r="12" />
+    <circle cx="25" cy="50" r="12" />
+    <circle cx="75" cy="50" r="12" />
+    <circle cx="25" cy="80" r="12" />
+    <circle cx="75" cy="80" r="12" />
+  </DiceBase>
+);

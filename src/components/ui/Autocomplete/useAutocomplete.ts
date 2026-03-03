@@ -1,8 +1,8 @@
 import { useState, useCallback, useRef, useMemo } from "react";
-import type { Suggestion } from "src/types";
+import type { BaseGameEntity } from "src/types/game";
 import { normalizeString } from "src/utils/index";
 
-export function useAutocomplete<T extends Suggestion>(
+export function useAutocomplete<T extends BaseGameEntity>(
   onGuess: (guess: string) => void | Promise<void>,
   allElements: T[],
   guessedNames: string[],

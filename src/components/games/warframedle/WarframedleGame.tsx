@@ -42,6 +42,14 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
     GameModeConfig,
   } = useWarframedle(warframeData as preWarframe[], gameId, playerName);
 
+  if (target === undefined) {
+    return (
+      <div className="w-full text-white text-2xl text-center">
+        Cargando objetivo....
+      </div>
+    );
+  }
+
   const currentHeroWf =
     gameStatus === "playing"
       ? { name: "WARFRAMEDLE", wikiaThumbnail: undefined }

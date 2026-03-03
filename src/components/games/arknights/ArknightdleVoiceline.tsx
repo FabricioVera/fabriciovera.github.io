@@ -38,6 +38,7 @@ import Button from "../../ui/General/Button";
 import { CalendarIcon, InfinityIcon } from "../../Icons";
 import { useGameModeStorage } from "@hooks/useGameModeStorage";
 import { useDailyStorage } from "@hooks/useDailyStorage";
+import { DiceRollerButton } from "../../ui/General/DiceRoller";
 
 interface ArknightDLEProps {
   gameId: string;
@@ -184,7 +185,7 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
   const isHydrating = useRef(true);
 
   const { operators } = useOperators(setGameStatus);
-  const { target } = useGetTarget(gameId, gameMode, operators);
+  const { target, refreshTarget } = useGetTarget(gameId, gameMode, operators);
   const { suggestions } = useSuggestions(operators);
 
   const { loadProgress, saveProgress } = useDailyStorage<OperatorDTO>({
@@ -192,7 +193,7 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
     items: operators,
   });
 
-  const { guesses, setGuesses, handleGuess } = useHandleGuess(
+  const { guesses, setGuesses, handleGuess, clearGuesses } = useHandleGuess(
     target,
     operators,
     playerName,
@@ -203,6 +204,12 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
   );
 
   // * ------------- Callbacks -----------
+  const handleRandomReroll = useCallback(() => {
+    if (gameMode !== "random") return;
+    refreshTarget();
+    clearGuesses();
+    setGameStatus("playing");
+  }, [gameMode, refreshTarget, clearGuesses, setGameStatus]);
   /**
    * Activa modo diario y lo inicializa.
    */
@@ -279,6 +286,13 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
       </div>
     );
   }
+  if (target === undefined) {
+    return (
+      <div className="w-full text-white text-2xl text-center">
+        Cargando objetivo....
+      </div>
+    );
+  }
 
   return (
     <RequirePlayer>
@@ -313,6 +327,10 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
         ) : (
           <CorrectBanner imageURL={target.imageURL} name={target.name} />
         )}
+
+        <div className="w-12">
+          <DiceRollerButton onRoll={handleRandomReroll} />
+        </div>
 
         <VoicePlayer targetName={target.name} />
 

@@ -1,0 +1,74 @@
+import { useCallback, useState } from "react";
+import { D1Icon, D2Icon, D3Icon, D4Icon, D5Icon, D6Icon } from "../../Icons";
+import Button from "./Button";
+
+const VALID_FACES: DiceValue[] = [1, 2, 3, 4, 5, 6];
+type DiceValue = 1 | 2 | 3 | 4 | 5 | 6;
+
+export interface DiceIconProps {
+  size?: number | string;
+  color?: string;
+}
+
+interface DiceFaceProps extends DiceIconProps {
+  value: DiceValue;
+}
+
+const DICE_MAP: Record<DiceValue, React.FC<DiceIconProps>> = {
+  1: D1Icon,
+  2: D2Icon,
+  3: D3Icon,
+  4: D4Icon,
+  5: D5Icon,
+  6: D6Icon,
+};
+
+const rollDice = (): DiceValue => {
+  const randomIndex = Math.floor(Math.random() * VALID_FACES.length);
+  return VALID_FACES[randomIndex];
+};
+
+export const DiceFace: React.FC<DiceFaceProps> = ({ value, ...props }) => {
+  const Icon = DICE_MAP[value] || D1Icon;
+  return <Icon {...props} />;
+};
+
+interface DiceRollerProps {
+  onRoll?: () => void;
+}
+
+export const DiceRollerButton: React.FC<DiceRollerProps> = ({ onRoll }) => {
+  const [currentFace, setCurrentFace] = useState<DiceValue>(1);
+  const [isRolling, setIsRolling] = useState<boolean>(false);
+
+  const handleRoll = useCallback(() => {
+    if (isRolling) return;
+    setIsRolling(true);
+    setCurrentFace(1);
+
+    setTimeout(() => {
+      const finalFace = rollDice();
+      setCurrentFace(finalFace);
+      setIsRolling(false);
+      if (onRoll) onRoll();
+    }, 400);
+  }, [isRolling, onRoll]);
+
+  return (
+    <Button
+      onClick={handleRoll}
+      aria-label="Lanzar dado"
+      className={` rounded-xl transition-all flex flex-col items-center shadow-lg outline-none ${
+        isRolling ? "scale-95 opacity-80 cursor-wait" : "cursor-pointer"
+      }`}
+    >
+      <div
+        className={` text-white flex items-center justify-center transition-transform duration-400 ease-in-out p-1 ${
+          isRolling ? "rotate-90 scale-0" : "rotate-0 scale-100"
+        }`}
+      >
+        <DiceFace value={currentFace} size="100%" />
+      </div>
+    </Button>
+  );
+};

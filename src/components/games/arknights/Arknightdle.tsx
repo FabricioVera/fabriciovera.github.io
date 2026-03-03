@@ -8,6 +8,7 @@ import TableHeader from "@components/ui/GuessedTable/TableHeader";
 import TableCell from "@components/ui/GuessedTable/TableCell";
 import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
 import CorrectBanner from "../CorrectBanner";
+import { DiceRollerButton } from "@components/ui/General/DiceRoller";
 
 // TYPES
 import type { OperatorDTO } from "src/types/index";
@@ -29,6 +30,9 @@ import { ArknightdleColumns } from "@config/gameTableColumns";
 import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelector";
 import type { GameStatus } from "src/types/game";
 import { logger } from "@services/logger";
+import { D1Icon, D6Icon } from "../../Icons";
+import Button from "../../ui/General/Button";
+import { useAutocomplete } from "../../ui/Autocomplete/useAutocomplete";
 
 interface ArknightDLEProps {
   gameId: string;
@@ -55,7 +59,11 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
 
   //* CUSTOM HOOKS
   const { operators } = useOperators(setGameStatus);
-  const { target } = useGetTarget<OperatorDTO>(gameId, gameMode, operators);
+  const { target, refreshTarget } = useGetTarget<OperatorDTO>(
+    gameId,
+    gameMode,
+    operators,
+  );
   const { suggestions } = useSuggestions<OperatorDTO>(operators);
 
   const { loadProgress, saveProgress } = useDailyStorage<OperatorDTO>({
@@ -75,6 +83,12 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
   );
 
   // * ------------- Callbacks -----------
+  const handleRandomReroll = useCallback(() => {
+    if (gameMode !== "random") return;
+    refreshTarget();
+    clearGuesses();
+    setGameStatus("playing");
+  }, [gameMode, refreshTarget, clearGuesses, setGameStatus]);
   /**
    * Activa modo diario y lo inicializa.
    */
@@ -150,6 +164,14 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
     );
   }
 
+  if (target === undefined) {
+    return (
+      <div className="w-full text-white text-2xl text-center">
+        Cargando objetivo....
+      </div>
+    );
+  }
+
   return (
     <RequirePlayer>
       <div className="flex flex-col items-center p-4 gap-6">
@@ -173,6 +195,7 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
             Rendirse
           </button>
         )}
+        <div className="flex flex-row items-end gap-2">
         {gameStatus === "playing" ? (
           <AutocompleteInput
             onGuess={handleGuess}
@@ -183,6 +206,10 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
         ) : (
           <CorrectBanner imageURL={target.imageURL} name={target.name} />
         )}
+          <div className="w-12">
+            <DiceRollerButton onRoll={handleRandomReroll} />
+          </div>
+        </div>
         {guesses.length > 0 && (
           <div className="w-full overflow-x-auto flex justify-start lg:justify-center ">
             <table className="min-w-max table-auto mt-4 bg-primary text-white">
