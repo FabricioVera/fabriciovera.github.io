@@ -7,7 +7,7 @@ import {
   useState,
   type ChangeEvent,
 } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, color } from "framer-motion";
 
 // COMPONENTS
 import Pointer from "@components/ui/Pointer";
@@ -40,6 +40,7 @@ import {
 } from "../../../services/dailyStorageRepository";
 import { logger } from "../../../services/logger";
 import Button from "../../ui/General/Button";
+import { CalendarIcon, InfinityIcon } from "../../Icons";
 
 interface ArknightDLEProps {
   gameId: string;
@@ -295,10 +296,12 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
   // * Variables y configuraciones derivadas
   const GameModeConfig: GameModeCONF[] = [
     {
+      gameModeLabel: <CalendarIcon />,
       gameModeName: "daily",
       gameModeHook: startDailyMode,
     },
     {
+      gameModeLabel: <InfinityIcon />,
       gameModeName: "random",
       gameModeHook: startRandomMode,
     },

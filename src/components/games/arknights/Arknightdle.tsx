@@ -29,13 +29,15 @@ import { useGetTarget, useSuggestions } from "./hooks/useGameHelpers";
 import {
   loadDailyProgress,
   saveDailyProgress,
-} from "../../../services/dailyStorageRepository";
-import { logger } from "../../../services/logger";
+} from "@services/dailyStorageRepository";
+import { logger } from "@services/logger";
+import { useGameModeStorage } from "@hooks/useGameModeStorage";
 
 interface ArknightDLEProps {
   gameId: string;
 }
 
+//* LOCAL STORAGE DAILY MANAGEMENT
 function useDailyStorage({
   gameId,
   operators,
@@ -77,7 +79,7 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
   // ESTADOS GLOBALES
   const playerName = useStore($playerName);
   const [gameStatus, setGameStatus] = useState<GameStatus>("loading");
-  const [gameMode, setGameMode] = useState<string>("daily");
+  const { gameMode, setGameModeValue } = useGameModeStorage({ gameId });
 
   const isHydrating = useRef(true);
 
@@ -104,7 +106,7 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
    * Activa modo diario y lo inicializa.
    */
   const startDailyMode = useCallback(() => {
-    setGameMode("daily");
+    setGameModeValue("daily");
     isHydrating.current = true;
     try {
       const saved = loadProgress();
@@ -131,14 +133,14 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
    * Activa modo aleatorio y limpia intentos.
    */
   const startRandomMode = useCallback(() => {
-    setGameMode("random");
+    setGameModeValue("random");
     setGuesses([]);
     setGameStatus("playing");
   }, []);
 
   // * --------- Effects ---------
   useEffect(() => {
-    if (operators) {
+    if (operators && gameMode === "daily") {
       startDailyMode();
     }
   }, [startDailyMode, operators]);
