@@ -1,23 +1,23 @@
-import type { Suggestion } from "src/types";
-import Button from "@components/ui/General/Button";
 import { useAutocomplete } from "./useAutocomplete";
 import HeroInput from "../InputHero";
+import type { BaseGameEntity } from "src/types/game";
 
-interface GuessInputProps<T extends Suggestion> {
+interface GuessInputProps<T extends BaseGameEntity> {
   onGuess: (guess: string) => void | Promise<void>;
-  suggestionList: T[];
+  suggestionList?: T[];
   guessedNames: string[];
   disabled?: boolean;
   placeholder?: string;
 }
 
-export default function AutocompleteInput<T extends Suggestion>({
+export default function AutocompleteInput<T extends BaseGameEntity>({
   onGuess,
   suggestionList,
   guessedNames,
   disabled,
   placeholder,
 }: GuessInputProps<T>) {
+  if (!suggestionList) return;
   const {
     inputRef,
     inputValue,
@@ -56,9 +56,12 @@ export default function AutocompleteInput<T extends Suggestion>({
       </div>
 
       {/* FORMULARIO DEL INPUT */}
-      <form onSubmit={handleSubmit} className="relative flex flex-row gap-2">
+      <form
+        onSubmit={handleSubmit}
+        className="relative flex flex-row text-white"
+      >
         <input
-          className={`w-full p-2 rounded border focus:outline-none transition-colors bg-primary border-secondary text-white focus:ring-2 focus:ring-(--color-accent) focus:border-(--color-accent)`}
+          className={`w-full p-2  focus:outline-none transition-colors rounded-xl bg-primary border border-secondary  focus:ring-2 focus:ring-(--color-accent) focus:border-(--color-accent)`}
           ref={inputRef}
           type="text"
           value={inputValue}
@@ -67,7 +70,12 @@ export default function AutocompleteInput<T extends Suggestion>({
           disabled={disabled}
           placeholder={placeholder}
         />
-        <Button type="submit" className="p-2">
+        <button
+          type="submit"
+          aria-label="Enviar"
+          title="Enviar"
+          className="p-2 absolute right-2 transition-colors hover:text-accent"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -76,7 +84,7 @@ export default function AutocompleteInput<T extends Suggestion>({
           >
             <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
           </svg>
-        </Button>
+        </button>
       </form>
 
       {/* SUGERENCIAS */}

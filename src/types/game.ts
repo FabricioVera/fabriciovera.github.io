@@ -1,3 +1,13 @@
+/**
+ * Entidad base genérica. Efectos: Ninguno.
+ * @property {string} name - Nombre único.
+ * @property {string} imageURL - URL de imagen (opcional).
+ */
+export interface BaseGameEntity {
+  name: string;
+  imageURL?: string;
+}
+
 export interface CharacterData {
   id: string;
   name: string;

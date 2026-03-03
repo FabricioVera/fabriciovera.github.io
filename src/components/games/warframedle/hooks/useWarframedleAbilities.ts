@@ -9,6 +9,7 @@ import {
 import { calculateDailyTarget, calculateRandomTarget } from "@utils/game";
 import { saveDailyProgress } from "@services/dailyStorageRepository";
 import { useDailyGame } from "@hooks/useDailyGame";
+import { getWarframeThumbnailName, getWikiThumbnail } from "../../../../utils";
 
 export type GameMode = "daily" | "random";
 
@@ -24,6 +25,7 @@ export default function useWarframedleAbilities(
   const warframes: Warframe[] = useMemo(() => {
     return rawData.map((wf) => ({
       ...wf,
+      imageURL: getWikiThumbnail(getWarframeThumbnailName(wf.name)),
       releaseYear: new Date(wf.releaseDate).getFullYear(),
     }));
   }, [rawData]);

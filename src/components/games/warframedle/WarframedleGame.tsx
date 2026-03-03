@@ -13,11 +13,9 @@ import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
 //HOOKS + UTILS
 import useWarframedle from "./hooks/useWarframedle";
 import { useStore } from "@nanostores/react";
-import { getWikiThumbnail, getWarframeThumbnailName } from "@utils/index";
 
 // TYPES
 import type { preWarframe } from "src/types/warframe";
-import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelector";
 
 // CONFIGS
 import { warframedleColumns } from "@config/gameTableColumns";
@@ -33,36 +31,24 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
   // ESTADO DEL JUEGO
   const {
     warframes,
-    targetWarframe,
+    guessedNames,
+    target,
+    suggestions,
     attemptsLeft,
     gameMode,
     guesses,
-    status,
+    gameStatus,
     handleGuess,
-    startDailyMode,
-    startRandomMode,
+    GameModeConfig,
   } = useWarframedle(warframeData as preWarframe[], gameId, playerName);
-  const guessedNames = guesses.map((g) => g.name);
 
   const currentHeroWf =
-    status === "playing"
+    gameStatus === "playing"
       ? { name: "WARFRAMEDLE", wikiaThumbnail: undefined }
       : {
-          name: targetWarframe.name,
-          imageURL: getWikiThumbnail(
-            getWarframeThumbnailName(targetWarframe.name),
-          ),
+          name: target.name,
+          imageURL: target.imageURL,
         };
-
-  const GameModeConfig: GameModeCONF[] = [
-    { gameModeName: "daily", gameModeHook: startDailyMode },
-    { gameModeName: "random", gameModeHook: startRandomMode },
-  ];
-
-  const suggestions = warframes.map((wf) => ({
-    name: wf.name,
-    imageURL: getWikiThumbnail(getWarframeThumbnailName(wf.name)),
-  }));
 
   return (
     <RequirePlayer>
@@ -83,7 +69,7 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
           actualGameMode={gameMode}
         />
 
-        {status === "playing" ? (
+        {gameStatus === "playing" ? (
           <div>
             <AutocompleteInput
               onGuess={handleGuess}
@@ -124,9 +110,7 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
                         <TableCell
                           key={colIndex}
                           guess={guessObj}
-                          target={
-                            targetWarframe
-                          } /* Ajusta el tipo según tu target real */
+                          target={target}
                           columnDef={col}
                         />
                       ))}

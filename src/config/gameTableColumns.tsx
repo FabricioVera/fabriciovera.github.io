@@ -13,6 +13,7 @@ export const warframedleColumns: ColumnDef<Warframe>[] = [
         <img
           src={getWikiThumbnail(getWarframeImageName(guess.name))}
           alt={guess.name}
+          loading="lazy"
           className="w-24 h-24 rounded-full"
         />
         <div className="m-auto">{guess.name}</div>
@@ -64,6 +65,7 @@ export const abilitydleColumns: ColumnDef<Warframe>[] = [
         <img
           src={getWikiThumbnail(getWarframeImageName(guess.name))}
           alt={guess.name}
+          loading="lazy"
           className="w-24 h-24 rounded-full"
         />
         <div className="m-auto">{guess.name}</div>
@@ -80,8 +82,10 @@ export const ArknightdleColumns: ColumnDef<OperatorDTO>[] = [
       <div className="flex flex-row gap-4 justify-start items-center">
         <img
           src={guess.imageURL}
+          alt={guess.name}
+          loading="lazy"
           className="w-24 h-24 rounded-full object-cover"
-        ></img>
+        />
         <div className="m-auto">{guess.name}</div>
       </div>
     ),
@@ -133,8 +137,10 @@ export const ArknightdleVoiceColumns: ColumnDef<OperatorDTO>[] = [
       <div className="flex flex-row gap-4 justify-start items-center">
         <img
           src={guess.imageURL}
+          alt={guess.name}
+          loading="lazy"
           className="w-24 h-24 rounded-full object-cover"
-        ></img>
+        />
         <div className="m-auto">{guess.name}</div>
       </div>
     ),

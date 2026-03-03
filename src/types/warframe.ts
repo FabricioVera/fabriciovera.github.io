@@ -19,10 +19,6 @@ export interface preWarframe {
 }
 
 export interface Warframe extends Omit<preWarframe, "releaseDate"> {
-  releaseYear: number;
-}
-
-export interface Suggestion {
-  name: string;
   imageURL: string;
+  releaseYear: number;
 }

@@ -12,7 +12,7 @@ export interface ILogger {
 class AppLogger implements ILogger {
   private isProduction = import.meta.env.PROD;
 
-  info(message: string, context?: LogContext): void {
+  info(message: string, context?: any): void {
     if (!this.isProduction) {
       console.info(`🔵 [INFO]: ${message}`, context ? context : "");
     }

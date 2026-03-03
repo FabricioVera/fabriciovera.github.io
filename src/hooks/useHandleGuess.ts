@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { GameStatus } from "src/types/game";
 import { saveDailyScore } from "@services/scoreRepository";
 
@@ -20,13 +20,13 @@ export function useHandleGuess(
 
     const guessedOp = operators.find((op) => op.name === name);
 
-    // Evita crashes y no permite adivinar duplicados
+    //* no permite adivinar duplicados
     if (!guessedOp || guesses.some((g) => g.name === name)) return;
 
     const newGuesses = [guessedOp, ...guesses];
     setGuesses(newGuesses);
 
-    // Lógica de victoria/derrota usando el nuevo arreglo
+    //* Lógica de victoria/derrota
     const isWin = guessedOp.name === target?.name;
 
     if (isWin) {
@@ -42,5 +42,19 @@ export function useHandleGuess(
     }
   };
 
-  return { guesses, setGuesses, gameStatus, setGameStatus, handleGuess };
+  /**
+   * * LIMPIA LA LISTA DE GUESSES
+   */
+  const clearGuesses = () => {
+    setGuesses([]);
+  };
+
+  return {
+    guesses,
+    setGuesses,
+    clearGuesses,
+    gameStatus,
+    setGameStatus,
+    handleGuess,
+  };
 }

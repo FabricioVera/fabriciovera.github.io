@@ -2,12 +2,11 @@
 import {
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
   type ChangeEvent,
 } from "react";
-import { motion, AnimatePresence, color } from "framer-motion";
+import { motion } from "framer-motion";
 
 // COMPONENTS
 import Pointer from "@components/ui/Pointer";
@@ -16,7 +15,7 @@ import TableHeader from "@components/ui/GuessedTable/TableHeader";
 import TableCell from "@components/ui/GuessedTable/TableCell";
 
 // TYPES
-import type { OperatorDTO, Suggestion } from "src/types/index";
+import type { OperatorDTO } from "src/types/index";
 
 // HOOKS UTILS
 import { useOperators } from "@hooks/useOperators";
@@ -33,15 +32,12 @@ import type { GameModeCONF } from "../../ui/GameModeSelector/GameModeSelector";
 import GameModeSelector from "../../ui/GameModeSelector/GameModeSelector";
 import type { GameStatus } from "../../../types/game";
 import CorrectBanner from "../CorrectBanner";
-import { useGetTarget, useSuggestions } from "./hooks/useGameHelpers";
-import {
-  loadDailyProgress,
-  saveDailyProgress,
-} from "../../../services/dailyStorageRepository";
-import { logger } from "../../../services/logger";
+import { useGetTarget, useSuggestions } from "../../../hooks/useGameHelpers";
+import { logger } from "@services/logger";
 import Button from "../../ui/General/Button";
 import { CalendarIcon, InfinityIcon } from "../../Icons";
-import { useGameModeStorage } from "../../../hooks/useGameModeStorage";
+import { useGameModeStorage } from "@hooks/useGameModeStorage";
+import { useDailyStorage } from "@hooks/useDailyStorage";
 
 interface ArknightDLEProps {
   gameId: string;
@@ -180,43 +176,6 @@ const VoicePlayer = ({ targetName }: VoiceProps) => {
   );
 };
 
-function useDailyStorage({
-  gameId,
-  operators,
-}: {
-  gameId: string;
-  operators: OperatorDTO[] | undefined;
-}) {
-  /**
-   * Carga intentos desde BD.
-   * @returns Estado guardado.
-   */
-  const loadProgress = useCallback(() => {
-    if (!operators) return null;
-    const savedState = loadDailyProgress(gameId);
-    if (!savedState) return null;
-
-    const guesses = savedState.guesses
-      .map((name: string) => operators.find((op) => op.name === name))
-      .filter(Boolean) as OperatorDTO[];
-
-    return { guesses, status: savedState.status };
-  }, [gameId, operators]);
-
-  /**
-   * Guarda progreso en BD.
-   * @param guesses Intentos.
-   */
-  const saveProgress = useCallback(
-    (guesses: OperatorDTO[], status: GameStatus) => {
-      saveDailyProgress(gameId, guesses, status);
-    },
-    [gameId],
-  );
-
-  return { loadProgress, saveProgress };
-}
-
 export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
   const playerName = useStore($playerName);
   const [gameStatus, setGameStatus] = useState<GameStatus>("loading");
@@ -225,10 +184,13 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
   const isHydrating = useRef(true);
 
   const { operators } = useOperators(setGameStatus);
-  const { target } = useGetTarget(operators, gameId, gameMode);
+  const { target } = useGetTarget(gameId, gameMode, operators);
   const { suggestions } = useSuggestions(operators);
 
-  const { loadProgress, saveProgress } = useDailyStorage({ gameId, operators });
+  const { loadProgress, saveProgress } = useDailyStorage<OperatorDTO>({
+    gameId,
+    items: operators,
+  });
 
   const { guesses, setGuesses, handleGuess } = useHandleGuess(
     target,

@@ -6,6 +6,8 @@ import Pointer from "@components/ui/Pointer";
 import AutocompleteInput from "@components/ui/Autocomplete/AutocompleteInput";
 import TableHeader from "@components/ui/GuessedTable/TableHeader";
 import TableCell from "@components/ui/GuessedTable/TableCell";
+import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
+import CorrectBanner from "../CorrectBanner";
 
 // TYPES
 import type { OperatorDTO } from "src/types/index";
@@ -13,6 +15,9 @@ import type { OperatorDTO } from "src/types/index";
 // HOOKS UTILS
 import { useOperators } from "@hooks/useOperators";
 import { useHandleGuess } from "@hooks/useHandleGuess";
+import { useGetTarget, useSuggestions } from "../../../hooks/useGameHelpers";
+import { useGameModeStorage } from "@hooks/useGameModeStorage";
+import { useDailyStorage } from "@hooks/useDailyStorage";
 
 // AUTH
 import { $playerName } from "@store/playerStore";
@@ -22,76 +27,44 @@ import { useStore } from "@nanostores/react";
 // CONFIG
 import { ArknightdleColumns } from "@config/gameTableColumns";
 import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelector";
-import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
 import type { GameStatus } from "src/types/game";
-import CorrectBanner from "../CorrectBanner";
-import { useGetTarget, useSuggestions } from "./hooks/useGameHelpers";
-import {
-  loadDailyProgress,
-  saveDailyProgress,
-} from "@services/dailyStorageRepository";
 import { logger } from "@services/logger";
-import { useGameModeStorage } from "@hooks/useGameModeStorage";
 
 interface ArknightDLEProps {
   gameId: string;
 }
 
-//* LOCAL STORAGE DAILY MANAGEMENT
-function useDailyStorage({
-  gameId,
-  operators,
-}: {
-  gameId: string;
-  operators: OperatorDTO[] | undefined;
-}) {
-  /**
-   * Carga intentos desde BD.
-   * @returns Estado guardado.
-   */
-  const loadProgress = useCallback(() => {
-    if (!operators) return null;
-    const savedState = loadDailyProgress(gameId);
-    if (!savedState) return null;
+function useGameState() {
+  const [gameState, setGameState] = useState<GameStatus>("loading");
 
-    const guesses = savedState.guesses
-      .map((name: string) => operators.find((op) => op.name === name))
-      .filter(Boolean) as OperatorDTO[];
+  const setGameStatus = (newGameState: GameStatus) => {
+    setGameState(newGameState);
+    logger.info("El estado del juego cambió a", gameState);
+  };
 
-    return { guesses, status: savedState.status };
-  }, [gameId, operators]);
-
-  /**
-   * Guarda progreso en BD.
-   * @param guesses Intentos.
-   */
-  const saveProgress = useCallback(
-    (guesses: OperatorDTO[], status: GameStatus) => {
-      saveDailyProgress(gameId, guesses, status);
-    },
-    [gameId],
-  );
-
-  return { loadProgress, saveProgress };
+  return { gameState, setGameStatus };
 }
 
 export default function ArknightDLE({ gameId }: ArknightDLEProps) {
-  // ESTADOS GLOBALES
+  //* ESTADOS GLOBALES
   const playerName = useStore($playerName);
-  const [gameStatus, setGameStatus] = useState<GameStatus>("loading");
+  const { gameState: gameStatus, setGameStatus } = useGameState();
   const { gameMode, setGameModeValue } = useGameModeStorage({ gameId });
 
   const isHydrating = useRef(true);
 
-  // CUSTOM HOOKS
+  //* CUSTOM HOOKS
   const { operators } = useOperators(setGameStatus);
-  const { target } = useGetTarget(operators, gameId, gameMode);
-  const { suggestions } = useSuggestions(operators);
+  const { target } = useGetTarget<OperatorDTO>(gameId, gameMode, operators);
+  const { suggestions } = useSuggestions<OperatorDTO>(operators);
 
-  const { loadProgress, saveProgress } = useDailyStorage({ gameId, operators });
+  const { loadProgress, saveProgress } = useDailyStorage<OperatorDTO>({
+    gameId,
+    items: operators,
+  });
 
   //* ------------- HANDLE GUESS HOOK --------------------
-  const { guesses, setGuesses, handleGuess } = useHandleGuess(
+  const { guesses, setGuesses, clearGuesses, handleGuess } = useHandleGuess(
     target,
     operators,
     playerName,
@@ -114,12 +87,12 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
         setGuesses(saved.guesses);
         setGameStatus(saved.status);
       } else {
-        setGuesses([]);
+        clearGuesses();
         setGameStatus("playing");
       }
     } catch (error) {
       logger.error(`Error de inicialización`, error);
-      setGuesses([]);
+      clearGuesses();
       setGameStatus("playing");
     } finally {
       // Liberamos el bloqueo en el siguiente ciclo de render
@@ -134,7 +107,7 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
    */
   const startRandomMode = useCallback(() => {
     setGameModeValue("random");
-    setGuesses([]);
+    clearGuesses();
     setGameStatus("playing");
   }, []);
 
