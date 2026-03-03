@@ -36,7 +36,7 @@ interface ArknightDLEProps {
   gameId: string;
 }
 
-export function useDailyStorage({
+function useDailyStorage({
   gameId,
   operators,
 }: {
@@ -209,8 +209,8 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
           <CorrectBanner imageURL={target.imageURL} name={target.name} />
         )}
         {guesses.length > 0 && (
-          <div className="w-full overflow-x-auto flex justify-center">
-            <table className="w-fit mt-4 bg-primary text-white">
+          <div className="w-full overflow-x-auto flex justify-start lg:justify-center ">
+            <table className="min-w-max table-auto mt-4 bg-primary text-white">
               <TableHeader columns={ArknightdleColumns} />
               <tbody>
                 {guesses.map((guess, index) => {

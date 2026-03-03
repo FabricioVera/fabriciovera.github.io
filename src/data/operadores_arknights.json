@@ -222,7 +222,7 @@
     "value": {
       "archetype": "Marksman",
       "data": {
-        "name": "'Justice Knight'",
+        "name": "Justice Knight",
         "nationId": "kazimierz",
         "position": "RANGED",
         "tagList": ["Robot", "Support"],

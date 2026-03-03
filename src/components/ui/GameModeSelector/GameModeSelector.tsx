@@ -1,4 +1,7 @@
+import type { ReactElement } from "react";
+
 export interface GameModeCONF {
+  gameModeLabel?: ReactElement;
   gameModeName: string;
   gameModeHook: () => void;
 }
@@ -20,7 +23,7 @@ export default function GameModeSelector({
           onClick={config.gameModeHook}
           className={`px-4 py-2 rounded-md font-bold transition-colors ${config.gameModeName === actualGameMode ? "bg-accent text-black" : "text-gray-400 hover:text-white"}`}
         >
-          {config.gameModeName}
+          {config.gameModeLabel || config.gameModeName}
         </button>
       ))}
     </div>

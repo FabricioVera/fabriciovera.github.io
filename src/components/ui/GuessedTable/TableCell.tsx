@@ -16,7 +16,7 @@ export default function TableCell<T>({
     : "";
 
   return (
-    <td className={`px-1 lg:px-4 lg:p-2 ${customClass}`}>
+    <td className={`px-1 lg:px-4 lg:p-2 whitespace-nowrap ${customClass}`}>
       {columnDef.renderCell(guess, target)}
     </td>
   );

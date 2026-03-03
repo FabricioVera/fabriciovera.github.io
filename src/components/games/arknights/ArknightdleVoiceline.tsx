@@ -100,6 +100,11 @@ const AnimatedPlayButton = ({ isPlaying, onClick }: AnimatedButtonProps) => {
   );
 };
 
+const cleanName = (name: string): string => {
+  const pattern = new RegExp("[ ]", "g");
+  return name.replace(pattern, "_");
+};
+
 const VoicePlayer = ({ targetName }: VoiceProps) => {
   const [status, setStatus] = useState<"loading" | "ready" | "error">(
     "loading",
@@ -113,14 +118,14 @@ const VoicePlayer = ({ targetName }: VoiceProps) => {
   const handleCanPlay = () => setStatus("ready");
   const handleError = () => {
     logger.warn(
-      `el audio https://arknights.wiki.gg/images/${targetName}-0${audioNum}.ogg no existe, recalculando audio...`,
+      `el audio https://arknights.wiki.gg/images/${cleanName(targetName)}-0${audioNum}.ogg no existe, recalculando audio...`,
     );
     setAudioNum(generateAudioNumber());
   };
 
   useEffect(() => {
     if (!audioRef.current) return;
-    audioRef.current.src = `https://arknights.wiki.gg/images/${targetName}-0${audioNum}.ogg`;
+    audioRef.current.src = `https://arknights.wiki.gg/images/${cleanName(targetName)}-0${audioNum}.ogg`;
     audioRef.current.volume = volume;
   }, [audioRef, audioNum, targetName]);
 
@@ -167,6 +172,7 @@ const VoicePlayer = ({ targetName }: VoiceProps) => {
         preload="metadata"
         onCanPlayThrough={handleCanPlay}
         onError={handleError}
+        onEnded={togglePlay}
       />
     </div>
   );
