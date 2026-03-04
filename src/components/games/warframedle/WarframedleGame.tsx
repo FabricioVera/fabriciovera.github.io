@@ -20,6 +20,7 @@ import type { preWarframe } from "src/types/warframe";
 // CONFIGS
 import { warframedleColumns } from "@config/gameTableColumns";
 import CorrectBanner from "../CorrectBanner";
+import { DiceRollerButton } from "../../ui/General/DiceRoller";
 
 interface WarframedleGameProps {
   gameId: string;
@@ -40,6 +41,7 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
     gameStatus,
     handleGuess,
     GameModeConfig,
+    handleRandomReroll,
   } = useWarframedle(warframeData as preWarframe[], gameId, playerName);
 
   if (target === undefined) {
@@ -77,27 +79,33 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
           actualGameMode={gameMode}
         />
 
-        {gameStatus === "playing" ? (
-          <div>
+        {gameMode === "daily" && (
+          <p className="text-secondary font-semibold">
+            Intentos restantes:{" "}
+            <span className="text-accent">{attemptsLeft}</span>
+          </p>
+        )}
+
+        <div className="flex flex-row items-end gap-2 w-full max-w-lg">
+          {gameStatus === "playing" ? (
             <AutocompleteInput
               onGuess={handleGuess}
               suggestionList={suggestions}
               guessedNames={guessedNames}
               placeholder="Ash, Mirage, Zephyr..."
             />
-            {gameMode === "daily" && (
-              <p className="text-secondary font-semibold">
-                Intentos restantes:{" "}
-                <span className="text-accent">{attemptsLeft}</span>
-              </p>
-            )}
-          </div>
-        ) : (
-          <CorrectBanner
-            imageURL={currentHeroWf.imageURL || ""}
-            name={currentHeroWf.name}
-          />
-        )}
+          ) : (
+            <CorrectBanner
+              imageURL={currentHeroWf.imageURL || ""}
+              name={currentHeroWf.name}
+            />
+          )}
+          {gameMode !== "daily" && (
+            <div className="w-12">
+              <DiceRollerButton onRoll={handleRandomReroll} />
+            </div>
+          )}
+        </div>
 
         {guesses.length > 0 && (
           <div className="overflow-x-auto justify-items-start rounded-2xl border border-(--border) bg-primary shadow-[0_0_30px_rgba(0,0,0,0.6)] mt-4 text-white">

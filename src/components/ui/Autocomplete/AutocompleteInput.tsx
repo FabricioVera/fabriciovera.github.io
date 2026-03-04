@@ -33,7 +33,7 @@ export default function AutocompleteInput<T extends BaseGameEntity>({
   } = useAutocomplete(onGuess, suggestionList, guessedNames, disabled);
 
   return (
-    <div className={`relative w-full max-w-md mx-auto`}>
+    <div className={`relative w-full max-w-3xl mx-auto`}>
       <div className="flex flex-column gap-2 justify-center mb-2">
         {/* Mensaje de error */}
         {errorMessage && (

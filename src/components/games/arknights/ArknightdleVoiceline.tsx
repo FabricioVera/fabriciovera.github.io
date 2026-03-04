@@ -309,27 +309,22 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
           gameModeCONF={GameModeConfig}
           actualGameMode={gameMode}
         />
-        {gameMode === "random" && (
-          <button
-            className="text-white text-2xl bg-primary border border-accent"
-            onClick={() => setGameStatus("lost")}
-          >
-            Rendirse
-          </button>
-        )}
-        {gameStatus === "playing" ? (
-          <AutocompleteInput
-            onGuess={handleGuess}
-            guessedNames={guessedNames}
-            suggestionList={suggestions || [{ name: "", imageURL: "" }]}
-            placeholder="Amiya, Utage, Pozemka..."
-          />
-        ) : (
-          <CorrectBanner imageURL={target.imageURL} name={target.name} />
-        )}
-
-        <div className="w-12">
-          <DiceRollerButton onRoll={handleRandomReroll} />
+        <div className="flex flex-row items-end gap-2 w-full max-w-lg">
+          {gameStatus === "playing" ? (
+            <AutocompleteInput
+              onGuess={handleGuess}
+              guessedNames={guessedNames}
+              suggestionList={suggestions || [{ name: "", imageURL: "" }]}
+              placeholder="Amiya, Utage, Pozemka..."
+            />
+          ) : (
+            <CorrectBanner imageURL={target.imageURL} name={target.name} />
+          )}
+          {gameMode !== "daily" && (
+            <div className="w-12">
+              <DiceRollerButton onRoll={handleRandomReroll} />
+            </div>
+          )}
         </div>
 
         <VoicePlayer targetName={target.name} />

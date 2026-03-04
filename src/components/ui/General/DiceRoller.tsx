@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { D1Icon, D2Icon, D3Icon, D4Icon, D5Icon, D6Icon } from "../../Icons";
 import Button from "./Button";
 
@@ -23,9 +23,10 @@ const DICE_MAP: Record<DiceValue, React.FC<DiceIconProps>> = {
   6: D6Icon,
 };
 
-const rollDice = (): DiceValue => {
-  const randomIndex = Math.floor(Math.random() * VALID_FACES.length);
-  return VALID_FACES[randomIndex];
+const rollDice = (current: DiceValue): DiceValue => {
+  const availableFaces = VALID_FACES.filter((face) => face !== current);
+  const randomIndex = Math.floor(Math.random() * availableFaces.length);
+  return availableFaces[randomIndex];
 };
 
 export const DiceFace: React.FC<DiceFaceProps> = ({ value, ...props }) => {
@@ -44,20 +45,35 @@ export const DiceRollerButton: React.FC<DiceRollerProps> = ({ onRoll }) => {
   const handleRoll = useCallback(() => {
     if (isRolling) return;
     setIsRolling(true);
-    setCurrentFace(1);
+    const previousFace = currentFace;
 
     setTimeout(() => {
-      const finalFace = rollDice();
+      const finalFace = rollDice(previousFace);
       setCurrentFace(finalFace);
       setIsRolling(false);
       if (onRoll) onRoll();
     }, 400);
   }, [isRolling, onRoll]);
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === "r") {
+        event.preventDefault();
+        handleRoll();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleRoll]);
   return (
     <Button
       onClick={handleRoll}
       aria-label="Lanzar dado"
+      title="Rollear (ctrl + R)"
       className={` rounded-xl transition-all flex flex-col items-center shadow-lg outline-none ${
         isRolling ? "scale-95 opacity-80 cursor-wait" : "cursor-pointer"
       }`}

@@ -37,7 +37,11 @@ export default function useWarframedle(
     }));
   }, [rawData]);
 
-  const { target } = useGetTarget<Warframe>(gameId, gameMode, warframes);
+  const { target, refreshTarget } = useGetTarget<Warframe>(
+    gameId,
+    gameMode,
+    warframes,
+  );
   const { suggestions } = useSuggestions<Warframe>(warframes);
   const { loadProgress, saveProgress } = useDailyStorage<Warframe>({
     gameId,
@@ -55,6 +59,13 @@ export default function useWarframedle(
   );
 
   // * ------------- Callbacks -----------
+
+  const handleRandomReroll = useCallback(() => {
+    if (gameMode !== "random") return;
+    refreshTarget();
+    clearGuesses();
+    setGameStatus("playing");
+  }, [gameMode, refreshTarget, clearGuesses, setGameStatus]);
   /**
    * Activa modo diario y lo inicializa.
    */
@@ -136,5 +147,6 @@ export default function useWarframedle(
     gameStatus,
     handleGuess,
     GameModeConfig,
+    handleRandomReroll,
   };
 }
