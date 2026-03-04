@@ -22,22 +22,23 @@ export default function Pointer({
 }: PointerProps) {
   return (
     <div
-      className={`flex w-full justify-evenly items-center p-4 rounded-xl shadow border mx-auto ${className}`}
+      className={`grid grid-cols-3 items-center w-full max-w-xl p-2 px-8 rounded-xl shadow border mx-auto ${className}`}
     >
-      <div className="hidden sm:block">
+      <div className="flex justify-start">
         <span className="font-bold">{playerName}</span>
         <RemovePlayerName />
       </div>
       <div className="text-center">
         {pointsName}: <span className="font-bold">{score}</span>
       </div>
-
-      <Leaderboard
-        gameId={gameId}
-        isDaily={isDaily}
-        ascending={ascending}
-        pointsName={pointsName}
-      />
+      <div className="flex justify-end">
+        <Leaderboard
+          gameId={gameId}
+          isDaily={isDaily}
+          ascending={ascending}
+          pointsName={pointsName}
+        />
+      </div>
     </div>
   );
 }
