@@ -3,6 +3,7 @@ import "../styles/global.css";
 import ClientRouter from "astro/components/ClientRouter.astro";
 import { Sidebar } from "./Sidebar";
 import { games } from "@data/games";
+import { fade } from "astro:transitions";
 
 interface Props {
   gameId: string;
@@ -17,7 +18,7 @@ if (!game) {
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" transition:animate={fade({ duration: "0.2s" })}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" , initial-scale='1.0"' />
