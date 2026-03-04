@@ -30,7 +30,7 @@ import { ArknightdleColumns } from "@config/gameTableColumns";
 import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelector";
 import type { GameStatus } from "src/types/game";
 import { logger } from "@services/logger";
-import { D1Icon, D6Icon } from "../../Icons";
+import { CalendarIcon, FlagIcon, InfinityIcon } from "../../Icons";
 import Button from "../../ui/General/Button";
 import { useAutocomplete } from "../../ui/Autocomplete/useAutocomplete";
 
@@ -145,10 +145,20 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
   // * Variables y configuraciones derivadas
   const GameModeConfig: GameModeCONF[] = [
     {
+      gameModeLabel: (
+        <div title="Modo Diario">
+          <CalendarIcon />
+        </div>
+      ),
       gameModeName: "daily",
       gameModeHook: startDailyMode,
     },
     {
+      gameModeLabel: (
+        <div title="Modo Infinito">
+          <InfinityIcon />
+        </div>
+      ),
       gameModeName: "random",
       gameModeHook: startRandomMode,
     },
@@ -172,9 +182,10 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
     );
   }
 
+  // * INICIO DEL RETURN ----------------
   return (
     <RequirePlayer>
-      <div className="flex flex-col items-center p-4 gap-6">
+      <div className="flex flex-col items-center p-2 gap-1">
         <Pointer
           playerName={playerName}
           score={guesses.length}
@@ -188,6 +199,18 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
           actualGameMode={gameMode}
         />
         <div className="flex flex-row items-end gap-2 w-full max-w-lg">
+          {gameMode !== "daily" && (
+            <div className="w-12">
+              <Button
+                title="Rendirse FF :("
+                aria-label="Rendirse FF :("
+                onClick={() => setGameStatus("lost")}
+                className="rounded-xl transition-all flex flex-col items-center shadow-lg outline-none p-1"
+              >
+                <FlagIcon size="100%" />
+              </Button>
+            </div>
+          )}
           {gameStatus === "playing" ? (
             <AutocompleteInput
               onGuess={handleGuess}
@@ -199,9 +222,11 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
             <CorrectBanner imageURL={target.imageURL} name={target.name} />
           )}
           {gameMode !== "daily" && (
-            <div className="w-12">
-              <DiceRollerButton onRoll={handleRandomReroll} />
-            </div>
+            <>
+              <div className="w-12">
+                <DiceRollerButton onRoll={handleRandomReroll} />
+              </div>
+            </>
           )}
         </div>
         {guesses.length > 0 && (

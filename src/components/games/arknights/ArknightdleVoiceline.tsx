@@ -35,7 +35,7 @@ import CorrectBanner from "../CorrectBanner";
 import { useGetTarget, useSuggestions } from "../../../hooks/useGameHelpers";
 import { logger } from "@services/logger";
 import Button from "../../ui/General/Button";
-import { CalendarIcon, InfinityIcon } from "../../Icons";
+import { CalendarIcon, FlagIcon, InfinityIcon } from "../../Icons";
 import { useGameModeStorage } from "@hooks/useGameModeStorage";
 import { useDailyStorage } from "@hooks/useDailyStorage";
 import { DiceRollerButton } from "../../ui/General/DiceRoller";
@@ -266,12 +266,20 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
   // * Variables y configuraciones derivadas
   const GameModeConfig: GameModeCONF[] = [
     {
-      gameModeLabel: <CalendarIcon />,
+      gameModeLabel: (
+        <div title="Modo Diario">
+          <CalendarIcon />
+        </div>
+      ),
       gameModeName: "daily",
       gameModeHook: startDailyMode,
     },
     {
-      gameModeLabel: <InfinityIcon />,
+      gameModeLabel: (
+        <div title="Modo Infinito">
+          <InfinityIcon />
+        </div>
+      ),
       gameModeName: "random",
       gameModeHook: startRandomMode,
     },
@@ -296,7 +304,7 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
 
   return (
     <RequirePlayer>
-      <div className="flex flex-col items-center p-4 gap-6">
+      <div className="flex flex-col items-center p-2 gap-1">
         <Pointer
           playerName={playerName}
           score={guesses.length}
@@ -310,6 +318,18 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
           actualGameMode={gameMode}
         />
         <div className="flex flex-row items-end gap-2 w-full max-w-lg">
+          {gameMode !== "daily" && (
+            <div className="w-12">
+              <Button
+                title="Rendirse FF :("
+                aria-label="Rendirse FF :("
+                onClick={() => setGameStatus("lost")}
+                className="rounded-xl transition-all flex flex-col items-center shadow-lg outline-none p-1"
+              >
+                <FlagIcon size="100%" />
+              </Button>
+            </div>
+          )}
           {gameStatus === "playing" ? (
             <AutocompleteInput
               onGuess={handleGuess}

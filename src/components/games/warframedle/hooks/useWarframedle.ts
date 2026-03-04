@@ -120,16 +120,6 @@ export default function useWarframedle(
   }, [guesses, gameStatus, gameMode, saveProgress]);
 
   // * Variables y configuraciones derivadas
-  const GameModeConfig: GameModeCONF[] = [
-    {
-      gameModeName: "daily",
-      gameModeHook: startDailyMode,
-    },
-    {
-      gameModeName: "random",
-      gameModeHook: startRandomMode,
-    },
-  ];
 
   const guessedNames = useMemo(() => {
     return guesses.map((g) => g.name);
@@ -146,7 +136,9 @@ export default function useWarframedle(
     guesses,
     gameStatus,
     handleGuess,
-    GameModeConfig,
+    setGameStatus,
+    startDailyMode,
+    startRandomMode,
     handleRandomReroll,
   };
 }

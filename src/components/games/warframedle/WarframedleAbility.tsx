@@ -26,6 +26,9 @@ import useWarframedleAbilities from "./hooks/useWarframedleAbilities";
 import type { preWarframe, Warframe } from "src/types/warframe";
 import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelector";
 import CorrectBanner from "../CorrectBanner";
+import { DiceRollerButton } from "../../ui/General/DiceRoller";
+import Button from "../../ui/General/Button";
+import { FlagIcon } from "../../Icons";
 
 // CONFIG
 
@@ -75,7 +78,7 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
 
   return (
     <RequirePlayer>
-      <div className="flex flex-col items-center p-4 gap-6">
+      <div className="flex flex-col items-center p-2 gap-1">
         {gameMode === "daily" && (
           <Pointer
             playerName={playerName}
@@ -90,6 +93,13 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
           gameModeCONF={GameModeConfig}
           actualGameMode={gameMode}
         />
+
+        {gameMode === "daily" && (
+          <p className="text-secondary font-semibold">
+            Intentos restantes:{" "}
+            <span className="text-accent">{attemptsLeft}</span>
+          </p>
+        )}
         <div className="relative w-40 h-40 md:w-48 md:h-48 overflow-hidden rounded-xl bg-primary shadow-lg border border-secondary flex items-center justify-center">
           <div
             style={imageVisualStyles}
@@ -97,30 +107,36 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
           />
         </div>
 
-        {status === "playing" ? (
-          <div>
-            <AutocompleteInput
-              onGuess={handleGuess}
-              suggestionList={suggestions}
-              guessedNames={guessedNames}
-              placeholder="Ash, Mirage, Zephyr..."
+        <div className="flex flex-row items-end gap-2 w-full max-w-lg">
+          {gameMode !== "daily" && (
+            <div className="w-12">
+              <Button
+                title="Rendirse FF :( NO ANDA XD"
+                aria-label="Rendirse FF :( NO ANDA XD"
+                className="rounded-xl transition-all flex flex-col items-center shadow-lg outline-none p-1"
+              >
+                <FlagIcon size="100%" />
+              </Button>
+            </div>
+          )}
+          {status === "playing" ? (
+            <div>
+              <AutocompleteInput
+                onGuess={handleGuess}
+                suggestionList={suggestions}
+                guessedNames={guessedNames}
+                placeholder="Ash, Mirage, Zephyr..."
+              />
+            </div>
+          ) : (
+            <CorrectBanner
+              imageURL={getWikiThumbnail(
+                getWarframeThumbnailName(target.warframeName),
+              )}
+              name={target.name}
             />
-            {gameMode === "daily" && (
-              <p className="text-secondary font-semibold">
-                Intentos restantes:{" "}
-                <span className="text-accent">{attemptsLeft}</span>
-              </p>
-            )}
-          </div>
-        ) : (
-          <CorrectBanner
-            imageURL={getWikiThumbnail(
-              getWarframeThumbnailName(target.warframeName),
-            )}
-            name={target.name}
-          />
-        )}
-
+          )}
+        </div>
         <table className="w-fit mt-4 bg-primary text-white">
           <TableHeader columns={abilitydleColumns} />
           <tbody>

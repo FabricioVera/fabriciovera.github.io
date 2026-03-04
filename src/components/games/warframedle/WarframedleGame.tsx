@@ -8,7 +8,9 @@ import TableHeader from "@components/ui/GuessedTable/TableHeader";
 import TableCell from "@components/ui/GuessedTable/TableCell";
 import Pointer from "../../ui/Pointer";
 import { RequirePlayer } from "@auth/index";
-import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
+import GameModeSelector, {
+  type GameModeCONF,
+} from "@components/ui/GameModeSelector/GameModeSelector";
 
 //HOOKS + UTILS
 import useWarframedle from "./hooks/useWarframedle";
@@ -21,6 +23,8 @@ import type { preWarframe } from "src/types/warframe";
 import { warframedleColumns } from "@config/gameTableColumns";
 import CorrectBanner from "../CorrectBanner";
 import { DiceRollerButton } from "../../ui/General/DiceRoller";
+import { CalendarIcon, FlagIcon, InfinityIcon } from "../../Icons";
+import Button from "../../ui/General/Button";
 
 interface WarframedleGameProps {
   gameId: string;
@@ -40,9 +44,31 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
     guesses,
     gameStatus,
     handleGuess,
-    GameModeConfig,
+    setGameStatus,
     handleRandomReroll,
+    startDailyMode,
+    startRandomMode,
   } = useWarframedle(warframeData as preWarframe[], gameId, playerName);
+  const GameModeConfig: GameModeCONF[] = [
+    {
+      gameModeLabel: (
+        <div title="Modo Diario">
+          <CalendarIcon />
+        </div>
+      ),
+      gameModeName: "daily",
+      gameModeHook: startDailyMode,
+    },
+    {
+      gameModeLabel: (
+        <div title="Modo Infinito">
+          <InfinityIcon />
+        </div>
+      ),
+      gameModeName: "random",
+      gameModeHook: startRandomMode,
+    },
+  ];
 
   if (target === undefined) {
     return (
@@ -60,20 +86,19 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
           imageURL: target.imageURL,
         };
 
+  // * INICIO DEL RETURN ----------------
   return (
     <RequirePlayer>
-      <div className="flex flex-col items-center p-4 gap-6">
-        {gameMode === "daily" && (
-          <Pointer
-            className="bg-primary/60 border border-accent text-white shadow-[0_0_25px_var(--color-accent)]"
-            playerName={playerName}
-            score={guesses.length}
-            gameId={gameId}
-            isDaily={true}
-            ascending={true}
-            pointsName="Intentos"
-          />
-        )}
+      <div className="flex flex-col items-center p-2 gap-1">
+        <Pointer
+          className="bg-primary/60 border border-accent text-white shadow-[0_0_25px_var(--color-accent)]"
+          playerName={playerName}
+          score={guesses.length}
+          gameId={gameId}
+          isDaily={true}
+          ascending={true}
+          pointsName="Intentos"
+        />
         <GameModeSelector
           gameModeCONF={GameModeConfig}
           actualGameMode={gameMode}
@@ -87,6 +112,18 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
         )}
 
         <div className="flex flex-row items-end gap-2 w-full max-w-lg">
+          {gameMode !== "daily" && (
+            <div className="w-12">
+              <Button
+                title="Rendirse FF :("
+                aria-label="Rendirse FF :("
+                onClick={() => setGameStatus("lost")}
+                className="rounded-xl transition-all flex flex-col items-center shadow-lg outline-none p-1"
+              >
+                <FlagIcon size="100%" />
+              </Button>
+            </div>
+          )}
           {gameStatus === "playing" ? (
             <AutocompleteInput
               onGuess={handleGuess}

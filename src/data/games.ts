@@ -11,15 +11,6 @@ export interface Game {
 
 export const games: Game[] = [
   {
-    id: "character-by-image",
-    name: "Adivina Personaje Anime",
-    title: "Adivina el personaje con una imagen",
-    isAvailable: true,
-    backgroundImage: "/img/bg-anime-character.jpg",
-    frontImage: "/img/fg-Ryxga.png",
-    url: "/games/character-by-image",
-  },
-  {
     id: "guess-mbti",
     name: "Adivina el MBTI",
     title: "Adivina el MBTI del personaje",

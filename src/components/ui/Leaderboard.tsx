@@ -5,6 +5,7 @@ import {
 } from "../../services/scoreRepository";
 import type { TopScore } from "src/types/score";
 import Button from "@components/ui/General/Button";
+import { TrophyIcon } from "../Icons";
 
 interface LeaderboardProps {
   gameId: string;
@@ -60,10 +61,10 @@ export function Leaderboard({
       {/* Botón Discreto en la UI */}
       <Button
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 px-3 py-1.5 font-medium text-sm"
+        className="flex items-center gap-2 p-1.5 font-medium text-sm"
         aria-label="Ver Ranking"
       >
-        Ranking
+        <TrophyIcon />
       </Button>
 
       {/* Overlay oscuro para enfocar el panel */}
