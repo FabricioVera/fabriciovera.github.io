@@ -136,6 +136,7 @@ export function Sidebar() {
                   href={link.url}
                   className="block px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-accent transition-colors"
                   onClick={() => setIsOpen(false)}
+                  data-astro-reload
                 >
                   {link.name}
                 </a>
