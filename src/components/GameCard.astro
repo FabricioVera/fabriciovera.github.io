@@ -12,7 +12,7 @@ const opacityClass = game.isAvailable
 ---
 
 <parallax-card
-  class="block w-full h-60 lg:h-80 relative rounded-2xl overflow-hidden cursor-pointer group border-2 border-gray-700"
+  class="block w-full h-60 lg:h-80 relative rounded-2xl overflow-hidden cursor-pointer group border-2 border-secondary"
   style={`perspective: 1000px;`}
 >
   <a
@@ -24,7 +24,6 @@ const opacityClass = game.isAvailable
     <div
       class="bg-layer absolute inset-[-10%] w-[120%] h-[120%] bg-cover bg-center transition-all duration-300 ease-out"
       style={`background-image: url('${game.backgroundImage}');`}
-      transition:name=`background ${game.id}`
     >
       <div class="absolute inset-0 bg-black/50 group-hover:bg-black/5"></div>
     </div>
@@ -38,13 +37,13 @@ const opacityClass = game.isAvailable
       />
     </picture>
   </a>
-
-  <h2
-    class="absolute min-h-20 w-full p-2 bg-red-950/50 bottom-0 text-white text-xl md:text-2xl font-bold mt-4 text-center text-shadow-2xs px-4 pointer-events-none"
-    transition:name=`gameTitle ${game?.id}`
-  >
-    {game.title}
-  </h2>
+  <div class="absolute min-h-20 w-full p-2 bg-red-950/50 bottom-0">
+    <h2
+      class="w-full text-white text-xl md:text-2xl font-bold my-4 text-center text-shadow-2xs px-4 pointer-events-none"
+    >
+      {game.title}
+    </h2>
+  </div>
 </parallax-card>
 
 <script>

@@ -40,7 +40,7 @@ if (!game) {
       <background
         class="fixed inset-0 bg-cover bg-center -z-10 opacity-30"
         style={`background-image: url('${game.backgroundImage}');`}
-        transition:name={`background ${game.id}`}></background>
+      ></background>
 
       <header
         class="sticky top-0 z-10 bg-primary/30
@@ -50,7 +50,6 @@ if (!game) {
         <Sidebar client:load transition:persist />
         <h1
           class="absolute left-0 w-full text-4xl py-2 font-extrabold text-transparent bg-clip-text bg-linear-to-r from-accent to-accent2 mb-2 pointer-events-none"
-          transition:name={`gameTitle ${game.id}`}
         >
           {game.title}
         </h1>
