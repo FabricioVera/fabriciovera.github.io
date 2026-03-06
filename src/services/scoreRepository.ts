@@ -12,19 +12,19 @@ export async function saveHighScore(
     .from("leaderboard")
     .select("score")
     .eq("game_id", gameId)
-    .eq("player_name", playerName);
+    .eq("player_name", playerName)
+    .order("score", { ascending: false })
+    .limit(1)
+    .maybeSingle();
 
   if (fetchError) {
     logger.error("Error al obtener el puntaje existente:", fetchError);
     return;
   }
-  for (let i = 0; i < existingScore.length; i++) {
-    if (existingScore[i].score >= score) {
-      logger.warn(
-        "El puntaje no es mayor a los existentes, no se actualizará.",
-      );
-      return;
-    }
+
+  if (existingScore && existingScore.score >= score) {
+    logger.warn("El puntaje no es mayor a los existentes, no se actualizará.");
+    return;
   }
   const { error } = await supabase
     .from("leaderboard")
@@ -77,36 +77,25 @@ export async function saveDailyScore(
     logger.error(`Error al obtener el puntaje: ${fetchError.message}`);
     throw new Error(`Error al obtener el puntaje: ${fetchError.message}`);
   }
-  if (existingRecord && existingRecord.score >= score) {
+  if (existingRecord) {
     logger.warn("El puntaje no supera al récord de hoy. No se actualizará.");
     return;
   }
   logger.info("se encontró: " + existingRecord);
 
   try {
-    if (existingRecord) {
-      const { error: updateError } = await supabase
-        .from("leaderboard")
-        .update({ score })
-        .eq("id", existingRecord.id);
+    const payload = {
+      game_id: gameId,
+      player_name: playerName,
+      score,
+    };
+    const { error: insertError } = await supabase
+      .from("leaderboard")
+      .insert([payload]);
 
-      if (updateError) {
-        logger.error(`Error al actualizar: ${updateError.message}`);
-        throw new Error(`Error al actualizar: ${updateError.message}`);
-      }
-    } else {
-      const { error: insertError } = await supabase.from("leaderboard").insert([
-        {
-          game_id: gameId,
-          player_name: playerName,
-          score,
-        },
-      ]);
-
-      if (insertError) {
-        logger.error(`Error al insertar: ${insertError.message}`);
-        throw new Error(`Error al insertar: ${insertError.message}`);
-      }
+    if (insertError) {
+      logger.error(`Error al insertar: ${insertError.message} | ${payload}`);
+      throw new Error(`Error al insertar: ${insertError.message}`);
     }
 
     logger.info("Puntaje diario guardado exitosamente");
