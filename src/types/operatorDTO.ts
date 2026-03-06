@@ -9,4 +9,5 @@ export interface OperatorDTO {
   tagList: string[];
   class: string;
   branch: string;
+  archetype: string;
 }

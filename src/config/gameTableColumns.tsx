@@ -127,6 +127,11 @@ export const ArknightdleColumns: ColumnDef<OperatorDTO>[] = [
       return guess.tagList.join(", ");
     },
   },
+  {
+    header: "Arqueotipo",
+    getCellClass: createExactMatchClass<OperatorDTO>("archetype"),
+    renderCell: (guess) => guess.archetype,
+  },
 ];
 
 export const ArknightdleVoiceColumns: ColumnDef<OperatorDTO>[] = [

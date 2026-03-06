@@ -88,6 +88,7 @@ export const fetchOperators = async (): Promise<OperatorDTO[]> => {
           ),
           class: item.wiki_class,
           branch: item.wiki_branch,
+          archetype: item.value.archetype,
         };
       })
       .filter((item: any) => !item.name.includes("Reserve"));
