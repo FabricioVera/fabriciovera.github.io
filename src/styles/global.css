@@ -62,6 +62,10 @@
   --color-calid: #bfb3a8;
 }
 
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-secondary) var(--color-primary);
+}
 .css-3d-text {
   letter-spacing: 3px;
   text-shadow:
@@ -122,4 +126,25 @@
 
   --font-game: "Orbitron", sans-serif;
   font-family: var(--font-game);
+}
+
+[data-theme="arknightdle"],
+[data-theme="arknightdlevoicelines"] {
+  @import url("https://fonts.googleapis.com/css?family=Oswald:700|Oswald:400");
+  font-family: "Oswald";
+  font-weight: 400;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-family: "Oswald";
+    font-weight: 700;
+  }
+
+  --color-primary: oklch(19.71% 0.021 211.92);
+  --color-secondary: oklch(56.76% 0.092 210.47);
+  --color-accent2: oklch(68.46% 0.12 214.15);
+  --color-accent: oklch(84.24% 0.071 207.17);
 }

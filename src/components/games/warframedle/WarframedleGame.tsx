@@ -125,12 +125,14 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
             </div>
           )}
           {gameStatus === "playing" ? (
-            <AutocompleteInput
-              onGuess={handleGuess}
-              suggestionList={suggestions}
-              guessedNames={guessedNames}
-              placeholder="Ash, Mirage, Zephyr..."
-            />
+            <div className="w-full">
+              <AutocompleteInput
+                onGuess={handleGuess}
+                suggestionList={suggestions}
+                guessedNames={guessedNames}
+                placeholder="Ash, Mirage, Zephyr..."
+              />
+            </div>
           ) : (
             <CorrectBanner
               imageURL={currentHeroWf.imageURL || ""}

@@ -208,33 +208,35 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
             </>
           )}
         </div>
-        <table className="w-fit mt-4 bg-primary text-white">
-          <TableHeader columns={abilitydleColumns} />
-          <tbody>
-            {guesses.map((guess, index) => {
-              const guessObj = warframes.find((w) => w.name === guess.name);
-              const targetObj = warframes.find(
-                (w) => w.name === target.warframeName,
-              );
-              if (!guessObj) return null;
+        <div className="max-h-48 overflow-y-scroll scrollbar-thin mt-4">
+          <table className="w-fit bg-primary text-white">
+            <TableHeader columns={abilitydleColumns} />
+            <tbody>
+              {guesses.map((guess, index) => {
+                const guessObj = warframes.find((w) => w.name === guess.name);
+                const targetObj = warframes.find(
+                  (w) => w.name === target.warframeName,
+                );
+                if (!guessObj) return null;
 
-              return (
-                <tr key={index}>
-                  {abilitydleColumns.map((col, colIndex) => (
-                    <TableCell
-                      key={colIndex + "-" + col.header}
-                      guess={guessObj}
-                      target={
-                        targetObj as unknown as Warframe
-                      } /* Ajusta el tipo según tu target real */
-                      columnDef={col}
-                    />
-                  ))}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                return (
+                  <tr key={index}>
+                    {abilitydleColumns.map((col, colIndex) => (
+                      <TableCell
+                        key={colIndex + "-" + col.header}
+                        guess={guessObj}
+                        target={
+                          targetObj as unknown as Warframe
+                        } /* Ajusta el tipo según tu target real */
+                        columnDef={col}
+                      />
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </RequirePlayer>
   );
