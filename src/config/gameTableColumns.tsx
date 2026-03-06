@@ -80,13 +80,18 @@ export const ArknightdleColumns: ColumnDef<OperatorDTO>[] = [
     getCellClass: createExactMatchClass<OperatorDTO>("name"),
     renderCell: (guess) => (
       <div className="flex flex-row gap-4 justify-start items-center">
-        <img
-          src={guess.imageURL}
-          alt={guess.name}
-          loading="lazy"
-          className="w-24 h-24 rounded-full object-cover"
-        />
-        <div className="m-auto">{guess.name}</div>
+        <a
+          href={`https://arknights.wiki.gg/wiki/${guess.name}`}
+          target="_blank"
+        >
+          <img
+            src={guess.imageURL}
+            alt={guess.name}
+            loading="lazy"
+            className="w-24 h-24 rounded-full object-cover"
+          />
+          <div className="m-auto">{guess.name}</div>
+        </a>
       </div>
     ),
   },
@@ -140,13 +145,18 @@ export const ArknightdleVoiceColumns: ColumnDef<OperatorDTO>[] = [
     getCellClass: createExactMatchClass<OperatorDTO>("name"),
     renderCell: (guess) => (
       <div className="flex flex-row gap-4 justify-start items-center">
-        <img
-          src={guess.imageURL}
-          alt={guess.name}
-          loading="lazy"
-          className="w-24 h-24 rounded-full object-cover"
-        />
-        <div className="m-auto">{guess.name}</div>
+        <a
+          href={`https://arknights.wiki.gg/wiki/${guess.name}`}
+          target="_blank"
+        >
+          <img
+            src={guess.imageURL}
+            alt={guess.name}
+            loading="lazy"
+            className="w-24 h-24 rounded-full object-cover"
+          />
+          <div className="m-auto">{guess.name}</div>
+        </a>
       </div>
     ),
   },

@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { calculateDailyTarget, calculateRandomTarget } from "@utils/game";
+import {
+  calculateDailyTarget,
+  calculateRandomTarget,
+  calculateRandomTargetArknights,
+} from "@utils/game";
 import type { BaseGameEntity } from "src/types/game";
 
 export function useGetTarget<T extends BaseGameEntity>(
@@ -14,7 +18,11 @@ export function useGetTarget<T extends BaseGameEntity>(
     if (gameMode === "daily") {
       setTarget(calculateDailyTarget(items, gameId));
     } else {
-      setTarget(calculateRandomTarget(items));
+      if (gameId === "arknightdle" || gameId === "arknightdlevoiceline") {
+        setTarget(calculateRandomTargetArknights(items));
+      } else {
+        setTarget(calculateRandomTarget(items));
+      }
     }
   }, [items, gameMode]);
 
