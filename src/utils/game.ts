@@ -23,7 +23,6 @@ export const calculateRandomTarget = (listTarget: any[]) => {
 
 export function calculateRandomTargetArknights(listTarget: any[]) {
   const randomRarity = getRandomWithWeight(numbers);
-  console.info("se eligio la rareza:", randomRarity);
 
   const filteredTargets = listTarget.filter(
     (op) => op.rarity == randomRarity.toString(),

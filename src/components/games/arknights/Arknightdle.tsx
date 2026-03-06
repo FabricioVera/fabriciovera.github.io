@@ -1,5 +1,11 @@
 // REACT
-import { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactEventHandler,
+} from "react";
 
 // COMPONENTS
 import Pointer from "@components/ui/Pointer";
@@ -26,7 +32,10 @@ import { RequirePlayer } from "@auth/index";
 import { useStore } from "@nanostores/react";
 
 // CONFIG
-import { ArknightdleColumns } from "@config/gameTableColumns";
+import {
+  ArknightdleColumns,
+  ArknightdleColumnsSprites,
+} from "@config/gameTableColumns";
 import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelector";
 import type { GameStatus } from "src/types/game";
 import { logger } from "@services/logger";
@@ -56,6 +65,16 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
   const { gameMode, setGameModeValue } = useGameModeStorage({ gameId });
 
   const isHydrating = useRef(true);
+
+  const savedSprites = localStorage.getItem(`${gameId}-Sprites-`);
+  const [sprites, setSprites] = useState<boolean>(
+    savedSprites ? JSON.parse(savedSprites) : false,
+  );
+  const spritesStatus = (e: any) => {
+    setSprites(e.target.checked);
+    localStorage.setItem(`${gameId}-Sprites-`, e.target.checked);
+  };
+  const Columns = sprites ? ArknightdleColumnsSprites : ArknightdleColumns;
 
   //* CUSTOM HOOKS
   const { operators } = useOperators(setGameStatus);
@@ -229,10 +248,27 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
             </>
           )}
         </div>
+        <label className="relative inline-flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            className="sr-only peer"
+            checked={sprites}
+            onChange={spritesStatus}
+            aria-label="Alternar estado de sprites"
+          />
+          <div
+            className="w-11 h-6 bg-primary rounded-full peer-checked:after:translate-x-full border border-secondary
+          peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 
+          after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent"
+          ></div>
+          <span className="ml-3 text-sm font-medium text-white">
+            Sprites {sprites ? "Activados" : "Desactivados"}
+          </span>
+        </label>
         {guesses.length > 0 && (
           <div className="w-full overflow-x-auto flex justify-start lg:justify-center ">
             <table className="min-w-max table-auto mt-4 bg-primary text-white">
-              <TableHeader columns={ArknightdleColumns} />
+              <TableHeader columns={Columns} />
               <tbody>
                 {guesses.map((guess, index) => {
                   const guessObj = operators?.find(
@@ -245,7 +281,7 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
 
                   return (
                     <tr key={index}>
-                      {ArknightdleColumns.map((col, colIndex) => (
+                      {Columns.map((col, colIndex) => (
                         <TableCell
                           key={colIndex + "-" + col.header}
                           guess={guessObj}

@@ -9,7 +9,7 @@ export const warframedleColumns: ColumnDef<Warframe>[] = [
     header: "Warframe",
     getCellClass: createExactMatchClass<Warframe>("name"),
     renderCell: (guess) => (
-      <div className="flex flex-row gap-4 justify-start items-center">
+      <div className="flex flex-col justify-center items-center">
         <img
           src={getWikiThumbnail(getWarframeImageName(guess.name))}
           alt={guess.name}
@@ -61,7 +61,7 @@ export const abilitydleColumns: ColumnDef<Warframe>[] = [
     header: "Warframe",
     getCellClass: createExactMatchClass<Warframe>("name"),
     renderCell: (guess) => (
-      <div className="flex flex-row gap-4 justify-start items-center">
+      <div className="flex flex-column gap-1 justify-center items-center">
         <img
           src={getWikiThumbnail(getWarframeImageName(guess.name))}
           alt={guess.name}
@@ -79,11 +79,8 @@ export const ArknightdleColumns: ColumnDef<OperatorDTO>[] = [
     header: "Operator",
     getCellClass: createExactMatchClass<OperatorDTO>("name"),
     renderCell: (guess) => (
-      <div className="flex flex-row gap-4 justify-start items-center">
-        <a
-          href={`https://arknights.wiki.gg/wiki/${guess.name}`}
-          target="_blank"
-        >
+      <a href={`https://arknights.wiki.gg/wiki/${guess.name}`} target="_blank">
+        <div className="flex flex-col justify-center items-center">
           <img
             src={guess.imageURL}
             alt={guess.name}
@@ -91,8 +88,8 @@ export const ArknightdleColumns: ColumnDef<OperatorDTO>[] = [
             className="w-24 h-24 rounded-full object-cover"
           />
           <div className="m-auto">{guess.name}</div>
-        </a>
-      </div>
+        </div>
+      </a>
     ),
   },
   {
@@ -144,11 +141,8 @@ export const ArknightdleVoiceColumns: ColumnDef<OperatorDTO>[] = [
     header: "Operator",
     getCellClass: createExactMatchClass<OperatorDTO>("name"),
     renderCell: (guess) => (
-      <div className="flex flex-row gap-4 justify-start items-center">
-        <a
-          href={`https://arknights.wiki.gg/wiki/${guess.name}`}
-          target="_blank"
-        >
+      <a href={`https://arknights.wiki.gg/wiki/${guess.name}`} target="_blank">
+        <div className="flex flex-col justify-center items-center">
           <img
             src={guess.imageURL}
             alt={guess.name}
@@ -156,8 +150,92 @@ export const ArknightdleVoiceColumns: ColumnDef<OperatorDTO>[] = [
             className="w-24 h-24 rounded-full object-cover"
           />
           <div className="m-auto">{guess.name}</div>
-        </a>
-      </div>
+        </div>
+      </a>
+    ),
+  },
+];
+
+export const ArknightdleColumnsSprites: ColumnDef<OperatorDTO>[] = [
+  {
+    header: "Operator",
+    getCellClass: createExactMatchClass<OperatorDTO>("name"),
+    renderCell: (guess) => (
+      <a href={`https://arknights.wiki.gg/wiki/${guess.name}`} target="_blank">
+        <div className="flex flex-col justify-center items-center">
+          <video
+            src={guess.spriteURL}
+            autoPlay
+            loop
+            muted
+            className="w-12 h-24 rounded-full object-cover"
+          />
+          <div className="m-auto">{guess.name}</div>
+        </div>
+      </a>
+    ),
+  },
+  {
+    header: "Género",
+    getCellClass: createExactMatchClass<OperatorDTO>("sex"),
+    renderCell: (guess) => guess.sex,
+  },
+  {
+    header: "Afiliación",
+    getCellClass: createExactMatchClass<OperatorDTO>("affiliation"),
+    renderCell: (guess) => guess.affiliation,
+  },
+  {
+    header: "Raza",
+    getCellClass: createExactMatchClass<OperatorDTO>("race"),
+    renderCell: (guess) => guess.race,
+  },
+  {
+    header: "Clase",
+    getCellClass: createExactMatchClass<OperatorDTO>("class"),
+    renderCell: (guess) => guess.class,
+  },
+  {
+    header: "Rareza",
+    getCellClass: createExactMatchClass<OperatorDTO>("rarity"),
+    renderCell: (guess, target) => {
+      if (target && target.rarity > guess.rarity) return `${guess.rarity} ⬆️`;
+      if (target && target.rarity < guess.rarity) return `${guess.rarity} ⬇️`;
+      return guess.rarity;
+    },
+  },
+  {
+    header: "Tags",
+    getCellClass: createArrayMatchClass<OperatorDTO>("tagList"),
+    renderCell: (guess) => {
+      if (!Array.isArray(guess.tagList)) return "Error de config";
+      return guess.tagList.join(", ");
+    },
+  },
+  {
+    header: "Arqueotipo",
+    getCellClass: createExactMatchClass<OperatorDTO>("archetype"),
+    renderCell: (guess) => guess.archetype,
+  },
+];
+
+export const ArknightdleVoiceColumnsSprites: ColumnDef<OperatorDTO>[] = [
+  {
+    header: "Operator",
+    getCellClass: createExactMatchClass<OperatorDTO>("name"),
+    renderCell: (guess) => (
+      <a href={`https://arknights.wiki.gg/wiki/${guess.name}`} target="_blank">
+        <div className="flex flex-col justify-center items-center">
+          <video
+            src={guess.spriteURL}
+            autoPlay
+            loop
+            muted
+            className="w-12 h-24 rounded-full object-cover"
+          />
+          <div className="m-auto">{guess.name}</div>
+        </div>
+      </a>
     ),
   },
 ];
