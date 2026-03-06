@@ -39,6 +39,7 @@ import { CalendarIcon, FlagIcon, InfinityIcon } from "../../Icons";
 import { useGameModeStorage } from "@hooks/useGameModeStorage";
 import { useDailyStorage } from "@hooks/useDailyStorage";
 import { DiceRollerButton } from "../../ui/General/DiceRoller";
+import MultiVoicePlayer from "../../ui/Player/VoicePlayer";
 
 interface ArknightDLEProps {
   gameId: string;
@@ -347,7 +348,10 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
           )}
         </div>
 
-        <VoicePlayer targetName={target.name} />
+        <MultiVoicePlayer
+          targetName={target.name}
+          guessesCount={guesses.length}
+        />
 
         <table className="w-fit mt-4 bg-primary text-white">
           <TableHeader columns={ArknightdleVoiceColumns} />

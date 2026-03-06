@@ -2,6 +2,20 @@ import { supabase } from "@lib/supabase";
 import type { TopScore } from "src/types/score";
 import { logger } from "./logger";
 
+export async function withRetry<T>(
+  fn: () => Promise<T>,
+  retries: number = 3,
+  delayMs: number = 1000,
+): Promise<T> {
+  try {
+    return await fn();
+  } catch (error) {
+    if (retries <= 1) throw error;
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+    return withRetry(fn, retries - 1, delayMs);
+  }
+}
+
 export async function saveHighScore(
   gameId: string,
   playerName: string,
@@ -62,6 +76,7 @@ export async function saveDailyScore(
   score: number,
 ): Promise<void> {
   if (score <= 0) return;
+
   const { start, end } = getTodayRange();
 
   const { data: existingRecord, error: fetchError } = await supabase
@@ -75,32 +90,49 @@ export async function saveDailyScore(
 
   if (fetchError) {
     logger.error(`Error al obtener el puntaje: ${fetchError.message}`);
-    throw new Error(`Error al obtener el puntaje: ${fetchError.message}`);
   }
+
   if (existingRecord) {
     logger.warn("El puntaje no supera al récord de hoy. No se actualizará.");
     return;
   }
+
   logger.info("se encontró: " + existingRecord);
 
-  try {
-    const payload = {
-      game_id: gameId,
-      player_name: playerName,
-      score,
-    };
-    const { error: insertError } = await supabase
-      .from("leaderboard")
-      .insert([payload]);
+  const payload = {
+    game_id: gameId,
+    player_name: playerName,
+    score,
+  };
 
-    if (insertError) {
-      logger.error(`Error al insertar: ${insertError.message} | ${payload}`);
-      throw new Error(`Error al insertar: ${insertError.message}`);
+  const maxRetries = 3;
+  const retryDelay = 500;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const { error: insertError } = await supabase
+        .from("leaderboard")
+        .insert([payload]);
+
+      if (!insertError) {
+        logger.info("Puntaje diario guardado exitosamente");
+        return;
+      }
+
+      throw insertError;
+    } catch (error: any) {
+      logger.error(`Intento ${attempt}/${maxRetries} falló: ${error.message}`);
+
+      if (attempt === maxRetries) {
+        logger.error(
+          "[LeaderboardService] Error final en saveDailyScore:",
+          error,
+        );
+        return;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, retryDelay));
     }
-
-    logger.info("Puntaje diario guardado exitosamente");
-  } catch (error) {
-    logger.error("[LeaderboardService] Error en saveDailyScore: ", error);
   }
 }
 

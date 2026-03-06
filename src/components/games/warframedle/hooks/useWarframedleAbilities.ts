@@ -10,6 +10,7 @@ import { calculateDailyTarget, calculateRandomTarget } from "@utils/game";
 import { saveDailyProgress } from "@services/dailyStorageRepository";
 import { useDailyGame } from "@hooks/useDailyGame";
 import { getWarframeThumbnailName, getWikiThumbnail } from "../../../../utils";
+import { createGameStore } from "../../../../store/useGameStorage";
 
 export type GameMode = "daily" | "random";
 
