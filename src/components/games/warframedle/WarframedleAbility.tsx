@@ -4,7 +4,6 @@ import { $playerName } from "@store/playerStore";
 
 // COMPONENTES
 import AutocompleteInput from "@components/ui/Autocomplete/AutocompleteInput";
-import { useAutocomplete } from "@components/ui/Autocomplete/useAutocomplete";
 import TableHeader from "@components/ui/GuessedTable/TableHeader";
 import TableCell from "@components/ui/GuessedTable/TableCell";
 import Pointer from "@components/ui/Pointer";
@@ -20,7 +19,6 @@ import {
   getWarframeThumbnailName,
 } from "@utils/index";
 import { abilityVisuals } from "@utils/ability";
-import useWarframedleAbilities from "./hooks/useWarframedleAbilities";
 
 // TYPES
 import type { preWarframe, Warframe } from "src/types/warframe";
@@ -29,8 +27,38 @@ import CorrectBanner from "../CorrectBanner";
 import { DiceRollerButton } from "../../ui/General/DiceRoller";
 import Button from "../../ui/General/Button";
 import { FlagIcon } from "../../Icons";
+import { createGameStore } from "../../../store/useGameStorage";
+import { getTodayDateString } from "../../../services/dailyStorageRepository";
+import {
+  saveDailyProgress,
+  loadDailyProgress,
+} from "../../../services/dailyStorageRepository";
+import { useCallback, useEffect, useMemo } from "react";
+import {
+  extractAbilitiesPool,
+  type AbilityTarget,
+} from "../../../services/abilitydleService";
+import {
+  calculateDailyTarget,
+  calculateRandomTarget,
+} from "../../../utils/game";
 
-// CONFIG
+const MAX_DAILY_ATTEMPTS = 10;
+
+const useWarframeGame = createGameStore<Warframe, AbilityTarget>({
+  gameId: "warframedleabilities",
+  maxDailyAttempts: MAX_DAILY_ATTEMPTS,
+  getTodayKey: getTodayDateString,
+  saveDailyProgress,
+  loadDailyProgress,
+  generateTarget: (items, mode, gameId) => {
+    const abilities = extractAbilitiesPool(items);
+    return mode === "daily"
+      ? calculateDailyTarget(abilities, gameId)
+      : calculateRandomTarget(abilities);
+  },
+  checkWin: (guess, target) => guess.name === target.warframeName,
+});
 
 interface AbilitydleProps {
   gameId: string;
@@ -38,24 +66,33 @@ interface AbilitydleProps {
 
 export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
   const playerName = useStore($playerName);
+  const rawData = warframeData as preWarframe[];
+  const warframes: Warframe[] = useMemo(() => {
+    return rawData.map((wf) => ({
+      ...wf,
+      imageURL: getWikiThumbnail(getWarframeThumbnailName(wf.name)),
+      releaseYear: new Date(wf.releaseDate).getFullYear(),
+    }));
+  }, [rawData]);
 
   // ESTADO DEL JUEGO
   const {
-    warframes,
-    warframeNames,
-    target,
-    attemptsLeft,
-    gameMode,
+    init,
+    guess,
+    reroll,
+    setGameMode,
+    surrender,
     guesses,
-    status,
-    handleGuess,
-    startDailyMode,
-    startRandomMode,
-  } = useWarframedleAbilities(
-    warframeData as preWarframe[],
-    gameId,
-    playerName,
-  );
+    gameStatus,
+    target,
+    gameMode,
+  } = useWarframeGame();
+
+  useEffect(() => {
+    if (warframes.length) init(warframes);
+  }, [warframes]);
+
+  const attemptsLeft = MAX_DAILY_ATTEMPTS - guesses.length;
   const guessedNames = guesses.map((g) => g.name);
   const suggestions = warframes
     .filter((wf) => !wf.isPrime && wf.name !== "Excalibur Umbra")
@@ -64,16 +101,42 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
       imageURL: getWikiThumbnail(getWarframeThumbnailName(wf.name)),
     }));
 
+  // Callbacks de UI
+  const handleGuess = useCallback(
+    (name: string) => guess(name, playerName),
+    [guess, playerName],
+  );
+  const startDailyMode = useCallback(() => setGameMode("daily"), [setGameMode]);
+  const startRandomMode = useCallback(
+    () => setGameMode("random"),
+    [setGameMode],
+  );
+
   const GameModeConfig: GameModeCONF[] = [
-    { gameModeName: "daily", gameModeHook: startDailyMode },
-    { gameModeName: "random", gameModeHook: startRandomMode },
+    {
+      gameModeLabel: <h1>Daily</h1>,
+      gameModeName: "daily",
+      gameModeHook: startDailyMode,
+    },
+    {
+      gameModeLabel: <h1>Random</h1>,
+      gameModeName: "random",
+      gameModeHook: startRandomMode,
+    },
   ];
+
+  // Renderizado temprano para evitar errores con variables indefinidas
+  if (gameStatus === "loading" || !target) {
+    return (
+      <div className="text-white text-center p-4">Cargando habilidades...</div>
+    );
+  }
 
   const imageVisualStyles = abilityVisuals(
     target?.abilityName || "default",
     getWikiThumbnail(getWarframeImageName(target.abilityName + "130xWhite")),
     guesses.length,
-    status,
+    gameStatus,
   );
 
   return (
@@ -95,7 +158,7 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
         />
 
         {gameMode === "daily" && (
-          <p className="text-secondary font-semibold">
+          <p className="text-white font-semibold">
             Intentos restantes:{" "}
             <span className="text-accent">{attemptsLeft}</span>
           </p>
@@ -111,16 +174,17 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
           {gameMode !== "daily" && (
             <div className="w-12">
               <Button
-                title="Rendirse FF :( NO ANDA XD"
-                aria-label="Rendirse FF :( NO ANDA XD"
+                onClick={surrender}
+                title="Rendirse FF :("
+                aria-label="Rendirse FF :("
                 className="rounded-xl transition-all flex flex-col items-center shadow-lg outline-none p-1"
               >
                 <FlagIcon size="100%" />
               </Button>
             </div>
           )}
-          {status === "playing" ? (
-            <div>
+          {gameStatus === "playing" ? (
+            <div className="w-full">
               <AutocompleteInput
                 onGuess={handleGuess}
                 suggestionList={suggestions}
@@ -133,8 +197,15 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
               imageURL={getWikiThumbnail(
                 getWarframeThumbnailName(target.warframeName),
               )}
-              name={target.name}
+              name={target.warframeName}
             />
+          )}
+          {gameMode !== "daily" && (
+            <>
+              <div className="w-12">
+                <DiceRollerButton onRoll={reroll} />
+              </div>
+            </>
           )}
         </div>
         <table className="w-fit mt-4 bg-primary text-white">

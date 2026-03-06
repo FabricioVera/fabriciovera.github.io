@@ -1,4 +1,4 @@
-import type { preWarframe } from "src/types/warframe";
+import type { preWarframe, Warframe } from "src/types/warframe";
 
 export interface AbilityTarget {
   warframeName: string;
@@ -9,7 +9,7 @@ export interface AbilityTarget {
 }
 
 export const extractAbilitiesPool = (
-  warframes: preWarframe[],
+  warframes: Warframe[],
 ): AbilityTarget[] => {
   const pool: AbilityTarget[] = [];
 
