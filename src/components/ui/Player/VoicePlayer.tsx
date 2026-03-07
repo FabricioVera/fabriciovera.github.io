@@ -118,22 +118,20 @@ const SingleVoicePlayer = ({
   };
 
   return (
-    <div className="flex flex-col items-center gap-3 w-full">
-      <AnimatedPlayButton isPlaying={isPlaying} onClick={togglePlay} />
-      <div className="w-full flex items-center gap-3">
-        <span className="text-sm text-gray-400 w-10">
-          {Math.round(volume * 100)}%
-        </span>
-        <input
-          type="range"
-          min={0}
-          max={1}
-          step={0.01}
-          value={volume}
-          onChange={handleVolumeChange}
-          className="w-full accent-red-600"
-        />
+    <div className="flex flex-row justify-center items-center gap-2 w-full">
+      <div className="w-24">
+        <AnimatedPlayButton isPlaying={isPlaying} onClick={togglePlay} />
       </div>
+      <span className="text-sm text-gray-400">{Math.round(volume * 100)}%</span>
+      <input
+        type="range"
+        min={0}
+        max={1}
+        step={0.01}
+        value={volume}
+        onChange={handleVolumeChange}
+        className="w-full text-accent accent-current"
+      />
       <audio
         ref={audioRef}
         preload="metadata"
