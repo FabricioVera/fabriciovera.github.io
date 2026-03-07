@@ -193,6 +193,10 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
           gameModeCONF={GameModeConfig}
           actualGameMode={gameMode}
         />
+        <MultiVoicePlayer
+          targetName={target.name}
+          guessesCount={guesses.length}
+        />
         <div className="flex flex-row items-end gap-2 w-full max-w-lg">
           {gameMode !== "daily" && (
             <div className="w-12">
@@ -222,11 +226,6 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
             </div>
           )}
         </div>
-
-        <MultiVoicePlayer
-          targetName={target.name}
-          guessesCount={guesses.length}
-        />
 
         <label className="relative inline-flex items-center cursor-pointer">
           <input

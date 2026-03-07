@@ -164,7 +164,7 @@ export default function MultiVoicePlayer({
   }, [targetName, tracks]);
 
   return (
-    <div className="flex flex-col items-center gap-4 w-full max-w-sm">
+    <div className="flex flex-col items-center gap-4 w-full max-w-sm p-2 bg-primary/20 backdrop-blur-2xl border border-secondary rounded-2xl ">
       <div className="flex gap-2 w-full justify-center">
         {tracks.map((track) => {
           const isUnlocked = guessesCount >= track.reqGuesses;
@@ -176,15 +176,15 @@ export default function MultiVoicePlayer({
               onClick={() => setActiveTrack(track.num)}
               className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
                 !isUnlocked
-                  ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                  ? "bg-gray-800 text-gray-500 cursor-not-allowed"
                   : isActive
-                    ? "bg-accent text-white"
-                    : "bg-gray-800 text-gray-300 hover:bg-gray-600"
+                    ? "bg-accent text-primary"
+                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
               }`}
             >
               {isUnlocked
                 ? track.label
-                : `${track.label} (${track.reqGuesses})`}
+                : `${track.label} (${track.reqGuesses - guessesCount})`}
             </button>
           );
         })}
