@@ -142,6 +142,20 @@ const VoicePlayer = ({ targetName }: VoiceProps) => {
     }
     setIsPlaying(!isPlaying);
   };
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === "P") {
+        event.preventDefault();
+        togglePlay();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [togglePlay]);
 
   const handleVolumeChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newVolume = Number(e.target.value);
