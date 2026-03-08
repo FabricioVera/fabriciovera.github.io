@@ -1,20 +1,8 @@
 import { create } from "zustand";
 import type { BaseGameEntity, GameStatus } from "../types/game";
-import {
-  extractAbilitiesPool,
-  type AbilityTarget,
-} from "../services/abilitydleService";
-import type { preWarframe, Warframe } from "../types";
-import { calculateDailyTarget, calculateRandomTarget } from "../utils/game";
-import {
-  loadDailyProgress,
-  saveDailyProgress,
-  type DailyGameState,
-} from "../services/dailyStorageRepository";
-import { getWarframeThumbnailName, getWikiThumbnail } from "../utils";
+import { type DailyGameState } from "../services/dailyStorageRepository";
 import { logger } from "../services/logger";
 import { saveDailyScore } from "../services/scoreRepository";
-import { useGameModeStorage } from "../hooks/useGameModeStorage";
 
 export type GameMode = "daily" | "random";
 const MAX_DAILY_ATTEMPTS = 10;

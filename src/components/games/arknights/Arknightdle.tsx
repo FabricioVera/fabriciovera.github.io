@@ -1,30 +1,15 @@
 // REACT
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type ReactEventHandler,
-} from "react";
+import { useEffect, useMemo, useState } from "react";
 
 // COMPONENTS
 import Pointer from "@components/ui/Pointer";
-import AutocompleteInput from "@components/ui/Autocomplete/AutocompleteInput";
-import TableHeader from "@components/ui/GuessedTable/TableHeader";
-import TableCell from "@components/ui/GuessedTable/TableCell";
 import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
 import CorrectBanner from "../CorrectBanner";
 import { DiceRollerButton } from "@components/ui/General/DiceRoller";
+import ToggleSwitch from "../../ui/General/ToggleSwitch";
 
 // TYPES
 import type { OperatorDTO } from "src/types/index";
-
-// HOOKS UTILS
-import { useOperators } from "@hooks/useOperators";
-import { useHandleGuess } from "@hooks/useHandleGuess";
-import { useGetTarget, useSuggestions } from "../../../hooks/useGameHelpers";
-import { useGameModeStorage } from "@hooks/useGameModeStorage";
-import { useDailyStorage } from "@hooks/useDailyStorage";
 
 // AUTH
 import { $playerName } from "@store/playerStore";
@@ -37,34 +22,37 @@ import {
   ArknightdleColumnsSprites,
 } from "@config/gameTableColumns";
 import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelector";
-import type { GameStatus } from "src/types/game";
-import { logger } from "@services/logger";
 import { CalendarIcon, FlagIcon, InfinityIcon } from "../../Icons";
 import Button from "../../ui/General/Button";
-import { useAutocomplete } from "../../ui/Autocomplete/useAutocomplete";
+import GuessesTable from "../../ui/GuessedTable/GuessesTable";
+import AutocompleteInputStore from "./ArknightsStore/AutocompleteInputStore";
+import HeroInput from "../../ui/InputHero";
+import { useArknightStore } from "./ArknightsStore/useArknightStore";
 
 interface ArknightDLEProps {
   gameId: string;
 }
 
-function useGameState() {
-  const [gameState, setGameState] = useState<GameStatus>("loading");
-
-  const setGameStatus = (newGameState: GameStatus) => {
-    setGameState(newGameState);
-    logger.info("El estado del juego cambió a", gameState);
-  };
-
-  return { gameState, setGameStatus };
-}
-
 export default function ArknightDLE({ gameId }: ArknightDLEProps) {
   //* ESTADOS GLOBALES
   const playerName = useStore($playerName);
-  const { gameState: gameStatus, setGameStatus } = useGameState();
-  const { gameMode, setGameModeValue } = useGameModeStorage({ gameId });
 
-  const isHydrating = useRef(true);
+  const {
+    gameStatus,
+    gameMode,
+    errorMessage,
+    target,
+    guesses,
+    items,
+    selectDirection,
+    init,
+    setGameMode,
+    reroll,
+    surrender,
+    getSelectedSuggestion,
+  } = useArknightStore();
+
+  const currentSelection = getSelectedSuggestion();
 
   const savedSprites = localStorage.getItem(`${gameId}-Sprites-`);
   const [sprites, setSprites] = useState<boolean>(
@@ -76,90 +64,9 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
   };
   const Columns = sprites ? ArknightdleColumnsSprites : ArknightdleColumns;
 
-  //* CUSTOM HOOKS
-  const { operators } = useOperators(setGameStatus);
-  const { target, refreshTarget } = useGetTarget<OperatorDTO>(
-    gameId,
-    gameMode,
-    operators,
-  );
-  const { suggestions } = useSuggestions<OperatorDTO>(operators);
-
-  const { loadProgress, saveProgress } = useDailyStorage<OperatorDTO>({
-    gameId,
-    items: operators,
-  });
-
-  //* ------------- HANDLE GUESS HOOK --------------------
-  const { guesses, setGuesses, clearGuesses, handleGuess } = useHandleGuess(
-    target,
-    operators,
-    playerName,
-    gameId,
-    gameMode,
-    gameStatus,
-    setGameStatus,
-  );
-
-  // * ------------- Callbacks -----------
-  const handleRandomReroll = useCallback(() => {
-    if (gameMode !== "random") return;
-    refreshTarget();
-    clearGuesses();
-    setGameStatus("playing");
-  }, [gameMode, refreshTarget, clearGuesses, setGameStatus]);
-  /**
-   * Activa modo diario y lo inicializa.
-   */
-  const startDailyMode = useCallback(() => {
-    setGameModeValue("daily");
-    isHydrating.current = true;
-    try {
-      const saved = loadProgress();
-      if (saved) {
-        setGuesses(saved.guesses);
-        setGameStatus(saved.status);
-      } else {
-        clearGuesses();
-        setGameStatus("playing");
-      }
-    } catch (error) {
-      logger.error(`Error de inicialización`, error);
-      clearGuesses();
-      setGameStatus("playing");
-    } finally {
-      // Liberamos el bloqueo en el siguiente ciclo de render
-      setTimeout(() => {
-        isHydrating.current = false;
-      }, 0);
-    }
-  }, [loadProgress, setGuesses]);
-
-  /**
-   * Activa modo aleatorio y limpia intentos.
-   */
-  const startRandomMode = useCallback(() => {
-    setGameModeValue("random");
-    clearGuesses();
-    setGameStatus("playing");
-  }, []);
-
-  // * --------- Effects ---------
   useEffect(() => {
-    if (operators && gameMode === "daily") {
-      startDailyMode();
-    }
-  }, [startDailyMode, operators]);
-
-  useEffect(() => {
-    if (
-      gameMode === "daily" &&
-      gameStatus !== "loading" &&
-      !isHydrating.current
-    ) {
-      saveProgress(guesses, gameStatus);
-    }
-  }, [guesses, gameStatus, gameMode, saveProgress]);
+    init(gameId, playerName);
+  }, [gameId, playerName, init]);
 
   // * Variables y configuraciones derivadas
   const GameModeConfig: GameModeCONF[] = [
@@ -170,7 +77,7 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
         </div>
       ),
       gameModeName: "daily",
-      gameModeHook: startDailyMode,
+      gameModeHook: () => setGameMode("daily"),
     },
     {
       gameModeLabel: (
@@ -179,24 +86,36 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
         </div>
       ),
       gameModeName: "random",
-      gameModeHook: startRandomMode,
+      gameModeHook: () => setGameMode("random"),
     },
   ];
 
   const guessedNames = guesses.map((g) => g.name);
+  const operatorMap = useMemo(() => {
+    if (!items) return new Map<string, OperatorDTO>();
+    return new Map(items.map((op) => [op.name, op]));
+  }, [items]);
 
-  if (gameStatus === "loading") {
+  // 2. Pre-calculamos los datos que la tabla necesita renderizar
+  const enrichedGuesses = useMemo(() => {
+    if (!items || guesses.length === 0 || !target) return [];
+
+    const targetObj = operatorMap.get(target.name);
+    if (!targetObj) return [];
+
+    return guesses
+      .map((guess) => {
+        const guessObj = operatorMap.get(guess.name);
+        if (!guessObj) return null;
+        return { guessObj, targetObj };
+      })
+      .filter(Boolean) as { guessObj: OperatorDTO; targetObj: OperatorDTO }[];
+  }, [guesses, operatorMap, target?.name]);
+
+  if (gameStatus === "loading" || !target) {
     return (
       <div className="w-full text-white text-2xl text-center">
         Cargando juego....
-      </div>
-    );
-  }
-
-  if (target === undefined) {
-    return (
-      <div className="w-full text-white text-2xl text-center">
-        Cargando objetivo....
       </div>
     );
   }
@@ -217,85 +136,53 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
           gameModeCONF={GameModeConfig}
           actualGameMode={gameMode}
         />
-        <div className="flex flex-row items-end gap-2 w-full max-w-lg">
+        <div className="block gap-2 justify-center mb-2">
+          {currentSelection && gameStatus === "playing" ? (
+            <HeroInput
+              className="mask-b-from-70"
+              key={currentSelection.name}
+              itemName={currentSelection.name}
+              thumbnailUrl={currentSelection.imageURL}
+              selectDirection={selectDirection}
+              isDefault={false}
+            />
+          ) : (
+            <div className="h-[25vh] md:h-[35vh]"></div>
+          )}
+          {gameStatus !== "playing" && (
+            <CorrectBanner imageURL={target.imageURL} name={target.name} />
+          )}
+        </div>
+        <div className="flex flex-row items-center gap-2 w-full max-w-lg h-lh">
           {gameMode !== "daily" && (
             <div className="w-12">
               <Button
                 title="Rendirse FF :("
                 aria-label="Rendirse FF :("
-                onClick={() => setGameStatus("lost")}
+                onClick={surrender}
                 className="rounded-xl transition-all flex flex-col items-center shadow-lg outline-none p-1"
               >
                 <FlagIcon size="100%" />
               </Button>
             </div>
           )}
-          {gameStatus === "playing" ? (
-            <AutocompleteInput
-              onGuess={handleGuess}
-              guessedNames={guessedNames}
-              suggestionList={suggestions || [{ name: "", imageURL: "" }]}
-              placeholder="Amiya, Utage, Pozemka..."
-            />
-          ) : (
-            <CorrectBanner imageURL={target.imageURL} name={target.name} />
+          {gameStatus === "playing" && (
+            <AutocompleteInputStore placeholder="Amiya, Utage, Pozemka..." />
           )}
           {gameMode !== "daily" && (
-            <>
-              <div className="w-12">
-                <DiceRollerButton onRoll={handleRandomReroll} />
-              </div>
-            </>
+            <div className="w-12">
+              <DiceRollerButton onRoll={reroll} />
+            </div>
           )}
         </div>
-        <label className="relative inline-flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            className="sr-only peer"
-            checked={sprites}
-            onChange={spritesStatus}
-            aria-label="Alternar estado de sprites"
-          />
-          <div
-            className="w-11 h-6 bg-primary rounded-full peer-checked:after:translate-x-full border border-secondary
-          peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 
-          after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent"
-          ></div>
-          <span className="ml-3 text-sm font-medium text-white">
-            Sprites {sprites ? "Activados" : "Desactivados"}
-          </span>
-        </label>
-        {guesses.length > 0 && (
-          <div className="w-full overflow-x-auto flex justify-start lg:justify-center ">
-            <table className="min-w-max table-auto mt-4 bg-primary text-white">
-              <TableHeader columns={Columns} />
-              <tbody>
-                {guesses.map((guess, index) => {
-                  const guessObj = operators?.find(
-                    (operator) => operator.name === guess.name,
-                  );
-                  const targetObj = operators?.find(
-                    (operator) => operator.name === target.name,
-                  );
-                  if (!guessObj) return null;
 
-                  return (
-                    <tr key={index}>
-                      {Columns.map((col, colIndex) => (
-                        <TableCell
-                          key={colIndex + "-" + col.header}
-                          guess={guessObj}
-                          target={targetObj as unknown as OperatorDTO}
-                          columnDef={col}
-                        />
-                      ))}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <ToggleSwitch
+          label="Sprites"
+          checked={sprites}
+          onChange={spritesStatus}
+        />
+
+        <GuessesTable guesses={enrichedGuesses} columns={Columns} />
       </div>
     </RequirePlayer>
   );

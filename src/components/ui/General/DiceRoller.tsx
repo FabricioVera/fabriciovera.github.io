@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { D1Icon, D2Icon, D3Icon, D4Icon, D5Icon, D6Icon } from "../../Icons";
 import Button from "./Button";
 
-const VALID_FACES: DiceValue[] = [1, 2, 3, 4, 5, 6];
 type DiceValue = 1 | 2 | 3 | 4 | 5 | 6;
+const VALID_FACES: DiceValue[] = [1, 2, 3, 4, 5, 6];
 
 export interface DiceIconProps {
   size?: number | string;
@@ -25,8 +26,7 @@ const DICE_MAP: Record<DiceValue, React.FC<DiceIconProps>> = {
 
 const rollDice = (current: DiceValue): DiceValue => {
   const availableFaces = VALID_FACES.filter((face) => face !== current);
-  const randomIndex = Math.floor(Math.random() * availableFaces.length);
-  return availableFaces[randomIndex];
+  return availableFaces[Math.floor(Math.random() * availableFaces.length)];
 };
 
 export const DiceFace: React.FC<DiceFaceProps> = ({ value, ...props }) => {
@@ -42,17 +42,14 @@ export const DiceRollerButton: React.FC<DiceRollerProps> = ({ onRoll }) => {
   const [currentFace, setCurrentFace] = useState<DiceValue>(1);
   const [isRolling, setIsRolling] = useState<boolean>(false);
 
-  const handleRoll = useCallback(() => {
+  const handleRoll = useCallback(async () => {
     if (isRolling) return;
     setIsRolling(true);
-    const previousFace = currentFace;
+    await new Promise((resolve) => setTimeout(resolve, 400));
 
-    setTimeout(() => {
-      const finalFace = rollDice(previousFace);
-      setCurrentFace(finalFace);
-      setIsRolling(false);
-      if (onRoll) onRoll();
-    }, 400);
+    setCurrentFace((prev) => rollDice(prev));
+    setIsRolling(false);
+    if (onRoll) onRoll();
   }, [isRolling, onRoll]);
 
   useEffect(() => {
@@ -74,17 +71,15 @@ export const DiceRollerButton: React.FC<DiceRollerProps> = ({ onRoll }) => {
       onClick={handleRoll}
       aria-label="Lanzar dado"
       title="Rollear (ctrl + R)"
-      className={` rounded-xl transition-all flex flex-col items-center shadow-lg outline-none ${
-        isRolling ? "scale-95 opacity-80 cursor-wait" : "cursor-pointer"
-      }`}
+      className={` rounded-xl flex flex-col items-center shadow-lg outline-none overflow-hidden`}
     >
-      <div
-        className={` text-white flex items-center justify-center transition-transform duration-400 ease-in-out p-1 ${
-          isRolling ? "rotate-90 scale-0" : "rotate-0 scale-100"
-        }`}
+      <motion.div
+        animate={isRolling ? { rotate: 90, scale: 0 } : { rotate: 0, scale: 1 }}
+        transition={{ duration: 0.4, ease: "easeInOut" }}
+        className="text-accent2 flex items-center justify-center p-1"
       >
         <DiceFace value={currentFace} size="100%" />
-      </div>
+      </motion.div>
     </Button>
   );
 };

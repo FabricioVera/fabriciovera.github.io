@@ -2,7 +2,7 @@ import { $playerName } from "@store/playerStore";
 import Button from "@components/ui/General/Button";
 export default function NameForm() {
   return (
-    <div className="max-w-2xl mx-auto p-8 bg-linear-to-br from-primary to-secondary border border-accent rounded-xl shadow-lg mt-10 my-4 text-center">
+    <div className="max-w-2xl mx-auto p-8 bg-linear-to-br from-primary to-secondary border border-accent rounded-xl shadow-lg mt-10 mb-4 text-center">
       <h2 className="text-xl font-bold text-neutral-primary">
         Para empezar a jugar dime tu nombre o apodo
       </h2>

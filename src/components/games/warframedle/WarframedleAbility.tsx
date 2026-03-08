@@ -75,7 +75,7 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
     }));
   }, [rawData]);
 
-  // ESTADO DEL JUEGO
+  // * INICIAR EL ESTADO DEL JUEGO ---------------
   const {
     init,
     guess,
@@ -87,7 +87,6 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
     target,
     gameMode,
   } = useWarframeGame();
-
   useEffect(() => {
     if (warframes.length) init(warframes);
   }, [warframes]);
