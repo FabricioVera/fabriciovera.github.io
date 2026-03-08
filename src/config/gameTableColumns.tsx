@@ -168,7 +168,7 @@ export const ArknightdleColumnsSprites: ColumnDef<OperatorDTO>[] = [
             autoPlay
             loop
             muted
-            className="w-12 h-24 rounded-full object-cover"
+            className="w-24 h-24 object-cover"
           />
           <div className="m-auto">{guess.name}</div>
         </div>
@@ -231,7 +231,7 @@ export const ArknightdleVoiceColumnsSprites: ColumnDef<OperatorDTO>[] = [
             autoPlay
             loop
             muted
-            className="w-12 h-24 rounded-full object-cover"
+            className="w-24 h-24 object-cover"
           />
           <div className="m-auto">{guess.name}</div>
         </div>

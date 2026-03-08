@@ -119,7 +119,7 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
   return (
     <RequirePlayer>
       <div className="flex flex-col items-center gap-1 p-2">
-        <section className="flex flex-col w-full max-w-lg gap-2 bg-primary/80 rounded-2xl border border-secondary">
+        <section className="flex flex-col w-full max-w-lg gap-2 bg-primary/80 rounded-2xl border border-secondary/30">
           <Pointer
             className="text-white"
             playerName={playerName}

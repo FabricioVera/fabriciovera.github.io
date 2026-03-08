@@ -76,7 +76,7 @@ export const DiceRollerButton: React.FC<DiceRollerProps> = ({ onRoll }) => {
       <motion.div
         animate={isRolling ? { rotate: 90, scale: 0 } : { rotate: 0, scale: 1 }}
         transition={{ duration: 0.4, ease: "easeInOut" }}
-        className="text-accent2 flex items-center justify-center p-1"
+        className="text-white flex items-center justify-center p-1"
       >
         <DiceFace value={currentFace} size="100%" />
       </motion.div>
