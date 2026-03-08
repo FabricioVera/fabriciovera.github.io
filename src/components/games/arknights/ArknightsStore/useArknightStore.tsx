@@ -46,6 +46,7 @@ interface ArknightsGameState {
   resetAutocomplete: () => void;
 
   getSelectedSuggestion: () => OperatorDTO | null;
+  setSelectedSuggestionIndex: (index: number) => void;
 }
 
 export const useArknightStore = create<ArknightsGameState>((set, get) => ({
@@ -281,5 +282,9 @@ export const useArknightStore = create<ArknightsGameState>((set, get) => ({
       return filteredSuggestions[selectedSuggestionIndex];
     }
     return null;
+  },
+
+  setSelectedSuggestionIndex: (index: number) => {
+    set({ selectedSuggestionIndex: index });
   },
 }));

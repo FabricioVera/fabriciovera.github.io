@@ -19,6 +19,7 @@ export default function AutocompleteInputStore({
     setInputValue,
     guess,
     handleKeyDown,
+    setSelectedSuggestionIndex,
   } = useArknightStore();
 
   const hasValidInput = inputValue.trim().length > 0;
@@ -97,6 +98,7 @@ export default function AutocompleteInputStore({
                 e.preventDefault();
                 onSuggestionClick(sug.name);
               }}
+              onMouseEnter={() => setSelectedSuggestionIndex(index)}
               className={`flex flex-row items-center gap-3 px-4 py-2 cursor-pointer transition-all ${
                 index === selectedSuggestionIndex
                   ? "bg-accent text-black shadow-[0_0_15px_var(--color-accent)]"
