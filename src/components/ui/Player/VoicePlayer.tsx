@@ -6,6 +6,7 @@ import {
   GAME_VOICE_TRACKS,
   type VoiceTrackConfig,
 } from "src/config/arknightdleVoiceTracks";
+import type { GameStatus } from "../../../types/game";
 
 /**
  * Limpia el nombre. P: name(string). R: string (limpio).
@@ -144,6 +145,7 @@ const SingleVoicePlayer = ({
 };
 
 interface MultiVoiceProps {
+  gameStatus: GameStatus;
   targetName: string;
   guessesCount: number;
   tracks?: VoiceTrackConfig[];
@@ -154,6 +156,7 @@ interface MultiVoiceProps {
  * Efectos: Cambia estado activo. Excepciones: Ninguna.
  */
 export default function MultiVoicePlayer({
+  gameStatus,
   targetName,
   guessesCount,
   tracks = GAME_VOICE_TRACKS,
@@ -167,7 +170,8 @@ export default function MultiVoicePlayer({
     <div className="flex flex-col items-center gap-4 w-full max-w-sm p-2 bg-primary/20 backdrop-blur-2xl border border-secondary rounded-2xl ">
       <div className="flex gap-2 w-full justify-center">
         {tracks.map((track) => {
-          const isUnlocked = guessesCount >= track.reqGuesses;
+          const isUnlocked =
+            guessesCount >= track.reqGuesses || gameStatus !== "playing";
           const isActive = activeTrack === track.num;
           return (
             <button
