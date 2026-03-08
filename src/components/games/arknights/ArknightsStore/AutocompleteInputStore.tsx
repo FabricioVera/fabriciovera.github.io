@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useArknightStore } from "./useArknightStore";
 
 interface GuessInputProps {
@@ -11,6 +11,7 @@ export default function AutocompleteInputStore({
   placeholder,
 }: GuessInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
 
   const {
     inputValue,
@@ -54,6 +55,21 @@ export default function AutocompleteInputStore({
     setTimeout(() => inputRef.current?.focus(), 50);
   };
 
+  useEffect(() => {
+    if (listRef.current && selectedSuggestionIndex >= 0) {
+      const selectedItem = listRef.current.children[
+        selectedSuggestionIndex
+      ] as HTMLLIElement;
+
+      if (selectedItem) {
+        selectedItem.scrollIntoView({
+          behavior: "auto",
+          block: "nearest",
+        });
+      }
+    }
+  }, [selectedSuggestionIndex]);
+
   return (
     <div className={`relative w-full max-w-3xl mx-auto`}>
       {/* FORMULARIO DEL INPUT */}
@@ -89,6 +105,7 @@ export default function AutocompleteInputStore({
       {/* SUGERENCIAS */}
       {hasValidInput && hasSuggestions && (
         <ul
+          ref={listRef}
           className={`absolute top-full z-10 w-full rounded mt-1 max-h-60 overflow-y-auto bg-primary border border-secondary`}
         >
           {filteredSuggestions.map((sug, index) => (
