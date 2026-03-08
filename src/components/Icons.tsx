@@ -130,3 +130,23 @@ export const TrophyIcon = ({
     />
   </svg>
 );
+
+export const HexagonIcon = ({
+  size = 18,
+  color = "currentColor",
+}: {
+  size?: string | number;
+  color?: string;
+}) => (
+  <svg viewBox="0 0 16 16" fill={color} width={size} height={size}>
+    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+    <g
+      id="SVGRepo_tracerCarrier"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    ></g>
+    <g id="SVGRepo_iconCarrier">
+      <path d="M8 0L15 4V12L8 16L1 12V4L8 0Z" fill={color}></path>{" "}
+    </g>
+  </svg>
+);

@@ -12,7 +12,7 @@ interface PointerProps {
 }
 
 export default function Pointer({
-  className = "bg-primary border-accent text-white",
+  className = "",
   playerName,
   score,
   gameId,
@@ -22,7 +22,7 @@ export default function Pointer({
 }: PointerProps) {
   return (
     <div
-      className={`grid grid-cols-3 items-center w-full max-w-xl p-2 px-8 rounded-xl shadow border mx-auto ${className}`}
+      className={`grid grid-cols-3 items-center w-full max-w-xl p-2 px-8 mx-auto ${className}`}
     >
       <div className="flex justify-start">
         <span className="font-bold">{playerName}</span>

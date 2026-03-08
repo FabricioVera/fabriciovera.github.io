@@ -29,6 +29,9 @@ import { useArknightStore } from "./ArknightsStore/useArknightStore";
 import ToggleSwitch from "../../ui/General/ToggleSwitch";
 import AutocompleteInputStore from "./ArknightsStore/AutocompleteInputStore";
 import HeroInput from "../../ui/InputHero";
+import { LevelCard } from "./specificComponents/LevelCard";
+import { gamesArknightdle } from "../../../data/games";
+import { LevelPath } from "./specificComponents/ArknightsLevelPath";
 
 interface ArknightDLEProps {
   gameId: string;
@@ -91,7 +94,19 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
     },
   ];
 
-  const guessedNames = guesses.map((g) => g.name);
+  const gamesLinked = gamesArknightdle.map((game) => {
+    const savedStatus = localStorage.getItem(`daily-state-${game.id}`);
+    const isCompleted = savedStatus ? JSON.parse(savedStatus) : "";
+    const status = isCompleted.status || "playing";
+    return {
+      id: game.id,
+      name: game.name,
+      completed: status !== "playing",
+      active: gameId === game.id,
+      url: game.url,
+      title: game.title,
+    };
+  });
 
   if (gameStatus === "loading" || !target) {
     return (
@@ -103,69 +118,80 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
 
   return (
     <RequirePlayer>
-      <div className="flex flex-col items-center p-2 gap-1">
-        <Pointer
-          playerName={playerName}
-          score={guesses.length}
-          gameId={gameId}
-          isDaily={true}
-          ascending={true}
-          pointsName="Intentos"
-        />
-        <GameModeSelector
-          gameModeCONF={GameModeConfig}
-          actualGameMode={gameMode}
-        />
-        <MultiVoicePlayer
-          gameStatus={gameStatus}
-          targetName={target.name}
-          guessesCount={guesses.length}
-        />
-        <div className="block gap-2 justify-center mb-2">
-          {currentSelection && gameStatus === "playing" ? (
-            <HeroInput
-              className="mask-b-from-70"
-              key={currentSelection.name}
-              itemName={currentSelection.name}
-              thumbnailUrl={currentSelection.imageURL}
-              selectDirection={selectDirection}
-              isDefault={false}
-            />
-          ) : (
-            <div className="h-[25vh] md:h-[35vh]"></div>
-          )}
-          {gameStatus !== "playing" && (
-            <CorrectBanner imageURL={target.imageURL} name={target.name} />
-          )}
-        </div>
-        <div className="flex flex-row items-center gap-2 w-full max-w-lg h-lh">
-          {gameMode !== "daily" && (
-            <div className="w-12">
-              <Button
-                title="Rendirse FF :("
-                aria-label="Rendirse FF :("
-                onClick={surrender}
-                className="rounded-xl transition-all flex flex-col items-center shadow-lg outline-none p-1"
-              >
-                <FlagIcon size="100%" />
-              </Button>
-            </div>
-          )}
-          {gameStatus === "playing" && (
-            <AutocompleteInputStore placeholder="Amiya, Utage, Pozemka..." />
-          )}
-          {gameMode !== "daily" && (
-            <div className="w-12">
-              <DiceRollerButton onRoll={reroll} />
-            </div>
-          )}
-        </div>
+      <div className="flex flex-col items-center gap-1 p-2">
+        <section className="flex flex-col w-full max-w-lg gap-2 bg-primary/80 rounded-2xl border border-secondary">
+          <Pointer
+            className="text-white"
+            playerName={playerName}
+            score={guesses.length}
+            gameId={gameId}
+            isDaily={true}
+            ascending={true}
+            pointsName="Intentos"
+          />
 
-        <ToggleSwitch
-          label="Sprites"
-          checked={sprites}
-          onChange={spritesStatus}
-        />
+          <div className="mt-4">
+            <LevelPath levels={gamesLinked} />
+          </div>
+        </section>
+        <section className="w-full max-w-lg flex flex-col items-center gap-3 bg-primary/80 p-2 rounded-2xl shadow-xl border border-secondary/30 backdrop-blur-sm">
+          <GameModeSelector
+            gameModeCONF={GameModeConfig}
+            actualGameMode={gameMode}
+          />
+          <MultiVoicePlayer
+            gameStatus={gameStatus}
+            targetName={target.name}
+            guessesCount={guesses.length}
+          />
+          <div className="block gap-2 justify-center mb-2">
+            {currentSelection && gameStatus === "playing" ? (
+              <HeroInput
+                className="mask-b-from-70"
+                key={currentSelection.name}
+                itemName={currentSelection.name}
+                thumbnailUrl={currentSelection.imageURL}
+                selectDirection={selectDirection}
+                isDefault={false}
+              />
+            ) : (
+              <div
+                className={`${gameStatus === "playing" ? "h-[25vh] md:h-[35vh]" : ""}`}
+              ></div>
+            )}
+            {gameStatus !== "playing" && (
+              <CorrectBanner imageURL={target.imageURL} name={target.name} />
+            )}
+          </div>
+          <div className="flex flex-row items-center gap-2 w-full max-w-lg h-lh">
+            {gameMode !== "daily" && (
+              <div className="w-12">
+                <Button
+                  title="Rendirse FF :("
+                  aria-label="Rendirse FF :("
+                  onClick={surrender}
+                  className="rounded-xl transition-all flex flex-col items-center shadow-lg outline-none p-1"
+                >
+                  <FlagIcon size="100%" />
+                </Button>
+              </div>
+            )}
+            {gameStatus === "playing" && (
+              <AutocompleteInputStore placeholder="Amiya, Utage, Pozemka..." />
+            )}
+            {gameMode !== "daily" && (
+              <div className="w-12">
+                <DiceRollerButton onRoll={reroll} />
+              </div>
+            )}
+          </div>
+
+          <ToggleSwitch
+            label="Sprites"
+            checked={sprites}
+            onChange={spritesStatus}
+          />
+        </section>
         <table className="w-fit mt-4 bg-primary text-white">
           <TableHeader columns={Columns} />
           <tbody>

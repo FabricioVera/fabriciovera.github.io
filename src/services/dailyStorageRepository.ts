@@ -1,8 +1,7 @@
 // src/services/dailyStorageRepository.ts
-import type { Warframe } from "src/types/warframe";
 import type { GameStatus } from "src/types/game";
 
-const DAILY_STORAGE_KEY = "warframedle_daily_state";
+const DAILY_STORAGE_KEY = "daily-state-";
 
 export interface DailyGameState {
   date: string;

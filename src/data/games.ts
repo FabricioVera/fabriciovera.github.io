@@ -9,6 +9,13 @@ export interface Game {
   hideTitle?: boolean;
 }
 
+export interface GameLinked {
+  id: string;
+  name: string;
+  title: string;
+  url: string;
+}
+
 export const games: Game[] = [
   {
     id: "guess-mbti",
@@ -58,5 +65,20 @@ export const games: Game[] = [
     frontImage: "/img/Muelsyse.webp",
     url: "/games/arknightdlevoicelines",
     hideTitle: false,
+  },
+];
+
+export const gamesArknightdle: GameLinked[] = [
+  {
+    id: "arknightdle",
+    name: "AD-1",
+    title: "Arknightdle: Classic",
+    url: "/games/arknightdle",
+  },
+  {
+    id: "arknightdlevoicelines",
+    name: "AD-2",
+    title: "Arknightdle: VoiceLine",
+    url: "/games/arknightdlevoicelines",
   },
 ];

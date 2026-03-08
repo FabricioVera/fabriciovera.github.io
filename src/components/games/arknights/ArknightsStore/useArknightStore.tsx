@@ -67,7 +67,10 @@ export const useArknightStore = create<ArknightsGameState>((set, get) => ({
   init: async (gameId, playerName) => {
     set({ gameId, playerName, gameStatus: "loading" });
     try {
-      const savedMode = localStorage.getItem(`${gameId}-GameMode`) || "daily";
+      const savedStatus = localStorage.getItem(`daily-state-${gameId}`);
+      const isCompleted = savedStatus ? JSON.parse(savedStatus) : "";
+      const status = isCompleted.status || "playing";
+      const savedMode = status === "playing" ? "daily" : "random";
       const operators = await fetchOperators();
 
       let initialTarget;
