@@ -32,6 +32,7 @@ import { gamesArknightdle } from "../../../data/games";
 import { LevelPath } from "./specificComponents/ArknightsLevelPath";
 import { ArknightsCorrectBanner } from "./specificComponents/ArknightsCorrectBanner";
 import { getWikiImageURL } from "../../../utils";
+import { loadDailyProgress } from "../../../services/dailyStorageRepository";
 
 interface ArknightDLEProps {
   gameId: string;
@@ -116,9 +117,8 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
   }, [guesses, operatorMap, target?.name]);
 
   const gamesLinked = gamesArknightdle.map((game) => {
-    const savedStatus = localStorage.getItem(`daily-state-${game.id}`);
-    const isCompleted = savedStatus ? JSON.parse(savedStatus) : "";
-    const status = isCompleted.status || "playing";
+    const savedStatus = loadDailyProgress(game.id);
+    const status = savedStatus?.status || "playing";
     return {
       id: game.id,
       name: game.name,

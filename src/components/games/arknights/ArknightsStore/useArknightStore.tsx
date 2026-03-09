@@ -15,6 +15,32 @@ import { logger } from "../../../../services/logger";
 import { saveDailyScore } from "../../../../services/scoreRepository";
 import { normalizeString } from "../../../../utils";
 
+export const gameModeRepository = {
+  save: (gameId: string, mode: string): void => {
+    try {
+      const endOfDay = new Date();
+      endOfDay.setHours(23, 59, 59, 999);
+
+      // Formato: gameId-GameMode=daily; expires=...; path=/
+      document.cookie = `${gameId}-GameMode=${mode};expires=${endOfDay.toUTCString()};path=/`;
+    } catch (error) {
+      console.error("[gameModeRepository] Error al guardar la cookie:", error);
+    }
+  },
+
+  load: (gameId: string): string | null => {
+    try {
+      const match = document.cookie.match(
+        new RegExp(`(^| )${gameId}-GameMode=([^;]+)`),
+      );
+      return match ? match[2] : null;
+    } catch (error) {
+      console.error("[gameModeRepository] Error al leer la cookie:", error);
+      return null;
+    }
+  },
+};
+
 interface ArknightsGameState {
   //* Game State
   gameId: string;
@@ -71,7 +97,9 @@ export const useArknightStore = create<ArknightsGameState>((set, get) => ({
       const savedStatus = localStorage.getItem(`daily-state-${gameId}`);
       const isCompleted = savedStatus ? JSON.parse(savedStatus) : "";
       const status = isCompleted.status || "playing";
-      const savedMode = status === "playing" ? "daily" : "random";
+      const cookieGameMode = gameModeRepository.load(gameId);
+      const savedMode =
+        cookieGameMode || (status === "playing" ? "daily" : "random");
       const operators = await fetchOperators();
 
       let initialTarget;
@@ -87,9 +115,9 @@ export const useArknightStore = create<ArknightsGameState>((set, get) => ({
 
       let initialGuesses: OperatorDTO[] = [];
       let initialStatus: GameStatus = "playing";
+      const savedState = loadDailyProgress(gameId);
 
       if (savedMode === "daily") {
-        const savedState = loadDailyProgress(gameId);
         if (savedState) {
           initialGuesses = savedState.guesses
             .map((name: string) => operators.find((op) => op.name === name))
@@ -114,7 +142,7 @@ export const useArknightStore = create<ArknightsGameState>((set, get) => ({
 
   setGameMode: (gameMode) => {
     const { items, gameId } = get();
-    localStorage.setItem(`${gameId}-GameMode`, gameMode);
+    gameModeRepository.save(gameId, gameMode);
 
     const newTarget =
       gameMode === "daily"

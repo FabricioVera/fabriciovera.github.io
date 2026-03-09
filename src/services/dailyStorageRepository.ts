@@ -31,16 +31,25 @@ export const saveDailyProgress = (
 };
 
 export const loadDailyProgress = (game_id: string): DailyGameState | null => {
-  const savedState = localStorage.getItem(DAILY_STORAGE_KEY + game_id);
+  const storageKey = DAILY_STORAGE_KEY + game_id;
+  const savedState = localStorage.getItem(storageKey);
   if (!savedState) return null;
 
   try {
     const parsed = JSON.parse(savedState) as DailyGameState;
+
     if (parsed.date === getTodayDateString()) {
       return parsed;
     }
+
+    localStorage.removeItem(storageKey);
+    return null;
   } catch (error) {
-    console.error("Error parsing daily storage", error);
+    console.error(
+      "[dailyStorageRepository] Error parsing daily storage",
+      error,
+    );
+    localStorage.removeItem(storageKey);
+    return null;
   }
-  return null;
 };
