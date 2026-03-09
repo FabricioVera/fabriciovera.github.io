@@ -32,6 +32,8 @@ import HeroInput from "../../ui/InputHero";
 import { LevelCard } from "./specificComponents/LevelCard";
 import { gamesArknightdle } from "../../../data/games";
 import { LevelPath } from "./specificComponents/ArknightsLevelPath";
+import { ArknightsCorrectBanner } from "./specificComponents/ArknightsCorrectBanner";
+import { getWikiImageURL } from "../../../utils";
 
 interface ArknightDLEProps {
   gameId: string;
@@ -108,6 +110,8 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
     };
   });
 
+  const stars = guesses.length < 5 ? 3 : guesses.length < 10 ? 2 : 1;
+
   if (gameStatus === "loading" || !target) {
     return (
       <div className="w-full text-white text-2xl text-center">
@@ -144,8 +148,8 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
             targetName={target.name}
             guessesCount={guesses.length}
           />
-          <div className="block gap-2 justify-center mb-2">
-            {currentSelection && gameStatus === "playing" ? (
+          {currentSelection && gameStatus === "playing" ? (
+            <div className="block gap-2 justify-center mb-2">
               <HeroInput
                 className="mask-b-from-70"
                 key={currentSelection.name}
@@ -154,15 +158,19 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
                 selectDirection={selectDirection}
                 isDefault={false}
               />
-            ) : (
-              <div
-                className={`${gameStatus === "playing" ? "h-[25vh] md:h-[35vh]" : ""}`}
-              ></div>
-            )}
-            {gameStatus !== "playing" && (
-              <CorrectBanner imageURL={target.imageURL} name={target.name} />
-            )}
-          </div>
+            </div>
+          ) : (
+            <div
+              className={`${gameStatus === "playing" ? "h-[25vh] md:h-[35vh]" : ""}`}
+            ></div>
+          )}
+          {gameStatus !== "playing" && (
+            <ArknightsCorrectBanner
+              imageURL={getWikiImageURL(target.name)}
+              name={target.name}
+              stars={stars}
+            />
+          )}
           <div className="flex flex-row items-center gap-2 w-full max-w-lg h-lh">
             {gameMode !== "daily" && (
               <div className="w-12">

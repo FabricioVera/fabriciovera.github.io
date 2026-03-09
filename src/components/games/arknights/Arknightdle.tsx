@@ -30,6 +30,8 @@ import HeroInput from "../../ui/InputHero";
 import { useArknightStore } from "./ArknightsStore/useArknightStore";
 import { gamesArknightdle } from "../../../data/games";
 import { LevelPath } from "./specificComponents/ArknightsLevelPath";
+import { ArknightsCorrectBanner } from "./specificComponents/ArknightsCorrectBanner";
+import { getWikiImageURL } from "../../../utils";
 
 interface ArknightDLEProps {
   gameId: string;
@@ -126,6 +128,7 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
       title: game.title,
     };
   });
+  const stars = guesses.length < 5 ? 3 : guesses.length < 10 ? 2 : 1;
 
   if (gameStatus === "loading" || !target) {
     return (
@@ -174,7 +177,11 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
               ></div>
             )}
             {gameStatus !== "playing" && (
-              <CorrectBanner imageURL={target.imageURL} name={target.name} />
+              <ArknightsCorrectBanner
+                imageURL={getWikiImageURL(target.name)}
+                name={target.name}
+                stars={stars}
+              />
             )}
           </div>
           <div className="flex flex-row items-center gap-2 w-full max-w-lg h-lh">
