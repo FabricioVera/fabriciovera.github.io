@@ -156,7 +156,7 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
             guessesCount={guesses.length}
           />
           {currentSelection && gameStatus === "playing" ? (
-            <div className="block gap-2 justify-center mb-2">
+            <div className="gap-2 justify-center mb-2">
               <HeroInput
                 className="mask-b-from-70"
                 key={currentSelection.name}

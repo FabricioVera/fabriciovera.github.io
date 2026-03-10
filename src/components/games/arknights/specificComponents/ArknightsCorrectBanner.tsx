@@ -8,14 +8,14 @@ interface Props {
 
 export function ArknightsCorrectBanner({ imageURL, name, stars }: Props) {
   return (
-    <div className="relative w-full h-full max-h-[70vh] rounded-2xl ">
+    <div className="relative w-full h-full">
       <img
-        className={`w-full h-[70vh] object-scale-down object-top-right transition-transform duration-1000 ease-out`}
+        className={`w-full h-[70vh] object-contain object-right transition-transform duration-1000 ease-out`}
         src={imageURL}
         alt={`Respuesta correcta: ${name}`}
         loading="lazy"
       />
-      <div className="absolute top-5 w-full flex flex-col  justify-center pointer-events-none z-20">
+      <div className="absolute top-5 w-full whitespace-break-spaces max-w-[60%] flex flex-col justify-center pointer-events-none z-20">
         {stars === 0 ? (
           <h2 className="text-lg md:text-xl font-semibold text-red-600 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">
             Operation Failed

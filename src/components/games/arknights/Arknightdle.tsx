@@ -168,8 +168,8 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
             gameModeCONF={GameModeConfig}
             actualGameMode={gameMode}
           />
-          <div className="block gap-2 justify-center mb-2">
-            {currentSelection && gameStatus === "playing" ? (
+          {currentSelection && gameStatus === "playing" ? (
+            <div className="block gap-2 justify-center mb-2">
               <HeroInput
                 className="mask-b-from-70"
                 key={currentSelection.name}
@@ -178,19 +178,19 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
                 selectDirection={selectDirection}
                 isDefault={false}
               />
-            ) : (
-              <div
-                className={`${gameStatus === "playing" ? "h-[25vh] md:h-[35vh]" : ""}`}
-              ></div>
-            )}
-            {gameStatus !== "playing" && (
-              <ArknightsCorrectBanner
-                imageURL={getWikiImageURL(target.name)}
-                name={target.name}
-                stars={stars}
-              />
-            )}
-          </div>
+            </div>
+          ) : (
+            <div
+              className={`${gameStatus === "playing" ? "h-[25vh] md:h-[35vh]" : ""}`}
+            ></div>
+          )}
+          {gameStatus !== "playing" && (
+            <ArknightsCorrectBanner
+              imageURL={getWikiImageURL(target.name)}
+              name={target.name}
+              stars={stars}
+            />
+          )}
           <div className="flex flex-row items-center gap-2 w-full max-w-lg h-lh">
             {gameMode !== "daily" && (
               <div className="w-12">
