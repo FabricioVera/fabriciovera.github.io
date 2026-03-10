@@ -19,7 +19,7 @@ export function LevelCard({
     <a
       href={url}
       title={title}
-      className={`relative flex flex-col justify-center items-center h-fit w-fit ${active ? "bg-gray-500" : "bg-white"}`}
+      className={`relative flex flex-col justify-center items-center h-fit w-fit ${active ? "bg-gray-500" : "bg-white"} hover:bg-gray-300`}
     >
       <div
         className="w-full bg-black text-white px-4"
@@ -35,7 +35,7 @@ export function LevelCard({
       >
         <HexagonIcon />
       </div>
-      <div className="ml-3 font-semibold">{name}</div>
+      <div className="ml-3 font-semibold ">{name}</div>
     </a>
   );
 }

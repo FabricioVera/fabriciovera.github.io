@@ -141,9 +141,7 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
             pointsName="Intentos"
           />
 
-          <div className="mt-4">
-            <LevelPath levels={gamesLinked} />
-          </div>
+          <LevelPath levels={gamesLinked} />
         </section>
         <section className="w-full max-w-lg flex flex-col items-center gap-3 bg-primary/80 p-2 rounded-2xl shadow-xl border border-secondary/30 backdrop-blur-sm">
           <GameModeSelector
