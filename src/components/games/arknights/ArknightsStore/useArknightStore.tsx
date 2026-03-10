@@ -53,11 +53,6 @@ interface ArknightsGameState {
   guesses: OperatorDTO[];
   maxDailyAttempts: number;
 
-  //* Autocomplete State
-  inputValue: string;
-  filteredSuggestions: OperatorDTO[];
-  selectedSuggestionIndex: number;
-  selectDirection: number;
   errorMessage: string | null;
 
   //* Actions
@@ -66,14 +61,6 @@ interface ArknightsGameState {
   guess: (name: string) => void;
   reroll: () => void;
   surrender: () => void;
-
-  //* Autocomplete Actions
-  setInputValue: (value: string) => void;
-  handleKeyDown: (key: string) => void;
-  resetAutocomplete: () => void;
-
-  getSelectedSuggestion: () => OperatorDTO | null;
-  setSelectedSuggestionIndex: (index: number) => void;
 }
 
 export const useArknightStore = create<ArknightsGameState>((set, get) => ({
@@ -86,10 +73,6 @@ export const useArknightStore = create<ArknightsGameState>((set, get) => ({
   guesses: [],
   maxDailyAttempts: Infinity,
 
-  inputValue: "",
-  filteredSuggestions: [],
-  selectedSuggestionIndex: -1,
-  selectDirection: -1,
   errorMessage: null,
 
   init: async (gameId, playerName) => {
@@ -171,7 +154,6 @@ export const useArknightStore = create<ArknightsGameState>((set, get) => ({
       guesses: newGuesses,
       gameStatus: newStatus,
     });
-    get().resetAutocomplete();
   },
 
   guess: (name) => {
@@ -208,8 +190,6 @@ export const useArknightStore = create<ArknightsGameState>((set, get) => ({
     if (gameMode === "daily") {
       saveDailyProgress(gameId, newGuesses, newStatus);
     }
-
-    get().resetAutocomplete();
   },
 
   reroll: () => {
@@ -227,102 +207,9 @@ export const useArknightStore = create<ArknightsGameState>((set, get) => ({
     }
 
     set({ target: newTarget, guesses: [], gameStatus: "playing" });
-    get().resetAutocomplete();
   },
 
   surrender: () => {
     set({ gameStatus: "lost" });
-  },
-
-  setInputValue: (value) => {
-    const { items, guesses, gameId } = get();
-
-    if (!value.trim()) {
-      set({
-        inputValue: value,
-        filteredSuggestions: [],
-        selectedSuggestionIndex: -1,
-        errorMessage: null,
-      });
-      return;
-    }
-
-    const normalizedValue = normalizeString(value);
-    const normalizedGuessedNames = guesses.map((g) => normalizeString(g.name));
-
-    let filtered = items
-      .filter(
-        (item) =>
-          normalizeString(item.name).includes(normalizedValue) &&
-          !normalizedGuessedNames.includes(normalizeString(item.name)),
-      )
-      .sort((a, b) => {
-        const nameA = normalizeString(a.name);
-        const nameB = normalizeString(b.name);
-        const aStartsWith = nameA.startsWith(normalizedValue);
-        const bStartsWith = nameB.startsWith(normalizedValue);
-
-        if (aStartsWith && !bStartsWith) return -1;
-        if (!aStartsWith && bStartsWith) return 1;
-        return nameA.localeCompare(nameB);
-      });
-
-    if (gameId === "arknightdleability") {
-      filtered = filtered.filter((item) => item.rarity > 3);
-    }
-
-    set({
-      inputValue: value,
-      filteredSuggestions: filtered,
-      selectedSuggestionIndex: filtered.length > 0 ? 0 : -1,
-      errorMessage: null,
-    });
-  },
-
-  handleKeyDown: (key) => {
-    const { filteredSuggestions, selectedSuggestionIndex } = get();
-    if (filteredSuggestions.length === 0) return;
-
-    if (key === "ArrowUp") {
-      set({
-        selectedSuggestionIndex:
-          selectedSuggestionIndex <= 0
-            ? filteredSuggestions.length - 1
-            : selectedSuggestionIndex - 1,
-        selectDirection: -1,
-      });
-    } else if (key === "ArrowDown") {
-      set({
-        selectedSuggestionIndex:
-          selectedSuggestionIndex >= filteredSuggestions.length - 1
-            ? 0
-            : selectedSuggestionIndex + 1,
-        selectDirection: 1,
-      });
-    } else if (key === "Enter" && selectedSuggestionIndex >= 0) {
-      const selectedName = filteredSuggestions[selectedSuggestionIndex].name;
-      get().guess(selectedName);
-    }
-  },
-
-  resetAutocomplete: () => {
-    set({
-      inputValue: "",
-      filteredSuggestions: [],
-      selectedSuggestionIndex: -1,
-      errorMessage: null,
-    });
-  },
-
-  getSelectedSuggestion: () => {
-    const { filteredSuggestions, selectedSuggestionIndex } = get();
-    if (selectedSuggestionIndex >= 0 && filteredSuggestions.length > 0) {
-      return filteredSuggestions[selectedSuggestionIndex];
-    }
-    return null;
-  },
-
-  setSelectedSuggestionIndex: (index: number) => {
-    set({ selectedSuggestionIndex: index });
   },
 }));

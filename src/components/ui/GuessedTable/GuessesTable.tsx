@@ -18,7 +18,7 @@ export default function GuessesTable({ guesses, columns }: GuessesTableProps) {
 
   return (
     <div className="w-full overflow-x-auto flex justify-start lg:justify-center mt-4">
-      <table className="min-w-max table-auto bg-primary text-neutral-primary shadow-md rounded-lg overflow-hidden">
+      <table className="min-w-max table-auto mb-40 bg-primary text-neutral-primary shadow-md rounded-lg overflow-hidden">
         <TableHeader columns={columns} />
         <tbody>
           {guesses.map((enrichedGuess, index) => (

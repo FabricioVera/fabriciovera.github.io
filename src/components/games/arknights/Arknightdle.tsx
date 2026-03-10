@@ -4,9 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 // COMPONENTS
 import Pointer from "@components/ui/Pointer";
 import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
-import CorrectBanner from "../CorrectBanner";
 import { DiceRollerButton } from "@components/ui/General/DiceRoller";
-import ToggleSwitch from "../../ui/General/ToggleSwitch";
+import ToggleSwitch from "@components/ui/General/ToggleSwitch";
 
 // TYPES
 import type { OperatorDTO } from "src/types/index";
@@ -26,7 +25,7 @@ import { CalendarIcon, FlagIcon, InfinityIcon } from "../../Icons";
 import Button from "../../ui/General/Button";
 import GuessesTable from "../../ui/GuessedTable/GuessesTable";
 import AutocompleteInputStore from "./ArknightsStore/AutocompleteInputStore";
-import HeroInput from "../../ui/InputHero";
+import ArknightsHeroInput from "./specificComponents/ArknightsInputHero";
 import { useArknightStore } from "./ArknightsStore/useArknightStore";
 import { gamesArknightdle } from "../../../data/games";
 import { LevelPath } from "./specificComponents/ArknightsLevelPath";
@@ -49,15 +48,11 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
     target,
     guesses,
     items,
-    selectDirection,
     init,
     setGameMode,
     reroll,
     surrender,
-    getSelectedSuggestion,
   } = useArknightStore();
-
-  const currentSelection = getSelectedSuggestion();
 
   const savedSprites = localStorage.getItem(`${gameId}-Sprites-`);
   const [sprites, setSprites] = useState<boolean>(
@@ -166,23 +161,9 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
             gameModeCONF={GameModeConfig}
             actualGameMode={gameMode}
           />
-          {currentSelection && gameStatus === "playing" ? (
-            <div className="block gap-2 justify-center mb-2">
-              <HeroInput
-                className="mask-b-from-70"
-                key={currentSelection.name}
-                itemName={currentSelection.name}
-                thumbnailUrl={currentSelection.imageURL}
-                selectDirection={selectDirection}
-                isDefault={false}
-              />
-            </div>
+          {gameStatus === "playing" ? (
+            <ArknightsHeroInput className="mask-b-from-70" isDefault={false} />
           ) : (
-            <div
-              className={`${gameStatus === "playing" ? "h-[25vh] md:h-[35vh]" : ""}`}
-            ></div>
-          )}
-          {gameStatus !== "playing" && (
             <ArknightsCorrectBanner
               imageURL={getWikiImageURL(target.name)}
               name={target.name}

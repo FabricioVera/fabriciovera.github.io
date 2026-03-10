@@ -74,7 +74,7 @@ export function LevelPath({ levels }: LevelPathProps) {
         return (
           <div
             key={level.id}
-            className="absolute z-10"
+            className="absolute"
             style={{
               top: y,
               left: x,

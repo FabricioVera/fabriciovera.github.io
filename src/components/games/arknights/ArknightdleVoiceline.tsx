@@ -35,6 +35,7 @@ import { LevelPath } from "./specificComponents/ArknightsLevelPath";
 import { ArknightsCorrectBanner } from "./specificComponents/ArknightsCorrectBanner";
 import { getWikiImageURL } from "../../../utils";
 import { loadDailyProgress } from "../../../services/dailyStorageRepository";
+import ArknightsHeroInput from "./specificComponents/ArknightsInputHero";
 
 interface ArknightDLEProps {
   gameId: string;
@@ -50,18 +51,14 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
     target,
     guesses,
     items,
-    selectDirection,
     init,
     setGameMode,
     reroll,
     surrender,
-    getSelectedSuggestion,
   } = useArknightStore();
   useEffect(() => {
     init(gameId, playerName);
   }, [gameId, playerName, init]);
-
-  const currentSelection = getSelectedSuggestion();
 
   const savedSprites = localStorage.getItem(`${gameId}-Sprites-`);
   const [sprites, setSprites] = useState<boolean>(
@@ -153,21 +150,13 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
             targetName={target.name}
             guessesCount={guesses.length}
           />
-          {currentSelection && gameStatus === "playing" ? (
-            <div className="gap-2 justify-center mb-2">
-              <HeroInput
+          {gameStatus === "playing" && (
+            <div className="block gap-2 justify-center mb-2">
+              <ArknightsHeroInput
                 className="mask-b-from-70"
-                key={currentSelection.name}
-                itemName={currentSelection.name}
-                thumbnailUrl={currentSelection.imageURL}
-                selectDirection={selectDirection}
                 isDefault={false}
               />
             </div>
-          ) : (
-            <div
-              className={`${gameStatus === "playing" ? "h-[25vh] md:h-[35vh]" : ""}`}
-            ></div>
           )}
           {gameStatus !== "playing" && (
             <ArknightsCorrectBanner
@@ -205,35 +194,33 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
             onChange={spritesStatus}
           />
         </section>
-        {guesses.length !== 0 && (
-          <table className="w-fit mt-4 bg-primary text-white">
-            <TableHeader columns={Columns} />
-            <tbody>
-              {guesses.map((guess, index) => {
-                const guessObj = items?.find(
-                  (operator) => operator.name === guess.name,
-                );
-                const targetObj = items?.find(
-                  (operator) => operator.name === target.name,
-                );
-                if (!guessObj) return null;
+        <table className="w-fit mt-4 mb-40 bg-primary text-white">
+          <TableHeader columns={Columns} />
+          <tbody>
+            {guesses.map((guess, index) => {
+              const guessObj = items?.find(
+                (operator) => operator.name === guess.name,
+              );
+              const targetObj = items?.find(
+                (operator) => operator.name === target.name,
+              );
+              if (!guessObj) return null;
 
-                return (
-                  <tr key={index}>
-                    {Columns.map((col, colIndex) => (
-                      <TableCell
-                        key={colIndex + "-" + col.header}
-                        guess={guessObj}
-                        target={targetObj as unknown as OperatorDTO}
-                        columnDef={col}
-                      />
-                    ))}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        )}
+              return (
+                <tr key={index}>
+                  {Columns.map((col, colIndex) => (
+                    <TableCell
+                      key={colIndex + "-" + col.header}
+                      guess={guessObj}
+                      target={targetObj as unknown as OperatorDTO}
+                      columnDef={col}
+                    />
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </RequirePlayer>
   );

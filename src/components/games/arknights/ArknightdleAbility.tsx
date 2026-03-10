@@ -35,6 +35,7 @@ import { LevelPath } from "./specificComponents/ArknightsLevelPath";
 import { ArknightsCorrectBanner } from "./specificComponents/ArknightsCorrectBanner";
 import { getWikiImageURL, getWikiImageURLAbility } from "../../../utils";
 import { loadDailyProgress } from "../../../services/dailyStorageRepository";
+import ArknightsHeroInput from "./specificComponents/ArknightsInputHero";
 
 interface ArknightDLEProps {
   gameId: string;
@@ -50,18 +51,14 @@ export default function ArknightDLEAbility({ gameId }: ArknightDLEProps) {
     target,
     guesses,
     items,
-    selectDirection,
     init,
     setGameMode,
     reroll,
     surrender,
-    getSelectedSuggestion,
   } = useArknightStore();
   useEffect(() => {
     init(gameId, playerName);
   }, [gameId, playerName, init]);
-
-  const currentSelection = getSelectedSuggestion();
 
   const savedSprites = localStorage.getItem(`${gameId}-Sprites-`);
   const [sprites, setSprites] = useState<boolean>(
@@ -186,23 +183,9 @@ export default function ArknightDLEAbility({ gameId }: ArknightDLEProps) {
             </div>
           </div>
 
-          {currentSelection && gameStatus === "playing" ? (
-            <div className="gap-2 justify-center">
-              <HeroInput
-                className="mask-b-from-70"
-                key={currentSelection.name}
-                itemName={currentSelection.name}
-                thumbnailUrl={currentSelection.imageURL}
-                selectDirection={selectDirection}
-                isDefault={false}
-              />
-            </div>
+          {gameStatus === "playing" ? (
+            <ArknightsHeroInput className="mask-b-from-70" isDefault={false} />
           ) : (
-            <div
-              className={`${gameStatus === "playing" ? "h-[25vh] md:h-[35vh]" : ""}`}
-            ></div>
-          )}
-          {gameStatus !== "playing" && (
             <ArknightsCorrectBanner
               imageURL={getWikiImageURL(target.name)}
               name={target.name}

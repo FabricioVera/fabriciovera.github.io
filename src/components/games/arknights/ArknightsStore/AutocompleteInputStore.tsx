@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useArknightStore } from "./useArknightStore";
+import { useAutocompleteStore } from "./useAutocompleteStorage";
 
 interface GuessInputProps {
   disabled?: boolean;
@@ -12,33 +13,42 @@ export default function AutocompleteInputStore({
 }: GuessInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+  const items = useArknightStore((state) => state.items);
+  const guesses = useArknightStore((state) => state.guesses);
+  const gameId = useArknightStore((state) => state.gameId);
+  const guess = useArknightStore((state) => state.guess);
 
   const {
     inputValue,
     filteredSuggestions,
     selectedSuggestionIndex,
-    setInputValue,
-    guess,
-    handleKeyDown,
+    setSearch,
+    navigateList,
+    resetSearch,
     setSelectedSuggestionIndex,
-  } = useArknightStore();
+  } = useAutocompleteStore();
 
   const hasValidInput = inputValue.trim().length > 0;
   const hasSuggestions =
     Array.isArray(filteredSuggestions) && filteredSuggestions.length > 0;
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
+    setSearch(e.target.value, items, guesses, gameId);
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "Enter") {
+    if (e.key === "ArrowUp") {
       e.preventDefault();
-      handleKeyDown(e.key);
-      if (e.key === "Enter") {
-        // Pequeño timeout para mantener el foco después del reset del form
-        setTimeout(() => inputRef.current?.focus(), 50);
-      }
+      navigateList("up");
+    }
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      navigateList("down");
+    }
+    if (e.key === "Enter" && selectedSuggestionIndex >= 0) {
+      e.preventDefault();
+      guess(filteredSuggestions[selectedSuggestionIndex].name);
+      resetSearch();
     }
   };
 
