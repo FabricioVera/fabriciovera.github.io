@@ -6,6 +6,7 @@ import WarframedleGame from "@components/games/warframedle/WarframedleGame";
 import WarframedleAbilitiesGame from "@components/games/warframedle/WarframedleAbility";
 import ArknightDLE from "src/components/games/arknights/Arknightdle.tsx";
 import ArknightDLEVoiceline from "../../components/games/arknights/ArknightdleVoiceline";
+import ArknightDLEAbility from "../../components/games/arknights/ArknightdleAbility";
 
 interface Props {
   gameId: string;
@@ -40,6 +41,11 @@ const { gameId } = Astro.props;
     <ArknightDLEVoiceline client:only="React" gameId={gameId} />
   )
 }
+{
+  gameId === "arknightdleability" && (
+    <ArknightDLEAbility client:only="React" gameId={gameId} />
+  )
+}
 
 {/* Manejo de Errores: Fallback visual si el ID no está mapeado */}
 {
@@ -50,6 +56,7 @@ const { gameId } = Astro.props;
     "warframedleabilities",
     "arknightdle",
     "arknightdlevoicelines",
+    "arknightdleability",
   ].includes(gameId) && (
     <div class="flex flex-col items-center justify-center p-10 text-center bg-primary/80 rounded-xl border border-secondary/50">
       <h2 class="text-2xl font-bold text-accent2 mb-2">

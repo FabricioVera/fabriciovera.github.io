@@ -6,6 +6,7 @@ import {
   calculateDailyTarget,
   calculateRandomTarget,
   calculateRandomTargetArknights,
+  calculateRandomTargetArknightsAbility,
 } from "../../../../utils/game";
 import {
   loadDailyProgress,
@@ -215,10 +216,15 @@ export const useArknightStore = create<ArknightsGameState>((set, get) => ({
     const { gameMode, items, gameId } = get();
     if (gameMode !== "random") return;
 
-    const newTarget =
-      gameId === "arknightdle" || gameId === "arknightdlevoiceline"
-        ? calculateRandomTargetArknights(items)
-        : calculateRandomTarget(items);
+    let newTarget;
+    if (gameId === "arknightdleability") {
+      newTarget = calculateRandomTargetArknightsAbility(items);
+    } else {
+      newTarget =
+        gameId === "arknightdle" || gameId === "arknightdlevoiceline"
+          ? calculateRandomTargetArknights(items)
+          : calculateRandomTarget(items);
+    }
 
     set({ target: newTarget, guesses: [], gameStatus: "playing" });
     get().resetAutocomplete();
@@ -229,7 +235,7 @@ export const useArknightStore = create<ArknightsGameState>((set, get) => ({
   },
 
   setInputValue: (value) => {
-    const { items, guesses } = get();
+    const { items, guesses, gameId } = get();
 
     if (!value.trim()) {
       set({
@@ -244,7 +250,7 @@ export const useArknightStore = create<ArknightsGameState>((set, get) => ({
     const normalizedValue = normalizeString(value);
     const normalizedGuessedNames = guesses.map((g) => normalizeString(g.name));
 
-    const filtered = items
+    let filtered = items
       .filter(
         (item) =>
           normalizeString(item.name).includes(normalizedValue) &&
@@ -260,6 +266,10 @@ export const useArknightStore = create<ArknightsGameState>((set, get) => ({
         if (!aStartsWith && bStartsWith) return 1;
         return nameA.localeCompare(nameB);
       });
+
+    if (gameId === "arknightdleability") {
+      filtered = filtered.filter((item) => item.rarity > 3);
+    }
 
     set({
       inputValue: value,

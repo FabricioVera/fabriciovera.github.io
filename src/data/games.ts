@@ -66,6 +66,16 @@ export const games: Game[] = [
     url: "/games/arknightdlevoicelines",
     hideTitle: false,
   },
+  {
+    id: "arknightdleability",
+    name: "Arknightdle: Ability",
+    title: "Arknightdle: Ability",
+    isAvailable: true,
+    backgroundImage: "/img/bg-arknightdle.webp",
+    frontImage: "/img/Muelsyse.webp",
+    url: "/games/arknightdleability",
+    hideTitle: false,
+  },
 ];
 
 export const gamesArknightdle: GameLinked[] = [
@@ -80,5 +90,11 @@ export const gamesArknightdle: GameLinked[] = [
     name: "AD-2",
     title: "Arknightdle: VoiceLine",
     url: "/games/arknightdlevoicelines",
+  },
+  {
+    id: "arknightdleability",
+    name: "AD-3",
+    title: "Arknightdle: Ability",
+    url: "/games/arknightdleability",
   },
 ];

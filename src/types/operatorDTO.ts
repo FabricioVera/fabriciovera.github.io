@@ -2,7 +2,7 @@ export interface OperatorDTO {
   name: string;
   imageURL: string;
   spriteURL: string;
-  rarity: string;
+  rarity: number;
   sex?: string;
   race?: string;
   affiliation: string;

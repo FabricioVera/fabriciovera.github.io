@@ -129,6 +129,7 @@
 }
 
 [data-theme="arknightdle"],
+[data-theme="arknightdleability"],
 [data-theme="arknightdlevoicelines"] {
   @import url("https://fonts.googleapis.com/css?family=Oswald:700|Oswald:400");
   font-family: "Oswald";
@@ -153,20 +154,20 @@
   --scrollbar-track-color: transparent;
 }
 
-:root {
+body {
   overflow-y: scroll;
   scrollbar-color: #1b8595 #09181b;
   scrollbar-width: thin;
 }
 
-:root::-webkit-scrollbar {
+body::-webkit-scrollbar {
   width: 4px;
 }
-:root::-webkit-scrollbar-thumb {
+body::-webkit-scrollbar-thumb {
   border-radius: 2px;
   background-color: #1b8595;
 }
 
-:root::-webkit-scrollbar-track {
+body::-webkit-scrollbar-track {
   background-color: #09181b;
 }

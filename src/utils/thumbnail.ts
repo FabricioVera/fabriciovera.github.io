@@ -34,3 +34,10 @@ export function getWikiSpriteURL(name: string) {
     "https://arknights.wiki.gg/images/" + name.replace(pattern, "_") + ".webm"
   );
 }
+
+export function getWikiImageURLAbility(name: string) {
+  const pattern = new RegExp("[ ]", "g");
+  return (
+    "https://arknights.wiki.gg/images/" + name.replace(pattern, "") + ".png"
+  );
+}
