@@ -69,6 +69,7 @@ export default function AutocompleteInput<T extends BaseGameEntity>({
           onKeyDown={handleKeyDown}
           disabled={disabled}
           placeholder={placeholder}
+          autoComplete="off"
         />
         <button
           type="submit"

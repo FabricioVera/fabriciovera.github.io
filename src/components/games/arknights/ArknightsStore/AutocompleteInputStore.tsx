@@ -84,6 +84,7 @@ export default function AutocompleteInputStore({
           onKeyDown={onKeyDown}
           disabled={disabled}
           placeholder={placeholder}
+          autoComplete="off"
         />
         <button
           type="submit"
