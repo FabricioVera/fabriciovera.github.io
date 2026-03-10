@@ -17,7 +17,7 @@ export function ArknightsCorrectBanner({ imageURL, name, stars }: Props) {
       />
       <div className="absolute top-5 w-full flex flex-col  justify-center pointer-events-none z-20">
         {stars === 0 ? (
-          <h2 className="text-lg md:text-xl font-semibold text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">
+          <h2 className="text-lg md:text-xl font-semibold text-red-600 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">
             Operation Failed
           </h2>
         ) : (

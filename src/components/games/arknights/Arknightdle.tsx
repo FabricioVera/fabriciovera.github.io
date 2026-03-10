@@ -128,7 +128,14 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
       title: game.title,
     };
   });
-  const stars = guesses.length < 5 ? 3 : guesses.length < 10 ? 2 : 1;
+  const stars =
+    gameStatus === "lost"
+      ? 0
+      : guesses.length < 5
+        ? 3
+        : guesses.length < 10
+          ? 2
+          : 1;
 
   if (gameStatus === "loading" || !target) {
     return (
