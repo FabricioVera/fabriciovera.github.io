@@ -6,6 +6,7 @@ import Pointer from "@components/ui/Pointer";
 import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
 import { DiceRollerButton } from "@components/ui/General/DiceRoller";
 import ToggleSwitch from "@components/ui/General/ToggleSwitch";
+import { ArknightsMascot } from "../../ui/Mascot/ArknightsMascot";
 
 // TYPES
 import type { OperatorDTO } from "src/types/index";
@@ -143,6 +144,7 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
   // * INICIO DEL RETURN ----------------
   return (
     <RequirePlayer>
+      <ArknightsMascot imageURL={`/img/${gameId}-mascot.webp`} />
       <div className="flex flex-col items-center p-2 gap-1">
         <section className="flex flex-col w-full max-w-lg gap-2 bg-primary/80 rounded-2xl border border-secondary/30">
           <Pointer
