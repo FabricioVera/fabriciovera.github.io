@@ -124,9 +124,17 @@ export default function ArknightDLEAbility({ gameId }: ArknightDLEProps) {
     );
   }
 
-  const abilityImageURL1 = getWikiImageURLAbility(`Skill-${target.name}1`);
-  const abilityImageURL2 = getWikiImageURLAbility(`Skill-${target.name}2`);
-  const abilityImageURL3 = getWikiImageURLAbility(`Skill-${target.name}3`);
+  const abilityImageURL1 = getWikiImageURLAbility(
+    `Skill-${target.skills[0]?.icon || ""}`,
+  );
+  const abilityImageURL2 =
+    guesses.length > 4
+      ? getWikiImageURLAbility(`Skill-${target.skills[1]?.icon || ""}`)
+      : "";
+  const abilityImageURL3 =
+    guesses.length > 8
+      ? getWikiImageURLAbility(`Skill-${target.skills[2]?.icon || ""}`)
+      : "";
 
   return (
     <RequirePlayer>

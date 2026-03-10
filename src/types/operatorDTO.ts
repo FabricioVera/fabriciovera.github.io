@@ -10,4 +10,21 @@ export interface OperatorDTO {
   class: string;
   branch: string;
   archetype: string;
+  images: any;
+  skills: {
+    name: string;
+    icon: string;
+    sp: string;
+    type: string;
+    duration: string;
+  }[];
+  voice_actors: {
+    jp: string;
+    cn: string;
+    en: string;
+    kr: string;
+    othercv: string;
+    otherlang: string;
+  };
+  theme: string;
 }

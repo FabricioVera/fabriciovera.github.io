@@ -1,7 +1,7 @@
 import type { OperatorDTO } from "src/types/index";
 import { logger } from "@services/logger";
 import { getWikiImageURL, getWikiSpriteURL } from "@utils/index";
-import ArknightsOperatorsData from "@data/operadores_arknights.json";
+import ArknightsOperatorsData from "@data/operadores_arknightsV2.json";
 
 const API_ARKNIGHTS_awedtan = "https://awedtan.ca/api/";
 const API_ARKNIGHTS = "https://api.rhodesapi.com/api/";
@@ -89,6 +89,10 @@ export const fetchOperators = async (): Promise<OperatorDTO[]> => {
           class: item.wiki_class,
           branch: item.wiki_branch,
           archetype: item.value.archetype,
+          images: item.wiki_images,
+          skills: item.wiki_skills,
+          voice_actors: item.wiki_voice_actors,
+          theme: item.wiki_theme,
         };
       })
       .filter((item: any) => !item.name.includes("Reserve"));
