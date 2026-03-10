@@ -33,6 +33,7 @@ import { LevelPath } from "./specificComponents/ArknightsLevelPath";
 import { ArknightsCorrectBanner } from "./specificComponents/ArknightsCorrectBanner";
 import { getWikiImageURL } from "../../../utils";
 import { loadDailyProgress } from "../../../services/dailyStorageRepository";
+import { useFeatureFlag } from "../../../store/featureFlagsStore";
 
 interface ArknightDLEProps {
   gameId: string;
@@ -55,15 +56,11 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
     surrender,
   } = useArknightStore();
 
-  const savedSprites = localStorage.getItem(`${gameId}-Sprites-`);
-  const [sprites, setSprites] = useState<boolean>(
-    savedSprites ? JSON.parse(savedSprites) : false,
-  );
-  const spritesStatus = (e: any) => {
-    setSprites(e.target.checked);
-    localStorage.setItem(`${gameId}-Sprites-`, e.target.checked);
-  };
-  const Columns = sprites ? ArknightdleColumnsSprites : ArknightdleColumns;
+  const { flags } = useFeatureFlag();
+
+  const Columns = flags.showSprites
+    ? ArknightdleColumnsSprites
+    : ArknightdleColumns;
 
   useEffect(() => {
     init(gameId, playerName);
@@ -144,7 +141,9 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
   // * INICIO DEL RETURN ----------------
   return (
     <RequirePlayer>
-      <ArknightsMascot imageURL={`/img/${gameId}-mascot.webp`} />
+      {flags.showMascot && (
+        <ArknightsMascot imageURL={`/img/${gameId}-mascot.webp`} />
+      )}
       <div className="flex flex-col items-center p-2 gap-1">
         <section className="flex flex-col w-full max-w-lg gap-2 bg-primary/80 rounded-2xl border border-secondary/30">
           <Pointer
@@ -194,12 +193,6 @@ export default function ArknightDLE({ gameId }: ArknightDLEProps) {
               </div>
             )}
           </div>
-
-          <ToggleSwitch
-            label="Sprites"
-            checked={sprites}
-            onChange={spritesStatus}
-          />
         </section>
 
         <GuessesTable guesses={enrichedGuesses} columns={Columns} />

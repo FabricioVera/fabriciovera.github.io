@@ -36,6 +36,7 @@ import { ArknightsCorrectBanner } from "./specificComponents/ArknightsCorrectBan
 import { getWikiImageURL, getWikiImageURLAbility } from "../../../utils";
 import { loadDailyProgress } from "../../../services/dailyStorageRepository";
 import ArknightsHeroInput from "./specificComponents/ArknightsInputHero";
+import { useFeatureFlag } from "../../../store/featureFlagsStore";
 
 interface ArknightDLEProps {
   gameId: string;
@@ -60,15 +61,9 @@ export default function ArknightDLEAbility({ gameId }: ArknightDLEProps) {
     init(gameId, playerName);
   }, [gameId, playerName, init]);
 
-  const savedSprites = localStorage.getItem(`${gameId}-Sprites-`);
-  const [sprites, setSprites] = useState<boolean>(
-    savedSprites ? JSON.parse(savedSprites) : false,
-  );
-  const spritesStatus = (e: any) => {
-    setSprites(e.target.checked);
-    localStorage.setItem(`${gameId}-Sprites-`, e.target.checked);
-  };
-  const Columns = sprites
+  const { flags } = useFeatureFlag();
+
+  const Columns = flags.showSprites
     ? ArknightdleVoiceColumnsSprites
     : ArknightdleVoiceColumns;
 
@@ -222,12 +217,6 @@ export default function ArknightDLEAbility({ gameId }: ArknightDLEProps) {
               </div>
             )}
           </div>
-
-          <ToggleSwitch
-            label="Sprites"
-            checked={sprites}
-            onChange={spritesStatus}
-          />
         </section>
         <table className="w-fit mt-4 mb-40 bg-primary text-white">
           <TableHeader columns={Columns} />

@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import ClientRouter from "astro/components/ClientRouter.astro";
+import SettingsMenu from "../components/ui/Settings/SettingsMenu";
 import { Sidebar } from "./Sidebar";
 import { games } from "@data/games";
 import { fade } from "astro:transitions";
@@ -54,6 +55,7 @@ if (!game) {
         >
           {game.title}
         </h1>
+        <SettingsMenu client:visible transition:persist />
       </header>
       <slot />
     </main>

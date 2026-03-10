@@ -68,9 +68,15 @@ interface Props {
   imageURL: string;
   name: string;
   stars: 0 | 1 | 2 | 3;
+  aditional?: string;
 }
 const SHADOW_TEXT = "drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]";
-export function ArknightsCorrectBanner({ imageURL, name, stars }: Props) {
+export function ArknightsCorrectBanner({
+  imageURL,
+  name,
+  stars,
+  aditional,
+}: Props) {
   const isSuccess = stars > 0;
   return (
     <div className="relative w-full h-[70vh] overflow-hidden rounded-lg">
@@ -109,6 +115,12 @@ export function ArknightsCorrectBanner({ imageURL, name, stars }: Props) {
           Mission Results
         </h2>
         <MissionStarsContainer stars={stars} />
+
+        <h2
+          className={`text-xl md:text-2xl font-semibold text-white mt-4 ${SHADOW_TEXT}`}
+        >
+          {aditional}
+        </h2>
       </motion.div>
     </div>
   );

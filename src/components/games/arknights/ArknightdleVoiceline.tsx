@@ -36,6 +36,7 @@ import { ArknightsCorrectBanner } from "./specificComponents/ArknightsCorrectBan
 import { getWikiImageURL } from "../../../utils";
 import { loadDailyProgress } from "../../../services/dailyStorageRepository";
 import ArknightsHeroInput from "./specificComponents/ArknightsInputHero";
+import { useFeatureFlag } from "../../../store/featureFlagsStore";
 
 interface ArknightDLEProps {
   gameId: string;
@@ -60,15 +61,8 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
     init(gameId, playerName);
   }, [gameId, playerName, init]);
 
-  const savedSprites = localStorage.getItem(`${gameId}-Sprites-`);
-  const [sprites, setSprites] = useState<boolean>(
-    savedSprites ? JSON.parse(savedSprites) : false,
-  );
-  const spritesStatus = (e: any) => {
-    setSprites(e.target.checked);
-    localStorage.setItem(`${gameId}-Sprites-`, e.target.checked);
-  };
-  const Columns = sprites
+  const { flags } = useFeatureFlag();
+  const Columns = flags.showSprites
     ? ArknightdleVoiceColumnsSprites
     : ArknightdleVoiceColumns;
 
@@ -163,6 +157,7 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
               imageURL={getWikiImageURL(target.name)}
               name={target.name}
               stars={stars}
+              aditional={`VA: ${target.voice_actors.jp}`}
             />
           )}
           <div className="flex flex-row items-center gap-2 w-full max-w-lg h-lh">
@@ -187,12 +182,6 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
               </div>
             )}
           </div>
-
-          <ToggleSwitch
-            label="Sprites"
-            checked={sprites}
-            onChange={spritesStatus}
-          />
         </section>
         <table className="w-fit mt-4 mb-40 bg-primary text-white">
           <TableHeader columns={Columns} />
