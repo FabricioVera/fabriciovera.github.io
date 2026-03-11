@@ -37,6 +37,7 @@ import { getWikiImageURL, getWikiImageURLAbility } from "../../../utils";
 import { loadDailyProgress } from "../../../services/dailyStorageRepository";
 import ArknightsHeroInput from "./specificComponents/ArknightsInputHero";
 import { useFeatureFlag } from "../../../store/featureFlagsStore";
+import { ArknightsMascot } from "../../ui/Mascot/ArknightsMascot";
 
 interface ArknightDLEProps {
   gameId: string;
@@ -118,21 +119,23 @@ export default function ArknightDLEAbility({ gameId }: ArknightDLEProps) {
       </div>
     );
   }
+  const hintsAtGuesses = [0, 5, 10];
 
-  const abilityImageURL1 = getWikiImageURLAbility(
-    `Skill-${target.skills[0]?.icon || ""}`,
-  );
-  const abilityImageURL2 =
-    guesses.length > 4
+  const abilityImageURL = [
+    getWikiImageURLAbility(`Skill-${target.skills[0]?.icon || ""}`),
+    guesses.length > hintsAtGuesses[1]
       ? getWikiImageURLAbility(`Skill-${target.skills[1]?.icon || ""}`)
-      : "";
-  const abilityImageURL3 =
-    guesses.length > 8
+      : "",
+    guesses.length > hintsAtGuesses[2]
       ? getWikiImageURLAbility(`Skill-${target.skills[2]?.icon || ""}`)
-      : "";
+      : "",
+  ];
 
   return (
     <RequirePlayer>
+      {flags.showMascot && (
+        <ArknightsMascot imageURL={`/img/${gameId}-mascot.webp`} />
+      )}
       <div className="flex flex-col items-center gap-1 p-2">
         <section className="flex flex-col w-full max-w-lg gap-2 bg-primary/80 rounded-2xl border border-secondary/30">
           <Pointer
@@ -154,36 +157,26 @@ export default function ArknightDLEAbility({ gameId }: ArknightDLEProps) {
           />
 
           <div className="h-40 w-full flex flex-row justify-around">
-            <div className="relative w-[30%] aspect-square">
-              <div
-                style={{
-                  backgroundImage: `url(${abilityImageURL1})`,
-                  backgroundSize: "contain",
-                  backgroundRepeat: "no-repeat",
-                }}
-                className="w-full h-full flex items-center justify-center pointer-events-none"
-              />
-            </div>
-            <div className="relative w-[30%] aspect-square">
-              <div
-                style={{
-                  backgroundImage: `url(${abilityImageURL2})`,
-                  backgroundSize: "contain",
-                  backgroundRepeat: "no-repeat",
-                }}
-                className="w-full h-full flex items-center justify-center pointer-events-none"
-              />
-            </div>
-            <div className="relative w-[30%] aspect-square">
-              <div
-                style={{
-                  backgroundImage: `url(${abilityImageURL3})`,
-                  backgroundSize: "contain",
-                  backgroundRepeat: "no-repeat",
-                }}
-                className="w-full h-full flex items-center justify-center pointer-events-none"
-              />
-            </div>
+            {abilityImageURL &&
+              abilityImageURL.map((imageURL, index) => (
+                <div className="relative w-[30%] aspect-square">
+                  {imageURL ? (
+                    <div
+                      style={{
+                        backgroundImage: `url(${imageURL})`,
+                        backgroundSize: "contain",
+                        backgroundRepeat: "no-repeat",
+                      }}
+                      className="w-full h-full flex items-center justify-center pointer-events-none"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex text-white items-center justify-center text-center border border-accent">
+                      Se desbloquea con: <br />
+                      {hintsAtGuesses[index] - guesses.length} Intentos
+                    </div>
+                  )}
+                </div>
+              ))}
           </div>
 
           {gameStatus === "playing" ? (

@@ -27,7 +27,7 @@ const defaultFlags: Record<FeatureFlag, boolean> = {
 };
 
 /**
- * *FeatureFlag type
+ * * type FeatureFlag
  * read state of feature flags and toggleFlags
  */
 export const useFeatureFlag = create<FeatureFlagsState>()(

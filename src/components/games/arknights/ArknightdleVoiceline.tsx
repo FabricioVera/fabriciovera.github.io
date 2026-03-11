@@ -37,6 +37,7 @@ import { getWikiImageURL } from "../../../utils";
 import { loadDailyProgress } from "../../../services/dailyStorageRepository";
 import ArknightsHeroInput from "./specificComponents/ArknightsInputHero";
 import { useFeatureFlag } from "../../../store/featureFlagsStore";
+import { ArknightsMascot } from "../../ui/Mascot/ArknightsMascot";
 
 interface ArknightDLEProps {
   gameId: string;
@@ -120,6 +121,9 @@ export default function ArknightDLEVoiceline({ gameId }: ArknightDLEProps) {
 
   return (
     <RequirePlayer>
+      {flags.showMascot && (
+        <ArknightsMascot imageURL={`/img/${gameId}-mascot.webp`} />
+      )}
       <div className="flex flex-col items-center gap-1 p-2">
         <section className="flex flex-col w-full max-w-lg gap-2 bg-primary/80 rounded-2xl border border-secondary/30">
           <Pointer
