@@ -216,7 +216,7 @@ const SingleVoicePlayer = ({
             step={0.01}
             value={volume}
             onChange={handleVolumeChange}
-            className="w-4 h-20 text-accent accent-current"
+            className="w-4 h-20"
           />
           <span className="text-sm">{Math.round(volume * 100)}%</span>
         </div>
