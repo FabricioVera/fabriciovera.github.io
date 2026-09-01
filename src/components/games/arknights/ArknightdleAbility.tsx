@@ -123,10 +123,10 @@ export default function ArknightDLEAbility({ gameId }: ArknightDLEProps) {
 
   const abilityImageURL = [
     getWikiImageURLAbility(`Skill-${target.skills[0]?.icon || ""}`),
-    guesses.length > hintsAtGuesses[1]
+    guesses.length >= hintsAtGuesses[1]
       ? getWikiImageURLAbility(`Skill-${target.skills[1]?.icon || ""}`)
       : "",
-    guesses.length > hintsAtGuesses[2]
+    guesses.length >= hintsAtGuesses[2]
       ? getWikiImageURLAbility(`Skill-${target.skills[2]?.icon || ""}`)
       : "",
   ];
@@ -171,8 +171,8 @@ export default function ArknightDLEAbility({ gameId }: ArknightDLEProps) {
                     />
                   ) : (
                     <div className="w-full h-full flex text-white items-center justify-center text-center border border-accent">
-                      Se desbloquea con: <br />
-                      {hintsAtGuesses[index] - guesses.length} Intentos
+                      Unlock with: <br />
+                      {hintsAtGuesses[index] - guesses.length} guesses
                     </div>
                   )}
                 </div>

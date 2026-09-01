@@ -9,7 +9,7 @@ export function ArknightsMascot({ imageURL }: { imageURL: string }) {
       <a href={imageCredit?.authorURL} target="_blank">
         <img src={imageURL} alt="mascot" className="w-full h-full" />
         <p className="absolute bottom-2 right-0 text-white hover:text-accent text-shadow-lg shadow-2xs font-black text-2xl w-full">
-          Mascot Credit: {imageCredit?.author}
+          Image Credit: {imageCredit?.author}
         </p>
       </a>
     </div>
