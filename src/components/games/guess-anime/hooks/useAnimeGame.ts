@@ -1,4 +1,3 @@
-import { set } from "astro:schema";
 import { useState, useEffect, useCallback } from "react";
 import type { GameStatus } from "src/types/game";
 

@@ -18,7 +18,7 @@ export function useGetTarget<T extends BaseGameEntity>(
     if (gameMode === "daily") {
       setTarget(calculateDailyTarget(items, gameId));
     } else {
-      if (gameId === "arknightdle" || gameId === "arknightdlevoiceline") {
+      if (gameId === "arknightdle" || gameId === "arknightdlevoicelines") {
         setTarget(calculateRandomTargetArknights(items));
       } else {
         setTarget(calculateRandomTarget(items));

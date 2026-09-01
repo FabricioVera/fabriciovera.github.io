@@ -47,7 +47,7 @@ export function useMbtiGame({
         onIncorrectGuess();
       }
     },
-    [character, status],
+    [character, status, onCorrectGuess, onIncorrectGuess],
   );
 
   useEffect(() => {

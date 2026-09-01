@@ -92,7 +92,7 @@ export const useArknightStore = create<ArknightsGameState>((set, get) => ({
         initialTarget = calculateDailyTarget(operators, gameId);
       } else {
         initialTarget =
-          gameId === "arknightdle" || gameId === "arknightdlevoiceline"
+          gameId === "arknightdle" || gameId === "arknightdlevoicelines"
             ? calculateRandomTargetArknights(operators)
             : calculateRandomTarget(operators);
       }
@@ -131,7 +131,7 @@ export const useArknightStore = create<ArknightsGameState>((set, get) => ({
     const newTarget =
       gameMode === "daily"
         ? calculateDailyTarget(items, gameId)
-        : gameId === "arknightdle" || gameId === "arknightdlevoiceline"
+        : gameId === "arknightdle" || gameId === "arknightdlevoicelines"
           ? calculateRandomTargetArknights(items)
           : calculateRandomTarget(items);
 
@@ -201,7 +201,7 @@ export const useArknightStore = create<ArknightsGameState>((set, get) => ({
       newTarget = calculateRandomTargetArknightsAbility(items);
     } else {
       newTarget =
-        gameId === "arknightdle" || gameId === "arknightdlevoiceline"
+        gameId === "arknightdle" || gameId === "arknightdlevoicelines"
           ? calculateRandomTargetArknights(items)
           : calculateRandomTarget(items);
     }

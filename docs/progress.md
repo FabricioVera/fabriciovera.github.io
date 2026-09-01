@@ -51,11 +51,9 @@
 
 | Severidad | Archivo(s) Afectado(s) | Descripción del Problema / Bug |
 | :--- | :--- | :--- |
-| 🔴 **Alta** | `src/components/games/arknights/ArknightsStore/useArknightStore.tsx`<br>`src/hooks/useGameHelpers.ts` | **Typo en ID de juego**: Se comprueba `gameId === "arknightdlevoiceline"` (en singular) mientras que en `games.ts` y las rutas el ID es `"arknightdlevoicelines"` (en plural). Esto provoca que en modo aleatorio el juego de voicelines caiga en el cálculo de target uniforme en lugar del algoritmo ponderado de Arknights. |
-| 🔴 **Alta** | `src/components/games/guess-anime/hooks/useAnimeGame.ts` | **Lógica de validación rota y endpoint faltante**: Llama a `/api/character` inexistente y ejecuta `normalizedName.split("").includes(normalizedGuess)`, lo que compara letras individuales en vez de palabras. Además tiene un import inválido `import { set } from "astro:schema";`. |
+| 🔴 **Alta** | `src/components/games/guess-anime/hooks/useAnimeGame.ts` | **Lógica de validación rota y endpoint faltante**: Llama a `/api/character` inexistente y ejecuta `normalizedName.split("").includes(normalizedGuess)`, lo que compara letras individuales en vez de palabras. |
 | 🟠 **Media** | `src/store/useGameStorage.ts` vs `src/components/games/warframedle/hooks/useWarframedle.ts` vs `useArknightStore.tsx` | **Fragmentación de Arquitectura de Estado**: Existen 3 implementaciones distintas para gestionar el ciclo de vida de los juegos (custom hooks legacy, store custom de Arknights y factory genérica de Zustand). |
 | 🟡 **Baja** | `src/config/gameModeConfig.ts` | **Archivo vacío huérfano**: Archivo de 0 bytes sin código ni exports. |
 | 🟡 **Baja** | `src/hooks/useOperators.ts` | **Hook huérfano**: Hook no utilizado en ninguna parte del proyecto tras la migración a `useArknightStore`. |
 | 🟡 **Baja** | `src/components/games/warframedle/hooks/useWarframedle.ts` | **Import no utilizado**: Importa `useDailyGame` pero no lo utiliza. |
 | 🟡 **Baja** | `src/lib/arknights.ts` | **Funciones obsoletas no eliminadas**: `fetchOperators_awedtan` y `fetchOperators_rhodesapi` siguen en el archivo aunque la app ahora usa `fetchOperators` con datos locales de `operadores_arknightsV2.json`. |
-| 🟡 **Baja** | `src/components/games/guess-mbti/hooks/useMbtiGame.ts` | **Dependencias faltantes en hook**: `useCallback` en `handleGuess` omite `onCorrectGuess` y `onIncorrectGuess` en su array de dependencias. |

@@ -2,17 +2,17 @@
 
 ## 📌 Fase 1: Corrección de Bugs Críticos y Seguridad (Prioridad Alta)
 
-- [ ] **Corregir inconsistencia en el ID de Voicelines**
+- [x] **Corregir inconsistencia en el ID de Voicelines**
   - **Archivos**: `src/components/games/arknights/ArknightsStore/useArknightStore.tsx` y `src/hooks/useGameHelpers.ts`
-  - **Acción**: Reemplazar `"arknightdlevoiceline"` por `"arknightdlevoicelines"` en todas las comprobaciones para que el cálculo ponderado por rareza en modo aleatorio funcione correctamente.
+  - **Acción**: Reemplazado `"arknightdlevoiceline"` por `"arknightdlevoicelines"` en todas las comprobaciones para que el cálculo ponderado por rareza en modo aleatorio funcione correctamente.
 - [x] **Migrar credenciales a Variables de Entorno en Supabase**
   - **Archivo**: `src/lib/supabase.ts` y `.github/workflows/astro.yml`
   - **Acción**: Reemplazados los strings hardcodeados por `import.meta.env.PUBLIC_SUPABASE_URL` e `import.meta.env.PUBLIC_SUPABASE_ANON_KEY`, e inyectados en el step de build de GitHub Actions.
-- [ ] **Corregir imports y dependencias en Hooks**
+- [x] **Corregir imports y dependencias en Hooks**
   - **Archivo**: `src/components/games/guess-anime/hooks/useAnimeGame.ts`
-    - Eliminar el import erróneo `import { set } from "astro:schema";`.
+    - Eliminado el import erróneo `import { set } from "astro:schema";`.
   - **Archivo**: `src/components/games/guess-mbti/hooks/useMbtiGame.ts`
-    - Agregar `onCorrectGuess` y `onIncorrectGuess` al array de dependencias del `useCallback` en `handleGuess`.
+    - Agregados `onCorrectGuess` y `onIncorrectGuess` al array de dependencias del `useCallback` en `handleGuess`.
 
 ---
 
