@@ -1,20 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { preWarframe, Warframe } from "src/types/warframe";
 import type { GameStatus } from "src/types/game";
-import { saveDailyScore, saveHighScore } from "src/services/scoreRepository";
-import {
-  loadDailyProgress,
-  saveDailyProgress,
-} from "@services/dailyStorageRepository";
-import { calculateDailyTarget, calculateRandomTarget } from "@utils/game";
 import { logger } from "@services/logger";
-import { useDailyGame } from "@hooks/useDailyGame";
-import { useGetTarget, useSuggestions } from "../../../../hooks/useGameHelpers";
-import { getWarframeThumbnailName, getWikiThumbnail } from "../../../../utils";
-import { useGameModeStorage } from "../../../../hooks/useGameModeStorage";
-import { useDailyStorage } from "../../../../hooks/useDailyStorage";
-import { useHandleGuess } from "../../../../hooks/useHandleGuess";
-import type { GameModeCONF } from "../../../ui/GameModeSelector/GameModeSelector";
+import { useGetTarget, useSuggestions } from "@hooks/useGameHelpers";
+import { getWarframeThumbnailName, getWikiThumbnail } from "@utils/index";
+import { useGameModeStorage } from "@hooks/useGameModeStorage";
+import { useDailyStorage } from "@hooks/useDailyStorage";
+import { useHandleGuess } from "@hooks/useHandleGuess";
 
 export type GameMode = "daily" | "random";
 

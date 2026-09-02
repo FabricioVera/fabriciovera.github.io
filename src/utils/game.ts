@@ -1,7 +1,7 @@
 import Rand from "rand-seed";
 import type { OperatorDTO } from "../types";
 
-export const calculateDailyTarget = (listTarget: any[], gameId: string) => {
+export const calculateDailyTarget = <T>(listTarget: T[], gameId: string): T => {
   const today = new Date();
   const seed =
     (
@@ -16,25 +16,29 @@ export const calculateDailyTarget = (listTarget: any[], gameId: string) => {
   return listTarget[Math.floor(randomValue * listTarget.length)];
 };
 
-export const calculateRandomTarget = (listTarget: any[]) => {
+export const calculateRandomTarget = <T>(listTarget: T[]): T => {
   const randomIndex = Math.floor(Math.random() * listTarget.length);
   return listTarget[randomIndex];
 };
 
-export function calculateRandomTargetArknights(listTarget: any[]) {
+export function calculateRandomTargetArknights(
+  listTarget: OperatorDTO[],
+): OperatorDTO {
   const randomRarity = getRandomWithWeight(numbers);
 
   const filteredTargets = listTarget.filter(
-    (op) => op.rarity == randomRarity.toString(),
+    (op) => op.rarity === randomRarity,
   );
   return filteredTargets[Math.floor(Math.random() * filteredTargets.length)];
 }
 
-export function calculateRandomTargetArknightsAbility(listTarget: any[]) {
+export function calculateRandomTargetArknightsAbility(
+  listTarget: OperatorDTO[],
+): OperatorDTO {
   const randomRarity = getRandomWithWeight(numbersAbility);
 
   const filteredTargets = listTarget.filter(
-    (op) => op.rarity == randomRarity.toString(),
+    (op) => op.rarity === randomRarity,
   );
   return filteredTargets[Math.floor(Math.random() * filteredTargets.length)];
 }

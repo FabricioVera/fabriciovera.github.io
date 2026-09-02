@@ -18,17 +18,17 @@
 
 ## 🧹 Fase 2: Limpieza de Código Muerto y Deuda Técnica (Prioridad Media)
 
-- [ ] **Eliminar o poblar archivos vacíos**
+- [x] **Eliminar o poblar archivos vacíos**
   - **Archivo**: `src/config/gameModeConfig.ts`
-  - **Acción**: Eliminar el archivo si no se requiere o mover las configuraciones de modo de juego repetidas en los componentes hacia este archivo.
-- [ ] **Remover Hooks y funciones huérfanas**
-  - **Archivos**: `src/hooks/useOperators.ts`, `src/hooks/useDailyGame.ts`
-  - **Acción**: Eliminar hooks no referenciados y limpiar el import no utilizado en `src/components/games/warframedle/hooks/useWarframedle.ts`.
-- [ ] **Depurar `src/lib/arknights.ts`**
-  - **Acción**: Eliminar `fetchOperators_awedtan` y `fetchOperators_rhodesapi` o moverlos a un archivo de scrapers/scripts si ya no se usan en tiempo de ejecución.
-- [ ] **Estandarizar tipos de `rarity`**
-  - **Archivos**: `src/types/operatorDTO.ts`, `src/components/games/arknights/ArknightsStore/useAutocompleteStorage.ts`, `src/utils/game.ts`
-  - **Acción**: Asegurar consistencia numérica en `rarity` (evitar comparar `string` con `number` en `item.rarity > 3` y `op.rarity == randomRarity.toString()`).
+  - **Acción**: Eliminado el archivo vacío tras confirmación explícita del usuario.
+- [x] **Remover Hooks y funciones huérfanas**
+  - **Archivos**: `src/hooks/useOperators.ts`, `src/hooks/useDailyGame.ts`, `src/components/games/warframedle/hooks/useWarframedle.ts`
+  - **Acción**: Eliminados los hooks obsoletos huérfanos `useOperators.ts` y `useDailyGame.ts` (con confirmación explícita) y limpiados todos los imports huérfanos y rutas relativas en `useWarframedle.ts`.
+- [x] **Depurar `src/lib/arknights.ts`**
+  - **Acción**: Eliminadas las funciones remotas obsoletas `fetchOperators_awedtan` y `fetchOperators_rhodesapi` junto a las constantes de API externa, manteniendo la carga optimizada desde el dataset local.
+- [x] **Estandarizar tipos de `rarity`**
+  - **Archivos**: `src/types/operatorDTO.ts`, `src/utils/game.ts`, `src/components/games/arknights/ArknightsStore/useArknightStore.tsx`, `src/hooks/useGameHelpers.ts`
+  - **Acción**: Tipado estricto con `OperatorDTO[]` y comparación numérica estricta `op.rarity === randomRarity`. Tipado genérico en `calculateDailyTarget<T>` y `calculateRandomTarget<T>`. Corregida la selección aleatoria de `arknightdleability` en `initializeGame` y `setGameMode`.
 
 ---
 
