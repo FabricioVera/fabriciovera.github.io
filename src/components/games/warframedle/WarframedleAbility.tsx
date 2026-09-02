@@ -21,6 +21,7 @@ import {
   getWikiThumbnail,
   getWarframeImageName,
   getWarframeThumbnailName,
+  getWarframeAbilityImageName,
 } from "@utils/index";
 import { abilityVisuals } from "@utils/ability";
 import {
@@ -130,7 +131,7 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
 
   const imageVisualStyles = abilityVisuals(
     target?.abilityName || "default",
-    getWikiThumbnail(getWarframeImageName(target.abilityName + "130xWhite")),
+    getWikiThumbnail(getWarframeAbilityImageName(target.abilityName)),
     guesses.length,
     gameStatus,
   );

@@ -21,6 +21,10 @@ export function getWarframeImageName(warframeName: string) {
   return cleanName(warframeName) + ".png";
 }
 
+export function getWarframeAbilityImageName(abilityName: string) {
+  return cleanName(abilityName) + WIKI_ABILITY_SUFFIX + ".png";
+}
+
 export function getWikiImageURL(name: string) {
   const pattern = new RegExp("[ ]", "g");
   return (
