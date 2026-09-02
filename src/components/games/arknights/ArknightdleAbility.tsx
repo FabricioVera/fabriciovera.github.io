@@ -163,7 +163,7 @@ export default function ArknightDLEAbility({ gameId }: ArknightDLEProps) {
                   {imageURL ? (
                     <div
                       style={{
-                        backgroundImage: `url(${imageURL})`,
+                        backgroundImage: `url("${imageURL}")`,
                         backgroundSize: "contain",
                         backgroundRepeat: "no-repeat",
                       }}

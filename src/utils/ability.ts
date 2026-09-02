@@ -1,4 +1,4 @@
-import type { GameStatus } from "src/types/game";
+import type { GameStatus } from "@types/game";
 import Rand from "rand-seed";
 
 /**
@@ -25,7 +25,7 @@ export const abilityVisuals = (
 ): React.CSSProperties => {
   if (status !== "playing") {
     return {
-      backgroundImage: `url(${targetImage})`,
+      backgroundImage: `url("${targetImage}")`,
       backgroundSize: "100%",
       backgroundPosition: "0% 0%",
       transform: "rotate(0)",
@@ -58,7 +58,7 @@ export const abilityVisuals = (
   const positionY = Math.floor(randomValue * 100);
 
   return {
-    backgroundImage: `url(${targetImage})`,
+    backgroundImage: `url("${targetImage}")`,
     backgroundSize: `${currentZoom * 100}%`,
     backgroundPosition: `${positionX}% ${positionY}%`,
     transform: `rotate(${rotation}deg) scaleX(${scaleX})`,
