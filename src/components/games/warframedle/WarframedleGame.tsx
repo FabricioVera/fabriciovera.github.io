@@ -1,30 +1,32 @@
-// DATA
+import { useCallback, useEffect, useMemo } from "react";
+import { useStore } from "@nanostores/react";
+
+// DATA & STORE
 import warframeData from "@data/Warframes_final.json";
 import { $playerName } from "@store/playerStore";
+import {
+  useWarframedleStore,
+  MAX_WARFRAME_DAILY_ATTEMPTS,
+} from "./hooks/useWarframedle";
 
 // COMPONENTES
 import AutocompleteInput from "@components/ui/Autocomplete/AutocompleteInput";
 import TableHeader from "@components/ui/GuessedTable/TableHeader";
 import TableCell from "@components/ui/GuessedTable/TableCell";
-import Pointer from "../../ui/Pointer";
+import Pointer from "@components/ui/Pointer";
 import { RequirePlayer } from "@auth/index";
 import GameModeSelector, {
   type GameModeCONF,
 } from "@components/ui/GameModeSelector/GameModeSelector";
+import CorrectBanner from "@components/games/CorrectBanner";
+import { DiceRollerButton } from "@components/ui/General/DiceRoller";
+import { CalendarIcon, FlagIcon, InfinityIcon } from "@components/Icons";
+import Button from "@components/ui/General/Button";
 
-//HOOKS + UTILS
-import useWarframedle from "./hooks/useWarframedle";
-import { useStore } from "@nanostores/react";
-
-// TYPES
-import type { preWarframe } from "src/types/warframe";
-
-// CONFIGS
+// UTILS & CONFIGS
+import { getWikiThumbnail, getWarframeThumbnailName } from "@utils/index";
 import { warframedleColumns } from "@config/gameTableColumns";
-import CorrectBanner from "../CorrectBanner";
-import { DiceRollerButton } from "../../ui/General/DiceRoller";
-import { CalendarIcon, FlagIcon, InfinityIcon } from "../../Icons";
-import Button from "../../ui/General/Button";
+import type { preWarframe, Warframe } from "@types/warframe";
 
 interface WarframedleGameProps {
   gameId: string;
@@ -32,23 +34,51 @@ interface WarframedleGameProps {
 
 export default function WarframedleGame({ gameId }: WarframedleGameProps) {
   const playerName = useStore($playerName);
+  const rawData = warframeData as preWarframe[];
 
-  // ESTADO DEL JUEGO
+  const warframes: Warframe[] = useMemo(() => {
+    return rawData.map((wf) => ({
+      ...wf,
+      imageURL: getWikiThumbnail(getWarframeThumbnailName(wf.name)),
+      releaseYear: new Date(wf.releaseDate).getFullYear(),
+    }));
+  }, [rawData]);
+
   const {
-    warframes,
-    guessedNames,
-    target,
-    suggestions,
-    attemptsLeft,
-    gameMode,
+    init,
+    guess,
+    reroll,
+    setGameMode,
+    surrender,
     guesses,
     gameStatus,
-    handleGuess,
-    setGameStatus,
-    handleRandomReroll,
-    startDailyMode,
-    startRandomMode,
-  } = useWarframedle(warframeData as preWarframe[], gameId, playerName);
+    target,
+    gameMode,
+  } = useWarframedleStore();
+
+  useEffect(() => {
+    if (warframes.length) {
+      init(warframes);
+    }
+  }, [warframes]);
+
+  const attemptsLeft = MAX_WARFRAME_DAILY_ATTEMPTS - guesses.length;
+  const guessedNames = useMemo(() => guesses.map((g) => g.name), [guesses]);
+  const suggestions = useMemo(() => {
+    return warframes.map((wf) => ({
+      name: wf.name,
+      imageURL: wf.imageURL,
+    }));
+  }, [warframes]);
+
+  const handleGuess = useCallback(
+    (name: string) => guess(name, playerName),
+    [guess, playerName],
+  );
+
+  const startDailyMode = useCallback(() => setGameMode("daily"), [setGameMode]);
+  const startRandomMode = useCallback(() => setGameMode("random"), [setGameMode]);
+
   const GameModeConfig: GameModeCONF[] = [
     {
       gameModeLabel: (
@@ -70,7 +100,7 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
     },
   ];
 
-  if (target === undefined) {
+  if (gameStatus === "loading" || !target) {
     return (
       <div className="w-full text-white text-2xl text-center">
         Cargando objetivo....
@@ -80,13 +110,12 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
 
   const currentHeroWf =
     gameStatus === "playing"
-      ? { name: "WARFRAMEDLE", wikiaThumbnail: undefined }
+      ? { name: "WARFRAMEDLE", imageURL: undefined }
       : {
           name: target.name,
           imageURL: target.imageURL,
         };
 
-  // * INICIO DEL RETURN ----------------
   return (
     <RequirePlayer>
       <div className="flex flex-col items-center p-2 gap-1">
@@ -117,7 +146,7 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
               <Button
                 title="Rendirse FF :("
                 aria-label="Rendirse FF :("
-                onClick={() => setGameStatus("lost")}
+                onClick={surrender}
                 className="rounded-xl transition-all flex flex-col items-center shadow-lg outline-none p-1"
               >
                 <FlagIcon size="100%" />
@@ -141,7 +170,7 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
           )}
           {gameMode !== "daily" && (
             <div className="w-12">
-              <DiceRollerButton onRoll={handleRandomReroll} />
+              <DiceRollerButton onRoll={reroll} />
             </div>
           )}
         </div>
@@ -152,7 +181,6 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
               <TableHeader columns={warframedleColumns} />
               <tbody>
                 {guesses.map((guess, index) => {
-                  // Necesitas buscar el objeto completo basado en el string almacenado
                   const guessObj = warframes.find((w) => w.name === guess.name);
                   if (!guessObj) return null;
 

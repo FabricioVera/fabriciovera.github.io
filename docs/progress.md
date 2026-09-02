@@ -18,6 +18,7 @@
 - **WarframeDLE (Clásico)** (`/games/warframedle`):
   - ✅ Deducción de Warframe por atributos: Género, Variante Prime, Polaridad de Aura, Estilos de juego y Año de lanzamiento con comparadores numéricos.
   - ✅ Límite estricto de 10 intentos en modo diario.
+  - ✅ Implementado y unificado sobre la factoría genérica de stores de Zustand (`createGameStore`).
 - **WarframeDLE: Habilidades** (`/games/warframedleabilities`):
   - ✅ Transformaciones visuales dinámicas: rotación aleatoria, flip horizontal y zoom inicial (3x) que se aleja con cada intento fallido.
   - ✅ Implementado sobre la factoría genérica de stores de Zustand (`createGameStore`).
@@ -29,6 +30,7 @@
 - **Perfil de Jugador**: Identificación por alias (`$playerName`) sincronizada reactivamente entre islas de Astro mediante Nanostores y guardada en `localStorage`.
 - **Leaderboards**: Panel lateral (drawer) con Top 10 diario y global conectado a Supabase con reintentos automáticos.
 - **Feature Flags**: Menú de configuración para alternar `showSprites` y `showMascot` persistido con Zustand `persist`.
+- **Persistencia de GameMode Unificada**: Servicio centralizado `gameModeRepository` con cookies (`SameSite=Lax`) y caducidad al final del día (23:59:59).
 - **Theming**: Paletas dinámicas por juego mediante atributos `data-theme`, tokens en `@theme` de Tailwind v4 y cursor temático retro.
 - **Observabilidad / Logger**: `AppLogger` con reporte asíncrono de errores a Supabase (`app_errors`) en producción.
 
@@ -52,4 +54,3 @@
 | Severidad | Archivo(s) Afectado(s) | Descripción del Problema / Bug |
 | :--- | :--- | :--- |
 | 🔴 **Alta** | `src/components/games/guess-anime/hooks/useAnimeGame.ts` | **Lógica de validación rota y endpoint faltante**: Llama a `/api/character` inexistente y ejecuta `normalizedName.split("").includes(normalizedGuess)`, lo que compara letras individuales en vez de palabras. |
-| 🟠 **Media** | `src/store/useGameStorage.ts` vs `src/components/games/warframedle/hooks/useWarframedle.ts` vs `useArknightStore.tsx` | **Fragmentación de Arquitectura de Estado**: Existen 3 implementaciones distintas para gestionar el ciclo de vida de los juegos (custom hooks legacy, store custom de Arknights y factory genérica de Zustand). |

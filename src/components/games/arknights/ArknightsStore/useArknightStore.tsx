@@ -1,46 +1,21 @@
 import { create } from "zustand";
-import type { OperatorDTO } from "../../../../types";
-import type { GameStatus } from "../../../../types/game";
-import { fetchOperators } from "../../../../lib/arknights";
+import type { OperatorDTO } from "@types/operatorDTO";
+import type { GameStatus } from "@types/game";
+import { fetchOperators } from "@lib/arknights";
 import {
   calculateDailyTarget,
   calculateRandomTarget,
   calculateRandomTargetArknights,
   calculateRandomTargetArknightsAbility,
-} from "../../../../utils/game";
+} from "@utils/game";
 import {
   loadDailyProgress,
   saveDailyProgress,
-} from "../../../../services/dailyStorageRepository";
-import { logger } from "../../../../services/logger";
-import { saveDailyScore } from "../../../../services/scoreRepository";
-import { normalizeString } from "../../../../utils";
-
-export const gameModeRepository = {
-  save: (gameId: string, mode: string): void => {
-    try {
-      const endOfDay = new Date();
-      endOfDay.setHours(23, 59, 59, 999);
-
-      // Formato: gameId-GameMode=daily; expires=...; path=/
-      document.cookie = `${gameId}-GameMode=${mode};expires=${endOfDay.toUTCString()};path=/`;
-    } catch (error) {
-      console.error("[gameModeRepository] Error al guardar la cookie:", error);
-    }
-  },
-
-  load: (gameId: string): string | null => {
-    try {
-      const match = document.cookie.match(
-        new RegExp(`(^| )${gameId}-GameMode=([^;]+)`),
-      );
-      return match ? match[2] : null;
-    } catch (error) {
-      console.error("[gameModeRepository] Error al leer la cookie:", error);
-      return null;
-    }
-  },
-};
+} from "@services/dailyStorageRepository";
+import { logger } from "@services/logger";
+import { saveDailyScore } from "@services/scoreRepository";
+import { normalizeString } from "@utils/index";
+import { gameModeRepository, type GameMode } from "@services/gameModeRepository";
 
 interface ArknightsGameState {
   //* Game State

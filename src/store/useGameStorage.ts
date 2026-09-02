@@ -1,11 +1,11 @@
 import { create } from "zustand";
-import type { BaseGameEntity, GameStatus } from "../types/game";
-import { type DailyGameState } from "../services/dailyStorageRepository";
-import { logger } from "../services/logger";
-import { saveDailyScore } from "../services/scoreRepository";
+import type { BaseGameEntity, GameStatus } from "@types/game";
+import { type DailyGameState } from "@services/dailyStorageRepository";
+import { logger } from "@services/logger";
+import { saveDailyScore } from "@services/scoreRepository";
+import { gameModeRepository, type GameMode } from "@services/gameModeRepository";
 
-export type GameMode = "daily" | "random";
-const MAX_DAILY_ATTEMPTS = 10;
+export type { GameMode };
 
 interface GameState<TItem, TTarget> {
   gameId: string;
@@ -48,52 +48,64 @@ export function createGameStore<TItem extends BaseGameEntity, TTarget>(
     items: [],
     target: undefined,
     guesses: [],
-    gameMode: localStorage.getItem(`${config.gameId}-GameMode`) as
-      | GameMode
-      | "daily",
+    gameMode: gameModeRepository.load(config.gameId) || "daily",
     gameStatus: "loading",
 
     /**
-     * * INICIALIZA EL JUEGO GENERA TARGET, CARGA EL PROGRESO DIARIO
-     * @param items
+     * INICIALIZA EL JUEGO, GENERA TARGET Y CARGA EL PROGRESO DIARIO
      */
     init: (items) => {
       logger.info("[init] Juego Iniciado...");
-      const { gameId, gameMode } = get();
+      const { gameId } = get();
+      const currentMode = gameModeRepository.load(gameId) || "daily";
       logger.info("[init] Generando Objetivo...");
-      const target = config.generateTarget(items, gameMode, gameId);
+      const target = config.generateTarget(items, currentMode, gameId);
 
-      set({ items, target, gameStatus: "playing" });
+      let initialGuesses: TItem[] = [];
+      let initialStatus: GameStatus = "playing";
 
-      if (gameMode === "daily") {
-        logger.info("[init] Cargando datos del dia...");
+      if (currentMode === "daily") {
+        logger.info("[init] Cargando datos del día...");
         const saved = config.loadDailyProgress(gameId);
         if (saved) {
-          const hydratedGuesses = saved.guesses
+          initialGuesses = saved.guesses
             .map((name) => items.find((i) => i.name === name))
             .filter(Boolean) as TItem[];
-          set({ guesses: hydratedGuesses, gameStatus: saved.status });
+          initialStatus = saved.status;
         }
       }
+
+      set({
+        items,
+        gameMode: currentMode,
+        target,
+        guesses: initialGuesses,
+        gameStatus: initialStatus,
+      });
     },
 
     setGameMode: (gameMode) => {
       const { items, gameId } = get();
       logger.info("[setGameMode] Guardando modo de juego...");
-      localStorage.setItem(`${gameId}-GameMode`, gameMode);
+      gameModeRepository.save(gameId, gameMode);
       logger.info("[setGameMode] Generando objetivo para modo de juego...");
       const target = config.generateTarget(items, gameMode, gameId);
-      set({ gameMode: gameMode, guesses: [], target, gameStatus: "playing" });
+
+      let hydratedGuesses: TItem[] = [];
+      let newStatus: GameStatus = "playing";
+
       if (gameMode === "daily") {
         logger.info("[setGameMode] Cargando progreso del día...");
         const saved = config.loadDailyProgress(gameId);
         if (saved) {
-          const hydratedGuesses = saved.guesses
+          hydratedGuesses = saved.guesses
             .map((name) => items.find((i) => i.name === name))
             .filter(Boolean) as TItem[];
-          set({ guesses: hydratedGuesses, gameStatus: saved.status });
+          newStatus = saved.status;
         }
       }
+
+      set({ gameMode, guesses: hydratedGuesses, target, gameStatus: newStatus });
     },
 
     guess: (name, playerName) => {
@@ -118,7 +130,7 @@ export function createGameStore<TItem extends BaseGameEntity, TTarget>(
 
       const isLost =
         !isWin && newGuesses.length >= maxDailyAttempts && gameMode === "daily";
-      const newStatus = isWin ? "won" : isLost ? "lost" : "playing";
+      const newStatus: GameStatus = isWin ? "won" : isLost ? "lost" : "playing";
 
       set({ guesses: newGuesses, gameStatus: newStatus });
 
@@ -133,7 +145,8 @@ export function createGameStore<TItem extends BaseGameEntity, TTarget>(
     },
 
     reroll: () => {
-      const { items, gameId } = get();
+      const { items, gameId, gameMode } = get();
+      if (gameMode !== "random") return;
       logger.info("[reroll] Rerrolleando objetivo...");
       const target = config.generateTarget(items, "random", gameId);
       set({ target, guesses: [], gameStatus: "playing" });

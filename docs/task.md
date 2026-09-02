@@ -34,12 +34,12 @@
 
 ## 🏗️ Fase 3: Unificación de la Arquitectura de Estado (Refactorización)
 
-- [ ] **Migrar `WarframedleGame` a la Factoría Genérica `createGameStore`**
+- [x] **Migrar `WarframedleGame` a la Factoría Genérica `createGameStore`**
   - **Archivos**: `src/components/games/warframedle/WarframedleGame.tsx`, `src/components/games/warframedle/hooks/useWarframedle.ts`
-  - **Acción**: Reemplazar la composición de hooks manuales (`useHandleGuess`, `useDailyStorage`, etc.) por una instancia de `createGameStore<Warframe, Warframe>` similar a la implementada en `WarframedleAbility.tsx`.
-- [ ] **Estandarizar persistencia de `GameMode`**
-  - **Archivos**: `src/hooks/useGameModeStorage.ts`, `useArknightStore.tsx`, `useGameStorage.ts`
-  - **Acción**: Definir una estrategia única (o Cookie con expiración a medianoche o LocalStorage con clave de fecha) para que todos los juegos recuerden el modo del día de forma coherente.
+  - **Acción**: Reemplazada la composición legacy de hooks manuales por `useWarframedleStore = createGameStore<Warframe, Warframe>`, unificando el ciclo de vida, persistencia y límite de 10 intentos con la arquitectura Zustand genérica.
+- [x] **Estandarizar persistencia de `GameMode`**
+  - **Archivos**: `src/services/gameModeRepository.ts`, `src/hooks/useGameModeStorage.ts`, `src/components/games/arknights/ArknightsStore/useArknightStore.tsx`, `src/store/useGameStorage.ts`
+  - **Acción**: Creado el servicio unificado `gameModeRepository` con persistencia mediante cookies seguras (`SameSite=Lax`) y expiración automática a las 23:59:59 del día en curso, consumido de forma consistente por todos los stores y hooks.
 
 ---
 

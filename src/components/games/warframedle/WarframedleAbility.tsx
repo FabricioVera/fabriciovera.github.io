@@ -9,9 +9,13 @@ import TableCell from "@components/ui/GuessedTable/TableCell";
 import Pointer from "@components/ui/Pointer";
 import { RequirePlayer } from "@auth/index";
 import GameModeSelector from "@components/ui/GameModeSelector/GameModeSelector";
-import { abilitydleColumns } from "../../../config/gameTableColumns";
+import { abilitydleColumns } from "@config/gameTableColumns";
+import CorrectBanner from "@components/games/CorrectBanner";
+import { DiceRollerButton } from "@components/ui/General/DiceRoller";
+import Button from "@components/ui/General/Button";
+import { FlagIcon } from "@components/Icons";
 
-//HOOKS + UTILS
+// HOOKS + UTILS
 import { useStore } from "@nanostores/react";
 import {
   getWikiThumbnail,
@@ -19,29 +23,22 @@ import {
   getWarframeThumbnailName,
 } from "@utils/index";
 import { abilityVisuals } from "@utils/ability";
-
-// TYPES
-import type { preWarframe, Warframe } from "src/types/warframe";
-import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelector";
-import CorrectBanner from "../CorrectBanner";
-import { DiceRollerButton } from "../../ui/General/DiceRoller";
-import Button from "../../ui/General/Button";
-import { FlagIcon } from "../../Icons";
-import { createGameStore } from "../../../store/useGameStorage";
-import { getTodayDateString } from "../../../services/dailyStorageRepository";
-import {
-  saveDailyProgress,
-  loadDailyProgress,
-} from "../../../services/dailyStorageRepository";
-import { useCallback, useEffect, useMemo } from "react";
 import {
   extractAbilitiesPool,
   type AbilityTarget,
-} from "../../../services/abilitydleService";
+} from "@services/abilitydleService";
+import { calculateDailyTarget, calculateRandomTarget } from "@utils/game";
 import {
-  calculateDailyTarget,
-  calculateRandomTarget,
-} from "../../../utils/game";
+  saveDailyProgress,
+  loadDailyProgress,
+  getTodayDateString,
+} from "@services/dailyStorageRepository";
+import { createGameStore } from "@store/useGameStorage";
+
+// TYPES
+import type { preWarframe, Warframe } from "@types/warframe";
+import type { GameModeCONF } from "@components/ui/GameModeSelector/GameModeSelector";
+import { useCallback, useEffect, useMemo } from "react";
 
 const MAX_DAILY_ATTEMPTS = 10;
 
