@@ -194,6 +194,7 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
                 getWarframeThumbnailName(target.warframeName),
               )}
               name={target.warframeName}
+              status={gameStatus}
             />
           )}
           {gameMode !== "daily" && (

@@ -166,6 +166,7 @@ export default function WarframedleGame({ gameId }: WarframedleGameProps) {
             <CorrectBanner
               imageURL={currentHeroWf.imageURL || ""}
               name={currentHeroWf.name}
+              status={gameStatus}
             />
           )}
           {gameMode !== "daily" && (
