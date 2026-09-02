@@ -130,7 +130,7 @@ export default function WarframedleAbilitiesGame({ gameId }: AbilitydleProps) {
 
   const imageVisualStyles = abilityVisuals(
     target?.abilityName || "default",
-    getWikiThumbnail(getWarframeImageName(target.abilityName + "(xWhite)")),
+    getWikiThumbnail(getWarframeImageName(target.abilityName + "130xWhite")),
     guesses.length,
     gameStatus,
   );
