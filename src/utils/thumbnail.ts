@@ -1,4 +1,4 @@
-export const WIKI_ABILITY_SUFFIX = "(xWhite)";
+export const WIKI_ABILITY_SUFFIX = "Icon(xWhite)";
 
 const cleanName = (name: string): string => {
   const pattern = new RegExp("[ -]", "g");
