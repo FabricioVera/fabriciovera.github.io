@@ -25,6 +25,14 @@
 - **Adivina el MBTI** (`/games/guess-mbti`):
   - ✅ Tablero interactivo con 16 tipos organizados por cuadrantes de personalidad.
   - ✅ Sistema de racha de puntos continuos que reinicia ante errores y guarda récord personal.
+- **Daily Kanji (Aprender Japonés)** (`/kanji`):
+  - ✅ Reto diario 100% determinista con semilla `YYYYMMDD + "kanji"` sobre 79 kanjis N5 esenciales y 208 kanas (`kana.json` y `n5.json`).
+  - ✅ 4 etapas evaluativas secuenciales: Lectura (hiragana con IME romaji en tiempo real), Significado (español con distractores deterministas), Romanización (Hepburn) y Trazos (canvas interactivo con Hanzi Writer, cuadrícula mizu-grid y animación pedagógica).
+  - ✅ Regla innegociable de 1 solo intento por etapa con revelación inmediata de feedback didáctico.
+  - ✅ Persistencia incremental por etapa desacoplada con `kanjiRepository` en `localStorage` (tolerancia SSR y fallback en memoria).
+  - ✅ Toggle de accesibilidad entre modalidades "Selección Múltiple" y "Escritura Directa".
+  - ✅ Modal de resumen y viralidad social ("Toque a un amigo") con Web Share API, fallback a WhatsApp y copiado al portapapeles.
+  - ✅ Integrado en catálogo general de juegos (`src/data/games.ts`), ruta Astro (`/kanji`) y ruta dinámica (`/games/daily-kanji`).
 
 ### 🌐 Funcionalidades Globales
 - **Perfil de Jugador**: Identificación por alias (`$playerName`) sincronizada reactivamente entre islas de Astro mediante Nanostores y guardada en `localStorage`.
@@ -39,25 +47,15 @@
 
 ## 2. Características Incompletas o a Medias (Work In Progress)
 
-- 🟡 **Daily Kanji [/kanji] (Aprender Japonés)**:
-  - En desarrollo activo bajo metodología SDD (`docs/specs/spec.md`, `plan.md`, `tasks.md`).
-  - Progreso: 9/10 tareas completadas.
-  - ✅ **T1 Completada:** Dependencia `hanzi-writer` (v3.7.3) instalada e integrada, y datasets estáticos creados en `src/data/kanji/kana.json` (104 kanas de cada tipo: Hiragana y Katakana) y `src/data/kanji/n5.json` (79 kanjis N5 esenciales estructurados con lecturas on/kun, significados y ejemplos).
-  - ✅ **T2 Completada:** Contratos y tipos estrictos de dominio creados en `src/types/kanji.ts` (`KanaItem`, `KanjiWord`, `KanjiN5`, `KanjiStageKey`, `StageOutcome`, `InputMode`, `KanjiStageProgress`, `KanjiDailyState`, `KanjiStats`, `ShareResultPayload`, `KanjiRepositoryContract`) y re-exportados en `src/types/index.ts`.
-  - ✅ **T3 Completada:** Funciones puras deterministas con `rand-seed` (`getDailyKanji`, `getMeaningOptions`, `getReadingOptions`, `getRomajiOptions`, `normalizeAnswer`, `isAnswerCorrect`) en `src/utils/kanji.ts` y motor conversor fonético en tiempo real (`convertRomajiToHiragana`, `convertRomajiToKatakana`, `normalizeRomaji`) en `src/utils/kanaConverter.ts`.
-  - ✅ **T4 Completada:** Repositorio de persistencia incremental desacoplado `kanjiRepository` (`src/services/kanjiRepository.ts`) con soporte de guardado por etapa, cálculo puro e idempotente de racha, preferencias de modo de entrada, protección SSR y fallback volátil en memoria.
-  - ✅ **T5 Completada:** Store reactivo de Zustand `useKanjiStore` (`src/store/useKanjiStore.ts`) con soporte para las 4 etapas, regla estricta de 1 solo intento por etapa, feedback educativo tras fallo, sincronización automática con `kanjiRepository` y gestión de trazos caligráficos.
-  - ✅ **T6 Completada:** Componentes visuales de cabecera implementados: `KanjiProgressBar.tsx` (con visualización de los 4 pasos, estados 🟩/🟥, resaltado activo y contador de racha con 🔥) y `KanjiModeToggle.tsx` (selector accesible de "Múltiple" vs "Escritura" con bloqueo en etapa de trazos).
-  - ✅ **T7 Completada:** Minijuegos evaluativos 1 a 3 implementados: `KanjiReadingStage.tsx` (lectura hiragana con conversión romaji instantánea en modo escritura), `KanjiMeaningStage.tsx` (significado en español con distractores deterministas) y `KanjiRomajiStage.tsx` (romanización Hepburn), con regla estricta de 1 intento y tarjeta de feedback pedagógico ante fallos.
-  - ✅ **T8 Completada:** Minijuego de trazos caligráficos interactivos (`KanjiStrokeStage.tsx`) con Hanzi Writer, cuadrícula de caligrafía (mizu-grid), validación en tiempo real de orden y dirección de trazos, animación correctiva pedagógica ante fallos, y finalización exitosa (`🟩`).
-  - ✅ **T9 Completada:** Utilidad de compartir social (`kanjiShare.ts`) con grilla de 4 emojis (`🟩`/`🟥`), mensaje viral estándar, Web Share API, fallback a WhatsApp y portapapeles; y modal de resumen (`KanjiSummaryModal.tsx`) con kanji del día, racha, récord, desglose de etapas y botón "Toque a un amigo".
-  - ⏳ **Próxima Tarea:** T10 (Contenedor Raíz, Ruta Astro, Registro en Catálogo y Verificación Global en `DailyKanjiGame.tsx`, `index.astro`, `games.ts`, `docs/progress.md`).
+- 🟢 **Daily Kanji [/kanji] (Aprender Japonés)**:
+  - Spec concluida al 100% (10/10 tareas implementadas, verificadas con build verde).
+  - Todas las tareas cerradas en [`docs/specs/001-daily-kanji/tasks.md`](specs/001-daily-kanji/tasks.md) y promovidas a características terminadas en Sección 1.
 - 🟡 **Adivina el Anime por Imagen (`AnimeGame` / `character-by-image`)**:
   - El componente existe en `src/components/games/guess-anime/GameContainer.tsx` y está registrado condicionalmente en `GameRenderer.astro`.
   - **Incompleto**: No está habilitado en `src/data/games.ts` (no aparece en la home ni en el sidebar).
   - **Bloqueado**: Intenta consumir un endpoint `/api/character` que no existe en el servidor.
-- 🟡 **Compartir Resultados en Redes (Social Share)**:
-  - No existe generación de grid de emojis (estilo Wordle: `🟩🟩🟨🟥`) para copiar al portapapeles y compartir resultados diarios.
+- 🟡 **Compartir Resultados en Redes (Social Share en Otros Juegos)**:
+  - Implementado para Daily Kanji (`kanjiShare.ts`); pendiente extender al resto de juegos (`guess-mbti`, `arknightdle`, `warframedle`).
 - 🟡 **Historial y Estadísticas de Jugador**:
   - No hay vista de estadísticas acumuladas (tasa de victoria, promedio de intentos, distribución de conjeturas).
 

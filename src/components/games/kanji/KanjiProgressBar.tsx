@@ -43,10 +43,14 @@ const STAGES_META: StageMetadata[] = [
 
 export interface KanjiProgressBarProps {
   className?: string;
+  onSelectStage?: (index: number) => void;
+  selectedStageIndex?: number;
 }
 
 export const KanjiProgressBar: React.FC<KanjiProgressBarProps> = ({
   className = "",
+  onSelectStage,
+  selectedStageIndex,
 }) => {
   const currentStageIndex = useKanjiStore((state) => state.currentStageIndex);
   const stages = useKanjiStore((state) => state.stages);
@@ -95,7 +99,10 @@ export const KanjiProgressBar: React.FC<KanjiProgressBarProps> = ({
             const stageProgress = stages[meta.key];
             const outcome: StageOutcome = stageProgress?.outcome ?? "pending";
             const isCurrent = currentStageIndex === idx && !isCompleted;
-            const isPending = outcome === "pending" && !isCurrent;
+            const isSelected = selectedStageIndex === idx;
+            const isClickable =
+              Boolean(onSelectStage) &&
+              (isCompleted || outcome !== "pending" || isCurrent);
 
             let statusStyles = "";
             let outcomeIcon = meta.icon;
@@ -117,36 +124,58 @@ export const KanjiProgressBar: React.FC<KanjiProgressBarProps> = ({
                 "bg-neutral-900/40 border-neutral-800 text-neutral-500 opacity-60";
             }
 
+            if (isSelected) {
+              statusStyles += " ring-2 ring-amber-400 border-amber-400";
+            }
+
             return (
               <li
                 key={meta.key}
                 aria-current={isCurrent ? "step" : undefined}
-                className={`flex flex-col items-center justify-center p-1.5 sm:p-2 rounded-xl border text-center transition-all duration-300 ${statusStyles}`}
+                className="list-none"
               >
-                {/* Indicador superior con paso o emoji */}
-                <div className="flex items-center justify-center h-5 text-xs font-bold">
-                  {outcome === "correct" || outcome === "incorrect" ? (
-                    <span className="text-xs" aria-hidden="true">
-                      {outcomeIcon}
-                    </span>
-                  ) : (
-                    <span
-                      className={`text-[11px] font-mono ${
-                        isCurrent ? "text-amber-300 font-extrabold" : "text-neutral-400"
-                      }`}
-                    >
-                      #{meta.stepNumber}
-                    </span>
-                  )}
-                </div>
+                <button
+                  type="button"
+                  disabled={!isClickable}
+                  onClick={() => isClickable && onSelectStage?.(idx)}
+                  className={`w-full flex flex-col items-center justify-center p-1.5 sm:p-2 rounded-xl border text-center transition-all duration-200 ${statusStyles} ${
+                    isClickable
+                      ? "cursor-pointer hover:brightness-110 active:scale-95"
+                      : "cursor-default"
+                  }`}
+                  title={
+                    isClickable
+                      ? `Revisar etapa ${meta.stepNumber}: ${meta.title}`
+                      : `Etapa ${meta.stepNumber}: Pendiente`
+                  }
+                >
+                  {/* Indicador superior con paso o emoji */}
+                  <div className="flex items-center justify-center h-5 text-xs font-bold">
+                    {outcome === "correct" || outcome === "incorrect" ? (
+                      <span className="text-xs" aria-hidden="true">
+                        {outcomeIcon}
+                      </span>
+                    ) : (
+                      <span
+                        className={`text-[11px] font-mono ${
+                          isCurrent
+                            ? "text-amber-300 font-extrabold"
+                            : "text-neutral-400"
+                        }`}
+                      >
+                        #{meta.stepNumber}
+                      </span>
+                    )}
+                  </div>
 
-                {/* Etiqueta de la etapa (responsive) */}
-                <div className="mt-0.5 font-medium leading-tight">
-                  <span className="hidden sm:inline text-xs">{meta.title}</span>
-                  <span className="sm:hidden text-[10px] tracking-tight">
-                    {meta.shortTitle}
-                  </span>
-                </div>
+                  {/* Etiqueta de la etapa (responsive) */}
+                  <div className="mt-0.5 font-medium leading-tight">
+                    <span className="hidden sm:inline text-xs">{meta.title}</span>
+                    <span className="sm:hidden text-[10px] tracking-tight">
+                      {meta.shortTitle}
+                    </span>
+                  </div>
+                </button>
               </li>
             );
           })}

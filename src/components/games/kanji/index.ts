@@ -5,3 +5,4 @@ export * from "./stages/KanjiMeaningStage";
 export * from "./stages/KanjiRomajiStage";
 export * from "./stages/KanjiStrokeStage";
 export * from "./KanjiSummaryModal";
+export * from "./DailyKanjiGame";

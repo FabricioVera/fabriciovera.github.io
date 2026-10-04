@@ -1,0 +1,10 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { DailyKanjiGame } from "../../components/games/kanji";
+---
+
+<Layout title="Daily Kanji — Aprender Japonés | FabriGames">
+  <div class="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col items-center justify-start py-2 sm:py-6 px-2 sm:px-4">
+    <DailyKanjiGame client:only="React" />
+  </div>
+</Layout>

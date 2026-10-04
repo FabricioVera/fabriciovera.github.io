@@ -18,6 +18,15 @@ export interface GameLinked {
 
 export const games: Game[] = [
   {
+    id: "daily-kanji",
+    name: "Daily Kanji",
+    title: "Aprender Japonés: Reto Diario",
+    isAvailable: true,
+    backgroundImage: "/img/bg-anime-character.jpg",
+    frontImage: "/img/fg-mbti2.png",
+    url: "/kanji",
+  },
+  {
     id: "guess-mbti",
     name: "Adivina el MBTI",
     title: "Adivina el MBTI del personaje",

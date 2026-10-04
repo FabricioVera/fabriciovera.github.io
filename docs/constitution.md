@@ -37,6 +37,7 @@ Este documento define los principios innegociables e inmutables de ingeniería, 
 
 ## 📐 Artículo V — Tipado Estricto y Coexistencia Progresiva de Documentación
 1. Todo el código TypeScript debe adherirse al modo estricto (`astro/tsconfigs/strict`). Se prohíbe el uso indiscriminado de `any`.
-2. **Coexistencia SDD / Memory Bank:**
-   - El flujo SDD (Spec-Driven Development: `spec.md` ➔ `plan.md` ➔ `tasks.md` en `docs/specs/NNN-{feature}/`) es de uso **obligatorio exclusivamente para nuevas features** o rediseños/refactorizaciones mayores de características existentes.
+2. **Coexistencia SDD / Memory Bank y Regla de Carpetas:**
+   - El flujo SDD (Spec-Driven Development: `spec.md` ➔ `plan.md` ➔ `tasks.md`) es de uso **obligatorio exclusivamente para nuevas features** o rediseños/refactorizaciones mayores de características existentes.
+   - **Regla Estricta de Directorio:** Toda spec DEBE crearse en su propia subcarpeta numerada secuencialmente `docs/specs/NNN-{feature}/` (ej. `docs/specs/001-daily-kanji/`). Queda prohibido situar documentos de una spec directamente en la raíz de `docs/specs/`.
    - Las características previas y consolidadas del proyecto permanecen documentadas en su formato actual (`docs/specs.md`, `docs/design.md`, `docs/progress.md` y `docs/task.md`), prohibiendo migraciones retroactivas forzadas a SDD salvo cuando una feature sea rediseñada o modificada sustancialmente.

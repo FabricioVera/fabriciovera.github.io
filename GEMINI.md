@@ -25,7 +25,13 @@ El proyecto opera bajo un modelo híbrido: **Memory Bank** para la gobernanza gl
   - **NO se deben migrar retroactivamente a SDD** las features antiguas salvo que se encare un rediseño estructural, una refactorización de gran impacto o un cambio de alcance mayor sobre las mismas.
   - Corrección de bugs menores o parches de estabilidad sobre features legacy continúan registrándose en [`docs/task.md`](docs/task.md) y [`docs/progress.md`](docs/progress.md).
 
-### 1.3. Mantenimiento y Actualización Continua de `docs/progress.md`
+### 1.3. Regla Estricta e Inviolable de Estructura de Carpetas SDD (`NNN-{nombre}`)
+> **Directiva Obligatoria de Aislamiento de Specs:**
+> 1. **Toda spec DEBE residir obligatoriamente en su propia subcarpeta numerada secuencialmente:** `docs/specs/NNN-{nombre-de-la-spec}/` (ej. `docs/specs/001-daily-kanji/`, `docs/specs/002-social-share/`).
+> 2. **Queda terminantemente PROHIBIDO** crear o alojar `spec.md`, `plan.md` o `tasks.md` directamente en la raíz de `docs/specs/`. La raíz de `docs/specs/` únicamente aloja las plantillas (`_template.md`, `_template_plan.md`, `_template_tasks.md`).
+> 3. Si una spec se inicia a partir de una descripción o archivo suelto, el primer paso OBLIGATORIO del agente o desarrollador es determinar el siguiente número secuencial (ej. `001`, `002`), crear el directorio `docs/specs/NNN-{nombre}/` y ubicar todos sus artefactos (`spec.md`, `plan.md`, `tasks.md`) allí dentro.
+
+### 1.4. Mantenimiento y Actualización Continua de `docs/progress.md`
 > **Directiva de Sincronización:**
 > Cada vez que se resuelva un bug, se complete una tarea de una spec o se finalice una funcionalidad:
 > 1. Actualiza inmediatamente el archivo [`docs/progress.md`](docs/progress.md) reflejando el nuevo estado de las características y eliminando los bugs que hayan sido resueltos.
