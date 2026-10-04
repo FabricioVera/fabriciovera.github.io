@@ -102,7 +102,7 @@ export const DailyKanjiGame: React.FC = () => {
           Daily Kanji
         </h1>
         <p className="text-xs sm:text-sm text-neutral-400 mt-1 max-w-sm">
-          Aprende y domina un nuevo kanji cada día en 4 etapas interactivas.
+          Domina 20 kanjis cada día en 4 etapas consecutivas (80 retos diarios).
         </p>
       </div>
 

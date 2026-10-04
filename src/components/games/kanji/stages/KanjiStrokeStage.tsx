@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import HanziWriter from "hanzi-writer";
-import { useKanjiStore } from "../../../../store/useKanjiStore";
+import { useKanjiStore, QUESTIONS_PER_STAGE } from "../../../../store/useKanjiStore";
 
 export const KanjiStrokeStage: React.FC = () => {
   const kanjiTarget = useKanjiStore((state) => state.kanjiTarget);
+  const currentQuestionIndex = useKanjiStore((state) => state.currentQuestionIndex);
   const stageProgress = useKanjiStore((state) => state.stages.strokes);
-  const completeStrokes = useKanjiStore((state) => state.completeStrokes);
+  const completeCurrentStrokeKanji = useKanjiStore((state) => state.completeCurrentStrokeKanji);
   const isCompleted = useKanjiStore((state) => state.isCompleted);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -16,7 +17,12 @@ export const KanjiStrokeStage: React.FC = () => {
   const [totalStrokes, setTotalStrokes] = useState<number>(0);
   const [currentStroke, setCurrentStroke] = useState<number>(0);
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
-  const isAlreadyFinished = stageProgress.outcome === "correct" || isCompleted;
+  const [strokeSuccess, setStrokeSuccess] = useState<boolean>(false);
+
+  // Comprueba si el kanji activo ya fue completado previamente
+  const isKanjiFinished =
+    isCompleted ||
+    Boolean(stageProgress.answers?.some((a) => a.kanjiId === kanjiTarget?.id));
 
   const startQuiz = useCallback((writer: HanziWriter) => {
     writer.quiz({
@@ -27,23 +33,34 @@ export const KanjiStrokeStage: React.FC = () => {
         setCurrentStroke(data.strokeNum + 1);
       },
       onMistake: (data) => {
-        // Reproduce animación del trazo correcto para guiar pedagógicamente al usuario
+        // Reproduce animación del trazo correcto para guiar pedagógicamente
         writer.animateStroke(data.strokeNum);
       },
       onComplete: () => {
-        completeStrokes();
+        setStrokeSuccess(true);
+        setTimeout(() => {
+          setStrokeSuccess(false);
+          completeCurrentStrokeKanji();
+        }, 1200);
       },
     });
-  }, [completeStrokes]);
+  }, [completeCurrentStrokeKanji]);
 
-  // Inicialización de HanziWriter sobre el lienzo DOM
+  // Inicialización y limpieza limpia de HanziWriter por cada kanji activo
   useEffect(() => {
     if (!containerRef.current || !kanjiTarget) return;
 
-    // Limpieza de renderizado previo
+    // Destrucción de instancia previa para evitar fugas de memoria
+    if (writerRef.current) {
+      writerRef.current.cancelQuiz();
+      writerRef.current = null;
+    }
+
     containerRef.current.innerHTML = "";
     setIsLoading(true);
     setLoadError(null);
+    setCurrentStroke(0);
+    setStrokeSuccess(false);
 
     try {
       const writer = HanziWriter.create(containerRef.current, kanjiTarget.kanji, {
@@ -51,12 +68,12 @@ export const KanjiStrokeStage: React.FC = () => {
         height: 260,
         padding: 16,
         showOutline: true,
-        showCharacter: isAlreadyFinished,
+        showCharacter: isKanjiFinished,
         strokeAnimationSpeed: 1.2,
         strokeHighlightSpeed: 1.5,
         strokeColor: "#f3f4f6", // blanco tiza
         outlineColor: "#2f3136", // gris tenue silueta
-        drawingColor: "#f59e0b", // ámbar para el puntero
+        drawingColor: "#f59e0b", // ámbar para el trazo activo
         highlightColor: "#38bdf8", // celeste de ayuda
         highlightCompleteColor: "#10b981", // verde esmeralda al completar
         onLoadCharDataSuccess: (data) => {
@@ -64,13 +81,13 @@ export const KanjiStrokeStage: React.FC = () => {
           if (data?.strokes) {
             setTotalStrokes(data.strokes.length);
           }
-          if (!isAlreadyFinished) {
+          if (!isKanjiFinished) {
             startQuiz(writer);
           }
         },
         onLoadCharDataError: (err) => {
           setIsLoading(false);
-          setLoadError("No se pudo cargar los datos de trazo del kanji.");
+          setLoadError("No se pudieron cargar los datos de trazo del kanji.");
           console.error("[KanjiStrokeStage] Error cargando HanziWriter:", err);
         },
       });
@@ -91,7 +108,7 @@ export const KanjiStrokeStage: React.FC = () => {
         containerRef.current.innerHTML = "";
       }
     };
-  }, [kanjiTarget, isAlreadyFinished, startQuiz]);
+  }, [kanjiTarget, isKanjiFinished, startQuiz]);
 
   const handleAnimate = () => {
     const writer = writerRef.current;
@@ -102,7 +119,7 @@ export const KanjiStrokeStage: React.FC = () => {
     writer.animateCharacter({
       onComplete: () => {
         setIsAnimating(false);
-        if (!isAlreadyFinished) {
+        if (!isKanjiFinished) {
           startQuiz(writer);
         }
       },
@@ -121,36 +138,36 @@ export const KanjiStrokeStage: React.FC = () => {
   if (!kanjiTarget) {
     return (
       <div className="flex items-center justify-center p-8 text-neutral-400">
-        Cargando kanji del día...
+        Cargando kanji...
       </div>
     );
   }
 
+  const isLastKanji = currentQuestionIndex >= QUESTIONS_PER_STAGE - 1;
+
   return (
     <section
       aria-label="Etapa 4: Caligrafía y Trazos Interactivos"
-      className="w-full max-w-lg mx-auto flex flex-col items-center gap-5 p-4 sm:p-6 bg-neutral-900/90 border border-neutral-800 rounded-3xl shadow-xl backdrop-blur-md"
+      className="w-full max-w-lg mx-auto flex flex-col items-center gap-4 sm:gap-5 p-4 sm:p-6 bg-neutral-900/90 border border-neutral-800 rounded-3xl shadow-xl backdrop-blur-md"
     >
       {/* Encabezado */}
       <div className="text-center">
         <span className="text-[11px] uppercase tracking-widest font-bold px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
-          Etapa 4 de 4 • Trazos
+          Etapa 4 • Trazos ({currentQuestionIndex + 1} de {QUESTIONS_PER_STAGE})
         </span>
         <h2 className="mt-2 text-base sm:text-lg font-bold text-neutral-100">
-          Dibuja los trazos del Kanji
+          Traza el kanji: <span className="text-amber-400 font-serif text-xl ml-1" lang="ja">{kanjiTarget.kanji}</span>
         </h2>
         <p className="text-xs text-neutral-400 mt-0.5">
-          Sigue el orden y sentido correcto con tu dedo o ratón.
+          Dibuja cada trazo en el orden y sentido caligráfico correcto.
         </p>
       </div>
 
-      {/* Indicador de Trazo Activo */}
-      <div className="flex items-center gap-2 text-xs font-semibold text-neutral-300 px-3 py-1 rounded-full bg-neutral-800/80 border border-neutral-700/80">
-        <span>Trazo:</span>
+      {/* Indicador de Trazo Activo y Contador de Kanjis de la serie */}
+      <div className="flex items-center justify-between w-full max-w-[260px] text-xs font-semibold text-neutral-300 px-3 py-1 rounded-full bg-neutral-800/80 border border-neutral-700/80">
+        <span>Kanji {currentQuestionIndex + 1}/{QUESTIONS_PER_STAGE}</span>
         <span className="text-amber-400 font-mono font-bold">
-          {isAlreadyFinished
-            ? `${totalStrokes} de ${totalStrokes}`
-            : `${Math.min(currentStroke + 1, totalStrokes || 1)} de ${totalStrokes || "?"}`}
+          Trazo {Math.min(currentStroke + 1, totalStrokes || 1)}/{totalStrokes || "?"}
         </span>
       </div>
 
@@ -162,7 +179,6 @@ export const KanjiStrokeStage: React.FC = () => {
           viewBox="0 0 260 260"
           aria-hidden="true"
         >
-          {/* Cruz central */}
           <line
             x1="130"
             y1="0"
@@ -181,7 +197,6 @@ export const KanjiStrokeStage: React.FC = () => {
             strokeWidth="1.5"
             strokeDasharray="4,4"
           />
-          {/* Diagonales sutiles */}
           <line
             x1="0"
             y1="0"
@@ -219,10 +234,18 @@ export const KanjiStrokeStage: React.FC = () => {
             <button
               type="button"
               onClick={handleReset}
-              className="mt-2 px-3 py-1 bg-neutral-800 rounded text-neutral-200"
+              className="mt-2 px-3 py-1 bg-neutral-800 rounded text-neutral-200 cursor-pointer"
             >
               Reintentar
             </button>
+          </div>
+        )}
+
+        {/* Overlay de éxito inmediato tras completar el kanji */}
+        {strokeSuccess && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-emerald-950/80 backdrop-blur-sm z-20 text-emerald-300 font-bold text-sm animate-fadeIn">
+            <span className="text-3xl">✨</span>
+            <span>¡Excelente! Siguiente kanji...</span>
           </div>
         )}
 
@@ -247,28 +270,38 @@ export const KanjiStrokeStage: React.FC = () => {
           <span>{isAnimating ? "Animando..." : "Ver animación"}</span>
         </button>
 
-        {!isAlreadyFinished && (
+        {!isKanjiFinished && (
           <button
             type="button"
             onClick={handleReset}
             disabled={isLoading || isAnimating}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-neutral-800 hover:bg-neutral-700/80 border border-neutral-700 text-neutral-300 text-xs font-semibold transition-all active:scale-95 disabled:opacity-50 cursor-pointer shadow-sm"
-            title="Reiniciar lienzo para volver a trazar"
+            title="Reiniciar lienzo para volver a trazar este kanji"
           >
             <span>🔄</span>
             <span>Reiniciar</span>
           </button>
         )}
+
+        {isKanjiFinished && !isCompleted && (
+          <button
+            type="button"
+            onClick={() => completeCurrentStrokeKanji()}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all active:scale-95 cursor-pointer shadow-md"
+          >
+            <span>Siguiente kanji ({currentQuestionIndex + 2}/{QUESTIONS_PER_STAGE}) →</span>
+          </button>
+        )}
       </div>
 
-      {/* Banner de Felicitación al Finalizar */}
-      {isAlreadyFinished && (
+      {/* Banner de Felicitación al Finalizar todos los trazos */}
+      {isCompleted && (
         <div
           role="status"
           className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl bg-emerald-950/60 border border-emerald-500/60 text-emerald-300 text-xs sm:text-sm font-bold shadow-lg animate-fadeIn"
         >
-          <span>🟩</span>
-          <span>¡Caligrafía completada con éxito!</span>
+          <span>🏆</span>
+          <span>¡Todos los 20 trazos del día completados!</span>
         </div>
       )}
     </section>

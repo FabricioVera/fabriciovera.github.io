@@ -1,5 +1,6 @@
 /**
  * Utilidades de compartir y viralidad social para Daily Kanji [/kanji]
+ * Soporta formato de 20 preguntas por etapa (80 retos diarios).
  * FabricioVera / FabriGames — Conforme con docs/constitution.md (Art. IV y V)
  */
 
@@ -18,9 +19,7 @@ const STAGE_KEYS: KanjiStageKey[] = [
 ];
 
 /**
- * Genera la grilla de 4 emojis que resumen el desempeño en las 4 etapas.
- * 🟩 = Acierto ("correct")
- * 🟥 = Fallo pedagógico ("incorrect" o no superado)
+ * Genera la grilla de emojis basada en los puntajes de las 4 etapas.
  */
 export function generateEmojiGrid(
   stages: Record<KanjiStageKey, KanjiStageProgress> | StageOutcome[]
@@ -31,34 +30,67 @@ export function generateEmojiGrid(
       .join("");
   }
 
-  return STAGE_KEYS.map((key) =>
-    stages[key]?.outcome === "correct" ? "🟩" : "🟥"
-  ).join("");
+  return STAGE_KEYS.map((key) => {
+    const st = stages[key];
+    if (!st) return "⚪";
+    // Si la etapa tiene 20 de 20 es verde brillante, si > 14 es verde, si menor es rojo/amarillo
+    const score = st.score ?? (st.outcome === "correct" ? 20 : 0);
+    if (score >= 18) return "🟩";
+    if (score >= 12) return "🟨";
+    return "🟥";
+  }).join("");
 }
 
 /**
  * Construye el mensaje formateado estándar para compartir en redes sociales y mensajería.
- * Formato:
+ * Formato enriquecido para el reto de 80 preguntas:
+ * 
  * FabriGames - Daily Kanji #YYYY-MM-DD
- * Kanji: {kanji} ({meaning})
- * Racha: {streak} días 🔥
- * Desempeño: {grid}
+ * 🏆 Puntuación: 76/80 (95%)
+ * 📖 Lectura: 19/20
+ * 💡 Significado: 20/20
+ * 🔤 Romaji: 18/20
+ * ✍️ Trazos: 19/20
+ * 🔥 Racha: 5 días
  * https://fabriciovera.github.io/kanji
  */
 export function buildKanjiShareMessage(payload: ShareResultPayload): string {
   const dateStr = payload.dateStr || payload.date;
+  const url =
+    payload.gameUrl || payload.url || "https://fabriciovera.github.io/kanji";
+
+  if (payload.stageScores) {
+    const reading = payload.stageScores.reading ?? 0;
+    const meaning = payload.stageScores.meaning ?? 0;
+    const romaji = payload.stageScores.romaji ?? 0;
+    const strokes = payload.stageScores.strokes ?? 0;
+    const total = payload.totalScore ?? (reading + meaning + romaji + strokes);
+    const max = payload.maxPossibleScore ?? 80;
+    const pct = Math.round((total / max) * 100);
+
+    return [
+      `FabriGames - Daily Kanji #${dateStr}`,
+      `🏆 Puntuación: ${total}/${max} (${pct}%)`,
+      `📖 Lectura: ${reading}/20`,
+      `💡 Significado: ${meaning}/20`,
+      `🔤 Romaji: ${romaji}/20`,
+      `✍️ Trazos: ${strokes}/20`,
+      `🔥 Racha: ${payload.streak} ${payload.streak === 1 ? "día" : "días"}`,
+      url,
+    ].join("\n");
+  }
+
+  // Fallback para mensajes legacy con grid de emojis
   const meaningPart = payload.meaning ? ` (${payload.meaning})` : "";
   const grid =
     payload.grid ||
     (payload.stageOutcomes
       ? generateEmojiGrid(payload.stageOutcomes)
       : "🟩🟩🟩🟩");
-  const url =
-    payload.gameUrl || payload.url || "https://fabriciovera.github.io/kanji";
 
   return [
     `FabriGames - Daily Kanji #${dateStr}`,
-    `Kanji: ${payload.kanji}${meaningPart}`,
+    `Kanji: ${payload.kanji || ""}${meaningPart}`,
     `Racha: ${payload.streak} días 🔥`,
     `Desempeño: ${grid}`,
     url,
@@ -77,7 +109,7 @@ export async function shareDailyKanjiResult(
     payload.gameUrl || payload.url || "https://fabriciovera.github.io/kanji";
   const title = `FabriGames - Daily Kanji #${payload.dateStr || payload.date}`;
 
-  // 1. Intentar Web Share API nativa (típica en móviles Android/iOS y Safari)
+  // 1. Intentar Web Share API nativa (dispositivos móviles y navegadores compatibles)
   if (
     typeof navigator !== "undefined" &&
     typeof navigator.share === "function"
@@ -91,7 +123,7 @@ export async function shareDailyKanjiResult(
       return { shared: true, method: "share" };
     } catch (err: unknown) {
       if (err instanceof Error && err.name === "AbortError") {
-        // El usuario canceló intencionalmente el diálogo nativo
+        // Cancelado intencionalmente por el usuario
         return { shared: false, method: "share" };
       }
       console.warn(
@@ -101,7 +133,7 @@ export async function shareDailyKanjiResult(
     }
   }
 
-  // 2. Fallback: Copiar al portapapeles
+  // 2. Copiar texto al portapapeles como respaldo seguro
   if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
     try {
       await navigator.clipboard.writeText(text);
@@ -113,7 +145,7 @@ export async function shareDailyKanjiResult(
     }
   }
 
-  // 3. Fallback: Abrir enlace directo a WhatsApp Web / App
+  // 3. Abrir WhatsApp Web / App nativa con el texto codificado
   if (typeof window !== "undefined") {
     const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
       text

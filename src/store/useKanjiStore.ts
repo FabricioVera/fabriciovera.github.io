@@ -1,5 +1,6 @@
 /**
  * Store de Estado del Reto Diario con Zustand para Daily Kanji [/kanji]
+ * Soporta 20 preguntas por etapa (80 retos diarios).
  * FabricioVera / FabriGames
  * Cumple con Art. I (Determinismo), Art. II (Separación de Estado) y Art. III (Repository Pattern)
  */
@@ -10,12 +11,13 @@ import type {
   KanjiN5,
   KanjiStageKey,
   KanjiStageProgress,
+  StageAnswerRecord,
   InputMode,
   KanjiStats,
   KanjiDailyState,
 } from "../types/kanji";
 import {
-  getDailyKanji,
+  getDailyKanjiList,
   getPrimaryReading,
   getPrimaryRomaji,
   isAnswerCorrect,
@@ -29,6 +31,8 @@ export const STAGE_KEYS: KanjiStageKey[] = [
   "romaji",
   "strokes",
 ];
+
+export const QUESTIONS_PER_STAGE = 20;
 
 export function getTodayDateString(): string {
   const today = new Date();
@@ -46,6 +50,9 @@ export function createInitialStages(): Record<KanjiStageKey, KanjiStageProgress>
       outcome: "pending",
       attempts: 0,
       attempted: false,
+      score: 0,
+      answers: [],
+      isCompleted: false,
     },
     meaning: {
       stageKey: "meaning",
@@ -53,6 +60,9 @@ export function createInitialStages(): Record<KanjiStageKey, KanjiStageProgress>
       outcome: "pending",
       attempts: 0,
       attempted: false,
+      score: 0,
+      answers: [],
+      isCompleted: false,
     },
     romaji: {
       stageKey: "romaji",
@@ -60,6 +70,9 @@ export function createInitialStages(): Record<KanjiStageKey, KanjiStageProgress>
       outcome: "pending",
       attempts: 0,
       attempted: false,
+      score: 0,
+      answers: [],
+      isCompleted: false,
     },
     strokes: {
       stageKey: "strokes",
@@ -67,17 +80,29 @@ export function createInitialStages(): Record<KanjiStageKey, KanjiStageProgress>
       outcome: "pending",
       attempts: 0,
       attempted: false,
+      score: 0,
+      answers: [],
+      isCompleted: false,
     },
   };
 }
 
+export interface LastFeedback {
+  isCorrect: boolean;
+  correctAnswer: string;
+  userAnswer: string;
+}
+
 export interface KanjiStoreState {
+  dailyKanjis: KanjiN5[];
   kanjiTarget: KanjiN5 | null;
   allKanjis: KanjiN5[];
   currentStageIndex: number; // 0: reading, 1: meaning, 2: romaji, 3: strokes, 4: completed
+  currentQuestionIndex: number; // 0..19
   stages: Record<KanjiStageKey, KanjiStageProgress>;
   inputMode: InputMode;
   isFeedbackOpen: boolean;
+  lastFeedback: LastFeedback | null;
   isCompleted: boolean;
   stats: KanjiStats;
   isLoading: boolean;
@@ -90,16 +115,20 @@ export interface KanjiStoreState {
   submitStageAnswer: (answer: string) => { isCorrect: boolean; correctAnswer: string };
   advanceAfterFeedback: () => void;
   advanceToNextStage: () => void;
+  completeCurrentStrokeKanji: () => void;
   completeStrokes: () => void;
 }
 
 export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
+  dailyKanjis: [],
   kanjiTarget: null,
   allKanjis: n5Data as unknown as KanjiN5[],
   currentStageIndex: 0,
+  currentQuestionIndex: 0,
   stages: createInitialStages(),
   inputMode: "choice",
   isFeedbackOpen: false,
+  lastFeedback: null,
   isCompleted: false,
   stats: {
     currentStreak: 0,
@@ -123,7 +152,8 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
       return;
     }
 
-    const target = getDailyKanji(kanjiList, todayDate);
+    // Obtener los 20 kanjis deterministas del día
+    const dailyKanjis = getDailyKanjiList(kanjiList, todayDate, QUESTIONS_PER_STAGE);
     const savedMode = kanjiRepository.getInputModePreference();
     const stats = kanjiRepository.getStats();
     const savedProgress = kanjiRepository.getDailyProgress(todayDate);
@@ -133,13 +163,22 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
       const isDone =
         savedProgress.isCompleted || savedProgress.currentStageIndex >= 4;
 
+      const stageIdx = isDone ? 4 : Math.min(savedProgress.currentStageIndex, 3);
+      const qIdx = isDone
+        ? 0
+        : Math.min(savedProgress.currentQuestionIndex ?? 0, QUESTIONS_PER_STAGE - 1);
+      const activeKanji = dailyKanjis[qIdx] || dailyKanjis[0];
+
       set({
-        kanjiTarget: target,
+        dailyKanjis,
+        kanjiTarget: activeKanji,
         allKanjis: kanjiList,
-        currentStageIndex: savedProgress.currentStageIndex,
+        currentStageIndex: stageIdx,
+        currentQuestionIndex: qIdx,
         stages: savedProgress.stages,
         inputMode: savedProgress.inputMode ?? savedMode,
         isFeedbackOpen: false,
+        lastFeedback: null,
         isCompleted: isDone,
         stats,
         isLoading: false,
@@ -148,10 +187,13 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
     } else {
       // Inicialización de nuevo reto diario
       const initialStages = createInitialStages();
+      const activeKanji = dailyKanjis[0];
       const newState: KanjiDailyState = {
         date: todayDate,
-        kanjiId: target.id,
+        kanjiId: activeKanji.id,
+        kanjiIds: dailyKanjis.map((k) => k.id),
         currentStageIndex: 0,
+        currentQuestionIndex: 0,
         stages: initialStages,
         inputMode: savedMode,
         isCompleted: false,
@@ -163,12 +205,15 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
       kanjiRepository.saveIncrementalProgress(newState);
 
       set({
-        kanjiTarget: target,
+        dailyKanjis,
+        kanjiTarget: activeKanji,
         allKanjis: kanjiList,
         currentStageIndex: 0,
+        currentQuestionIndex: 0,
         stages: initialStages,
         inputMode: savedMode,
         isFeedbackOpen: false,
+        lastFeedback: null,
         isCompleted: false,
         stats,
         isLoading: false,
@@ -185,13 +230,15 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
     set({ inputMode: mode });
 
     // Actualiza también en el progreso diario guardado
-    const { date, kanjiTarget, currentStageIndex, stages, isCompleted, stats } =
+    const { date, kanjiTarget, dailyKanjis, currentStageIndex, currentQuestionIndex, stages, isCompleted, stats } =
       get();
     if (kanjiTarget) {
       kanjiRepository.saveIncrementalProgress({
         date,
         kanjiId: kanjiTarget.id,
+        kanjiIds: dailyKanjis.map((k) => k.id),
         currentStageIndex,
+        currentQuestionIndex,
         stages,
         inputMode: mode,
         isCompleted,
@@ -203,12 +250,15 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
   },
 
   /**
-   * Procesa la respuesta para la etapa en curso con regla estricta de 1 solo intento.
+   * Procesa la respuesta para la pregunta activa de la etapa en curso.
+   * Regla de 1 solo intento por pregunta con retroalimentación inmediata.
    */
   submitAnswer: (answer: string) => {
     const {
+      dailyKanjis,
       kanjiTarget,
       currentStageIndex,
+      currentQuestionIndex,
       stages,
       date,
       inputMode,
@@ -223,11 +273,12 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
     const currentKey = STAGE_KEYS[currentStageIndex];
     const stageState = stages[currentKey];
 
-    // Bloqueo: si la etapa ya fue intentada o respondida, no permitir reintentos
-    if (stageState.attempts > 0 || stageState.outcome !== "pending") {
+    // Verificar si esta pregunta específica ya fue respondida en esta etapa
+    if (stageState.answers && stageState.answers.length > currentQuestionIndex) {
+      const existing = stageState.answers[currentQuestionIndex];
       return {
-        isCorrect: stageState.outcome === "correct",
-        correctAnswer: stageState.revealedAnswer ?? "",
+        isCorrect: existing.isCorrect,
+        correctAnswer: existing.correctAnswer,
       };
     }
 
@@ -267,17 +318,30 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
         : [correctAnswer];
       isCorrect = isAnswerCorrect(answer, acceptableRomaji, true);
     } else {
-      // Etapa 3 (Trazos) se resuelve vía completeStrokes
+      // Etapa 3 (Trazos) se resuelve vía completeCurrentStrokeKanji
       return { isCorrect: false, correctAnswer: "" };
     }
 
+    const answerRecord: StageAnswerRecord = {
+      kanjiId: kanjiTarget.id,
+      kanjiCharacter: kanjiTarget.kanji,
+      isCorrect,
+      userAnswer: answer,
+      correctAnswer,
+      timestamp: new Date().toISOString(),
+    };
+
+    const newAnswers = [...(stageState.answers || []), answerRecord];
+    const newScore = isCorrect ? (stageState.score || 0) + 1 : (stageState.score || 0);
+
     const updatedProgress: KanjiStageProgress = {
-      stageKey: currentKey,
-      stage: currentKey,
+      ...stageState,
+      score: newScore,
+      answers: newAnswers,
       outcome: isCorrect ? "correct" : "incorrect",
       userAnswer: answer,
       revealedAnswer: correctAnswer,
-      attempts: 1,
+      attempts: (stageState.attempts || 0) + 1,
       attempted: true,
       completedAt: new Date().toISOString(),
     };
@@ -287,66 +351,170 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
       [currentKey]: updatedProgress,
     };
 
-    if (isCorrect) {
-      // Acierto: avanza de inmediato a la siguiente etapa
-      const nextIndex = currentStageIndex + 1;
-      const done = nextIndex >= 4;
+    const feedbackPayload: LastFeedback = {
+      isCorrect,
+      correctAnswer,
+      userAnswer: answer,
+    };
+
+    set({
+      stages: newStages,
+      isFeedbackOpen: true,
+      lastFeedback: feedbackPayload,
+    });
+
+    kanjiRepository.saveIncrementalProgress({
+      date,
+      kanjiId: kanjiTarget.id,
+      kanjiIds: dailyKanjis.map((k) => k.id),
+      currentStageIndex,
+      currentQuestionIndex,
+      stages: newStages,
+      inputMode,
+      isCompleted: false,
+      updatedAt: new Date().toISOString(),
+      streak: stats.currentStreak,
+      lastPlayedDate: stats.lastCompletedDate,
+    });
+
+    return { isCorrect, correctAnswer };
+  },
+
+  submitStageAnswer: (answer: string) => {
+    return get().submitAnswer(answer);
+  },
+
+  /**
+   * Cierra la retroalimentación y avanza a la siguiente pregunta o etapa.
+   */
+  advanceAfterFeedback: () => {
+    const {
+      dailyKanjis,
+      currentStageIndex,
+      currentQuestionIndex,
+      stages,
+      date,
+      inputMode,
+      stats,
+    } = get();
+
+    if (currentStageIndex >= 4) return;
+
+    const currentKey = STAGE_KEYS[currentStageIndex];
+
+    if (currentQuestionIndex < QUESTIONS_PER_STAGE - 1) {
+      // Avanzar a la siguiente pregunta de la misma etapa
+      const nextQ = currentQuestionIndex + 1;
+      const nextKanji = dailyKanjis[nextQ];
 
       set({
-        stages: newStages,
-        currentStageIndex: nextIndex,
+        currentQuestionIndex: nextQ,
+        kanjiTarget: nextKanji,
         isFeedbackOpen: false,
-        isCompleted: done,
+        lastFeedback: null,
       });
 
       kanjiRepository.saveIncrementalProgress({
         date,
-        kanjiId: kanjiTarget.id,
-        currentStageIndex: nextIndex,
-        stages: newStages,
-        inputMode,
-        isCompleted: done,
-        updatedAt: new Date().toISOString(),
-        streak: stats.currentStreak,
-        lastPlayedDate: stats.lastCompletedDate,
-      });
-    } else {
-      // Fallo pedagógico: muestra la solución en pantalla antes de permitir continuar
-      set({
-        stages: newStages,
-        isFeedbackOpen: true,
-      });
-
-      kanjiRepository.saveIncrementalProgress({
-        date,
-        kanjiId: kanjiTarget.id,
+        kanjiId: nextKanji.id,
+        kanjiIds: dailyKanjis.map((k) => k.id),
         currentStageIndex,
-        stages: newStages,
+        currentQuestionIndex: nextQ,
+        stages,
         inputMode,
         isCompleted: false,
         updatedAt: new Date().toISOString(),
         streak: stats.currentStreak,
         lastPlayedDate: stats.lastCompletedDate,
       });
+    } else {
+      // Completó las 20 preguntas de la etapa actual: pasar a la siguiente etapa
+      const updatedStages = {
+        ...stages,
+        [currentKey]: {
+          ...stages[currentKey],
+          isCompleted: true,
+        },
+      };
+
+      const nextStageIndex = currentStageIndex + 1;
+      const isDone = nextStageIndex >= 4;
+
+      if (!isDone) {
+        // Pasa a la siguiente etapa en la pregunta 0
+        const firstKanjiOfNextStage = dailyKanjis[0];
+        set({
+          currentStageIndex: nextStageIndex,
+          currentQuestionIndex: 0,
+          kanjiTarget: firstKanjiOfNextStage,
+          stages: updatedStages,
+          isFeedbackOpen: false,
+          lastFeedback: null,
+          isCompleted: false,
+        });
+
+        kanjiRepository.saveIncrementalProgress({
+          date,
+          kanjiId: firstKanjiOfNextStage.id,
+          kanjiIds: dailyKanjis.map((k) => k.id),
+          currentStageIndex: nextStageIndex,
+          currentQuestionIndex: 0,
+          stages: updatedStages,
+          inputMode,
+          isCompleted: false,
+          updatedAt: new Date().toISOString(),
+          streak: stats.currentStreak,
+          lastPlayedDate: stats.lastCompletedDate,
+        });
+      } else {
+        // Completó las 4 etapas (80 retos)
+        const totalScore =
+          updatedStages.reading.score +
+          updatedStages.meaning.score +
+          updatedStages.romaji.score +
+          updatedStages.strokes.score;
+        const isPerfect = totalScore === QUESTIONS_PER_STAGE * 4;
+        const newStats = kanjiRepository.recordDailyCompletion(date, isPerfect);
+
+        set({
+          currentStageIndex: 4,
+          currentQuestionIndex: 0,
+          stages: updatedStages,
+          isFeedbackOpen: false,
+          lastFeedback: null,
+          isCompleted: true,
+          stats: newStats,
+        });
+
+        kanjiRepository.saveIncrementalProgress({
+          date,
+          kanjiId: dailyKanjis[0].id,
+          kanjiIds: dailyKanjis.map((k) => k.id),
+          currentStageIndex: 4,
+          currentQuestionIndex: 0,
+          stages: updatedStages,
+          inputMode,
+          isCompleted: true,
+          updatedAt: new Date().toISOString(),
+          streak: newStats.currentStreak,
+          lastPlayedDate: date,
+        });
+      }
     }
+  },
 
-    return { isCorrect, correctAnswer };
+  advanceToNextStage: () => {
+    get().advanceAfterFeedback();
   },
 
   /**
-   * Alias de submitAnswer para compatibilidad de nomenclatura con plan.md.
+   * Registra el kanji de trazo actual como completado en la Etapa 4 y avanza al siguiente (1..20).
    */
-  submitStageAnswer: (answer: string) => {
-    return get().submitAnswer(answer);
-  },
-
-  /**
-   * Cierra el diálogo de feedback pedagógico y avanza a la siguiente etapa.
-   */
-  advanceAfterFeedback: () => {
+  completeCurrentStrokeKanji: () => {
     const {
+      dailyKanjis,
       kanjiTarget,
-      currentStageIndex,
+      currentQuestionIndex,
       stages,
       date,
       inputMode,
@@ -355,88 +523,98 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
 
     if (!kanjiTarget) return;
 
-    const nextIndex = currentStageIndex + 1;
-    const isDone = nextIndex >= 4;
-
-    set({
-      currentStageIndex: nextIndex,
-      isFeedbackOpen: false,
-      isCompleted: isDone,
-    });
-
-    kanjiRepository.saveIncrementalProgress({
-      date,
+    const strokeRecord: StageAnswerRecord = {
       kanjiId: kanjiTarget.id,
-      currentStageIndex: nextIndex,
-      stages,
-      inputMode,
-      isCompleted: isDone,
-      updatedAt: new Date().toISOString(),
-      streak: stats.currentStreak,
-      lastPlayedDate: stats.lastCompletedDate,
-    });
-  },
+      kanjiCharacter: kanjiTarget.kanji,
+      isCorrect: true,
+      userAnswer: "completed",
+      correctAnswer: kanjiTarget.kanji,
+      timestamp: new Date().toISOString(),
+    };
 
-  /**
-   * Alias de advanceAfterFeedback para compatibilidad de nomenclatura con plan.md.
-   */
-  advanceToNextStage: () => {
-    get().advanceAfterFeedback();
-  },
+    const newAnswers = [...(stages.strokes.answers || []), strokeRecord];
+    const newScore = (stages.strokes.score || 0) + 1;
 
-  /**
-   * Registra la finalización exitosa de la etapa de trazos caligráficos (Etapa 4).
-   */
-  completeStrokes: () => {
-    const {
-      kanjiTarget,
-      stages,
-      date,
-      inputMode,
-    } = get();
-
-    if (!kanjiTarget) return;
-
-    const strokesProgress: KanjiStageProgress = {
-      stageKey: "strokes",
-      stage: "strokes",
+    const updatedStrokes: KanjiStageProgress = {
+      ...stages.strokes,
+      score: newScore,
+      answers: newAnswers,
       outcome: "correct",
-      attempts: 1,
+      attempts: (stages.strokes.attempts || 0) + 1,
       attempted: true,
       completedAt: new Date().toISOString(),
     };
 
     const newStages = {
       ...stages,
-      strokes: strokesProgress,
+      strokes: updatedStrokes,
     };
 
-    // Evalúa si el usuario logró una partida perfecta (4/4 aciertos)
-    const isPerfect = Object.values(newStages).every(
-      (s) => s.outcome === "correct"
-    );
+    if (currentQuestionIndex < QUESTIONS_PER_STAGE - 1) {
+      // Avanzar al siguiente kanji para trazar
+      const nextQ = currentQuestionIndex + 1;
+      const nextKanji = dailyKanjis[nextQ];
 
-    // Actualiza la racha diaria de forma idempotente en el repositorio
-    const newStats = kanjiRepository.recordDailyCompletion(date, isPerfect);
+      set({
+        currentQuestionIndex: nextQ,
+        kanjiTarget: nextKanji,
+        stages: newStages,
+      });
 
-    set({
-      stages: newStages,
-      currentStageIndex: 4,
-      isCompleted: true,
-      isFeedbackOpen: false,
-      stats: newStats,
-    });
+      kanjiRepository.saveIncrementalProgress({
+        date,
+        kanjiId: nextKanji.id,
+        kanjiIds: dailyKanjis.map((k) => k.id),
+        currentStageIndex: 3,
+        currentQuestionIndex: nextQ,
+        stages: newStages,
+        inputMode,
+        isCompleted: false,
+        updatedAt: new Date().toISOString(),
+        streak: stats.currentStreak,
+        lastPlayedDate: stats.lastCompletedDate,
+      });
+    } else {
+      // Se completaron los 20 kanjis de trazos: finalización de la partida
+      const totalScore =
+        newStages.reading.score +
+        newStages.meaning.score +
+        newStages.romaji.score +
+        newScore;
+      const isPerfect = totalScore === QUESTIONS_PER_STAGE * 4;
+      const newStats = kanjiRepository.recordDailyCompletion(date, isPerfect);
 
-    kanjiRepository.saveIncrementalProgress({
-      date,
-      kanjiId: kanjiTarget.id,
-      currentStageIndex: 4,
-      stages: newStages,
-      inputMode,
-      isCompleted: true,
-      updatedAt: new Date().toISOString(),
-      streak: newStats.currentStreak,
-      lastPlayedDate: date,
-    });
+      const finalStrokes = { ...updatedStrokes, isCompleted: true };
+      const finalStages = { ...newStages, strokes: finalStrokes };
+
+      set({
+        stages: finalStages,
+        currentStageIndex: 4,
+        isCompleted: true,
+        isFeedbackOpen: false,
+        stats: newStats,
+      });
+
+      kanjiRepository.saveIncrementalProgress({
+        date,
+        kanjiId: kanjiTarget.id,
+        kanjiIds: dailyKanjis.map((k) => k.id),
+        currentStageIndex: 4,
+        currentQuestionIndex: QUESTIONS_PER_STAGE - 1,
+        stages: finalStages,
+        inputMode,
+        isCompleted: true,
+        updatedAt: new Date().toISOString(),
+        streak: newStats.currentStreak,
+        lastPlayedDate: date,
+      });
+    }
+  },
+
+  /**
+   * Alias de compatibilidad para completeCurrentStrokeKanji.
+   */
+  completeStrokes: () => {
+    get().completeCurrentStrokeKanji();
   },
 }));

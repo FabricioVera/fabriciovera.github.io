@@ -27,11 +27,15 @@
   - ✅ Sistema de racha de puntos continuos que reinicia ante errores y guarda récord personal.
 - **Daily Kanji (Aprender Japonés)** (`/kanji`):
   - ✅ Reto diario 100% determinista con semilla `YYYYMMDD + "kanji"` sobre 79 kanjis N5 esenciales y 208 kanas (`kana.json` y `n5.json`).
-  - ✅ 4 etapas evaluativas secuenciales: Lectura (hiragana con IME romaji en tiempo real), Significado (español con distractores deterministas), Romanización (Hepburn) y Trazos (canvas interactivo con Hanzi Writer, cuadrícula mizu-grid y animación pedagógica).
-  - ✅ Regla innegociable de 1 solo intento por etapa con revelación inmediata de feedback didáctico.
-  - ✅ Persistencia incremental por etapa desacoplada con `kanjiRepository` en `localStorage` (tolerancia SSR y fallback en memoria).
+  - ✅ Expansión a 20 desafíos por modalidad (80 retos diarios en total): 20 Lecturas ➔ 20 Significados ➔ 20 Romajis ➔ 20 Trazos.
+  - ✅ Selección determinista de 20 kanjis diarios sin duplicados con barajado PRNG reproducibles universalmente.
+  - ✅ 4 etapas evaluativas secuenciales con sub-progreso en tiempo real (`Pregunta X de 20`) y puntuación granular (`X/20` por etapa, `X/80` global).
+  - ✅ Regla innegociable de 1 solo intento por desafío con revelación inmediata de feedback didáctico.
+  - ✅ Persistencia incremental por pregunta desacoplada con `kanjiRepository` en `localStorage` (restauración exacta ante recargas o cierres de pestaña).
+  - ✅ Trazos interactivos con Hanzi Writer adaptados al kanji activo con limpieza de memoria SVG, cuadrícula mizu-grid y animación de trazo correcto.
+  - ✅ Modal de resumen con desglose detallado de aciertos por modalidad y viralidad social ("Toque a un amigo" con Web Share API, WhatsApp y portapapeles).
   - ✅ Toggle de accesibilidad entre modalidades "Selección Múltiple" y "Escritura Directa".
-  - ✅ Modal de resumen y viralidad social ("Toque a un amigo") con Web Share API, fallback a WhatsApp y copiado al portapapeles.
+  - ✅ Gobernanza bajo Spec-Driven Development en carpeta aislada `docs/specs/001-daily-kanji/`.
   - ✅ Integrado en catálogo general de juegos (`src/data/games.ts`), ruta Astro (`/kanji`) y ruta dinámica (`/games/daily-kanji`).
 
 ### 🌐 Funcionalidades Globales
@@ -47,9 +51,6 @@
 
 ## 2. Características Incompletas o a Medias (Work In Progress)
 
-- 🟢 **Daily Kanji [/kanji] (Aprender Japonés)**:
-  - Spec concluida al 100% (10/10 tareas implementadas, verificadas con build verde).
-  - Todas las tareas cerradas en [`docs/specs/001-daily-kanji/tasks.md`](specs/001-daily-kanji/tasks.md) y promovidas a características terminadas en Sección 1.
 - 🟡 **Adivina el Anime por Imagen (`AnimeGame` / `character-by-image`)**:
   - El componente existe en `src/components/games/guess-anime/GameContainer.tsx` y está registrado condicionalmente en `GameRenderer.astro`.
   - **Incompleto**: No está habilitado en `src/data/games.ts` (no aparece en la home ni en el sidebar).

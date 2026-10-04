@@ -38,17 +38,31 @@ export function deterministicShuffle<T>(array: T[], nextRandom: () => number): T
 }
 
 /**
- * Selecciona el Kanji del día de forma determinista universal.
- * Cumple estrictamente con el Artículo I de la Constitución (semilla YYYYMMDD + "kanji").
+ * Selecciona una lista ordenada y determinista de N kanjis únicos del catálogo N5
+ * utilizando la semilla YYYYMMDD + "kanji" con rand-seed.
+ * Cumple estrictamente con el Artículo I de la Constitución.
  */
-export function getDailyKanji(kanjis: KanjiN5[], dateStr?: string): KanjiN5 {
+export function getDailyKanjiList(
+  kanjis: KanjiN5[],
+  dateStr?: string,
+  count: number = 20
+): KanjiN5[] {
   if (!kanjis || kanjis.length === 0) {
     throw new Error("El catálogo de kanjis no puede estar vacío");
   }
   const seed = getDailySeed(dateStr, "kanji");
   const rand = new Rand(seed);
-  const index = Math.floor(rand.next() * kanjis.length);
-  return kanjis[index];
+  const shuffled = deterministicShuffle(kanjis, () => rand.next());
+  return shuffled.slice(0, Math.min(count, shuffled.length));
+}
+
+/**
+ * Selecciona el Kanji principal del día de forma determinista universal.
+ * Mantiene retrocompatibilidad retornando el primer kanji de la lista diaria.
+ */
+export function getDailyKanji(kanjis: KanjiN5[], dateStr?: string): KanjiN5 {
+  const list = getDailyKanjiList(kanjis, dateStr, 1);
+  return list[0];
 }
 
 /**
@@ -79,14 +93,14 @@ export function getPrimaryRomaji(kanji: KanjiN5): string {
 
 /**
  * Genera exactamente 4 opciones de significado (1 correcta y 3 distractores deterministas)
- * garantizando ausencia de duplicados semánticos y barajado determinista.
+ * garantizando ausencia de duplicados semánticos y barajado determinista para cada kanji.
  */
 export function getMeaningOptions(
   kanji: KanjiN5,
   allKanjis: KanjiN5[],
   dateStr?: string
 ): string[] {
-  const seed = getDailySeed(dateStr, "meaning");
+  const seed = getDailySeed(dateStr, `meaning_${kanji.id}`);
   const rand = new Rand(seed);
 
   const correctMeaning = kanji.meanings[0];
@@ -118,7 +132,7 @@ export function getReadingOptions(
   allKanjis: KanjiN5[],
   dateStr?: string
 ): string[] {
-  const seed = getDailySeed(dateStr, "reading");
+  const seed = getDailySeed(dateStr, `reading_${kanji.id}`);
   const rand = new Rand(seed);
 
   const correctReading = getPrimaryReading(kanji);
@@ -149,7 +163,7 @@ export function getRomajiOptions(
   allKanjis: KanjiN5[],
   dateStr?: string
 ): string[] {
-  const seed = getDailySeed(dateStr, "romaji");
+  const seed = getDailySeed(dateStr, `romaji_${kanji.id}`);
   const rand = new Rand(seed);
 
   const correctRomaji = getPrimaryRomaji(kanji);

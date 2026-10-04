@@ -158,6 +158,22 @@ export const kanjiRepository: KanjiRepositoryContract & {
     try {
       const state = JSON.parse(raw) as KanjiDailyState;
       if (state && state.date && isSameDay(state.date, dateStr)) {
+        // Garantizar valores por defecto para migración de estado a 20 ítems
+        if (state.currentQuestionIndex === undefined) {
+          state.currentQuestionIndex = 0;
+        }
+        if (!state.kanjiIds) {
+          state.kanjiIds = state.kanjiId ? [state.kanjiId] : [];
+        }
+        if (state.stages) {
+          for (const key of Object.keys(state.stages) as (keyof typeof state.stages)[]) {
+            const st = state.stages[key];
+            if (st) {
+              if (st.score === undefined) st.score = st.outcome === "correct" ? 1 : 0;
+              if (!st.answers) st.answers = [];
+            }
+          }
+        }
         return state;
       }
       return null;

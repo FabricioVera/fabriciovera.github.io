@@ -42,6 +42,16 @@ export interface KanjiN5 {
   words: KanjiWord[];
 }
 
+/** Registro de respuesta individual para cada pregunta de una etapa (1..20) */
+export interface StageAnswerRecord {
+  kanjiId: string;
+  kanjiCharacter: string;
+  isCorrect: boolean;
+  userAnswer: string;
+  correctAnswer: string;
+  timestamp?: string;
+}
+
 export interface KanjiStageProgress {
   stageKey: KanjiStageKey;
   stage?: KanjiStageKey;
@@ -51,12 +61,17 @@ export interface KanjiStageProgress {
   attempts: number;
   attempted?: boolean;
   completedAt?: string;
+  score: number; // Aciertos sobre 20 en esta etapa
+  answers: StageAnswerRecord[]; // Historial de las 20 respuestas de la etapa
+  isCompleted?: boolean;
 }
 
 export interface KanjiDailyState {
   date: string; // Formato "YYYY-MM-DD"
-  kanjiId: string;
+  kanjiId?: string; // ID del kanji inicial/activo para compatibilidad
+  kanjiIds: string[]; // 20 IDs ordenados deterministas del día
   currentStageIndex: number; // 0: reading, 1: meaning, 2: romaji, 3: strokes, 4: completed
+  currentQuestionIndex: number; // 0..19 (sub-progreso de la etapa activa)
   stages: Record<KanjiStageKey, KanjiStageProgress>;
   inputMode: InputMode;
   isCompleted: boolean;
@@ -72,14 +87,18 @@ export interface KanjiStats {
   lastCompletedDate?: string | null;
   totalDaysPlayed?: number;
   totalPerfectDays?: number;
+  totalScoreAccumulated?: number;
 }
 
 export interface ShareResultPayload {
   date: string;
-  kanji: string;
+  kanji?: string;
   meaning?: string;
   streak: number;
-  stageOutcomes: [StageOutcome, StageOutcome, StageOutcome, StageOutcome];
+  stageOutcomes?: [StageOutcome, StageOutcome, StageOutcome, StageOutcome];
+  stageScores?: Record<KanjiStageKey, number>;
+  totalScore?: number;
+  maxPossibleScore?: number;
   url: string;
   grid?: string;
   dateStr?: string;

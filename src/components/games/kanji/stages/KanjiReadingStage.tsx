@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from "react";
-import { useKanjiStore } from "../../../../store/useKanjiStore";
+import React, { useState, useEffect, useMemo } from "react";
+import { useKanjiStore, QUESTIONS_PER_STAGE } from "../../../../store/useKanjiStore";
 import { getReadingOptions } from "../../../../utils/kanji";
 import { convertRomajiToHiragana } from "../../../../utils/kanaConverter";
 
@@ -7,21 +7,26 @@ export const KanjiReadingStage: React.FC = () => {
   const kanjiTarget = useKanjiStore((state) => state.kanjiTarget);
   const allKanjis = useKanjiStore((state) => state.allKanjis);
   const date = useKanjiStore((state) => state.date);
+  const currentQuestionIndex = useKanjiStore((state) => state.currentQuestionIndex);
   const stageProgress = useKanjiStore((state) => state.stages.reading);
   const inputMode = useKanjiStore((state) => state.inputMode);
   const isFeedbackOpen = useKanjiStore((state) => state.isFeedbackOpen);
+  const lastFeedback = useKanjiStore((state) => state.lastFeedback);
   const submitAnswer = useKanjiStore((state) => state.submitAnswer);
-  const advanceAfterFeedback = useKanjiStore(
-    (state) => state.advanceAfterFeedback
-  );
+  const advanceAfterFeedback = useKanjiStore((state) => state.advanceAfterFeedback);
 
   const [inputText, setInputText] = useState("");
-  const hasAttempted =
-    stageProgress.attempts > 0 || stageProgress.outcome !== "pending";
-  const isIncorrect = stageProgress.outcome === "incorrect";
-  const isCorrect = stageProgress.outcome === "correct";
 
-  // Generación determinista de 4 opciones de lectura
+  // Limpiar el campo de texto cuando cambia la pregunta
+  useEffect(() => {
+    setInputText("");
+  }, [currentQuestionIndex, kanjiTarget]);
+
+  // Verificar si la pregunta actual ya fue respondida
+  const currentAnswer = stageProgress.answers?.[currentQuestionIndex];
+  const hasAttempted = isFeedbackOpen || Boolean(currentAnswer);
+
+  // Generación determinista de 4 opciones de lectura para el kanji actual
   const options = useMemo(() => {
     if (!kanjiTarget || allKanjis.length === 0) return [];
     return getReadingOptions(kanjiTarget, allKanjis, date);
@@ -30,7 +35,7 @@ export const KanjiReadingStage: React.FC = () => {
   if (!kanjiTarget) {
     return (
       <div className="flex items-center justify-center p-8 text-neutral-400">
-        Cargando kanji del día...
+        Cargando kanji...
       </div>
     );
   }
@@ -47,10 +52,11 @@ export const KanjiReadingStage: React.FC = () => {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Conversor fonético instantáneo Romaji -> Hiragana
     const converted = convertRomajiToHiragana(e.target.value);
     setInputText(converted);
   };
+
+  const isLastQuestion = currentQuestionIndex >= QUESTIONS_PER_STAGE - 1;
 
   return (
     <section
@@ -60,7 +66,7 @@ export const KanjiReadingStage: React.FC = () => {
       {/* Encabezado de la etapa */}
       <div className="text-center">
         <span className="text-[11px] uppercase tracking-widest font-bold px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
-          Etapa 1 de 4 • Lectura
+          Etapa 1 • Lectura ({currentQuestionIndex + 1} de {QUESTIONS_PER_STAGE})
         </span>
         <h2 className="mt-2 text-base sm:text-lg font-bold text-neutral-100">
           ¿Cuál es la lectura en Hiragana?
@@ -83,7 +89,7 @@ export const KanjiReadingStage: React.FC = () => {
         </span>
       </div>
 
-      {/* Contenido interactivo según InputMode */}
+      {/* Contenido interactivo: opciones o escritura */}
       {!hasAttempted && (
         <div className="w-full">
           {inputMode === "choice" ? (
@@ -103,74 +109,61 @@ export const KanjiReadingStage: React.FC = () => {
             </div>
           ) : (
             /* Modo Escritura Directa */
-            <form onSubmit={handleInputSubmit} className="flex flex-col gap-2.5 w-full">
-              <div className="flex gap-2">
+            <form onSubmit={handleInputSubmit} className="flex flex-col gap-3 w-full">
+              <div className="relative">
                 <input
                   type="text"
                   value={inputText}
                   onChange={handleInputChange}
-                  placeholder="Escribe en romaji (ej. ka -> か)..."
+                  placeholder="Escribe en romaji (ej. hi, mizu)..."
                   disabled={hasAttempted}
-                  autoComplete="off"
                   autoFocus
-                  className="flex-1 px-4 py-3 rounded-xl bg-neutral-950/90 border border-neutral-700 text-neutral-100 placeholder-neutral-400 text-sm sm:text-base font-medium focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
+                  className="w-full px-4 py-3 bg-neutral-950/90 border border-neutral-700 focus:border-amber-400 rounded-xl text-neutral-100 placeholder-neutral-500 text-center font-medium text-base tracking-wide outline-none transition-all shadow-inner"
                 />
-                <button
-                  type="submit"
-                  disabled={hasAttempted || !inputText.trim()}
-                  className="px-5 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 disabled:bg-neutral-800 disabled:text-neutral-400 text-neutral-950 font-bold text-sm transition-all cursor-pointer shadow-md"
-                >
-                  Comprobar
-                </button>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-neutral-500 font-mono">
+                  IME activo
+                </span>
               </div>
-              <p className="text-[11px] text-neutral-400 text-center">
-                Escribe en letras estándar; se transcribirá automáticamente a Hiragana.
-              </p>
+
+              <button
+                type="submit"
+                disabled={!inputText.trim() || hasAttempted}
+                className="w-full py-2.5 px-4 bg-amber-500 hover:bg-amber-400 disabled:bg-neutral-800 disabled:text-neutral-500 text-neutral-950 font-bold rounded-xl text-sm transition-all duration-150 active:scale-98 cursor-pointer disabled:cursor-not-allowed shadow-md"
+              >
+                Confirmar lectura
+              </button>
             </form>
           )}
         </div>
       )}
 
-      {/* Feedback de Acierto */}
-      {isCorrect && (
-        <div className="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 text-xs sm:text-sm font-semibold animate-fadeIn">
-          <span>🟩</span>
-          <span>¡Correcto! Avanzando a la siguiente etapa...</span>
-        </div>
-      )}
-
-      {/* Tarjeta Educativa ante Fallo Pedagógico (Regla de 1 intento) */}
-      {isIncorrect && isFeedbackOpen && (
+      {/* Retroalimentación didáctica inmediata y botón siguiente */}
+      {hasAttempted && (
         <div
           role="alert"
-          className="w-full flex flex-col gap-3 p-4 rounded-2xl bg-rose-950/40 border border-rose-500/60 text-neutral-200 animate-fadeIn"
+          className={`w-full p-4 rounded-2xl border flex flex-col items-center gap-3 transition-all animate-fadeIn ${
+            lastFeedback?.isCorrect || currentAnswer?.isCorrect
+              ? "bg-emerald-950/60 border-emerald-500/80 text-emerald-200"
+              : "bg-rose-950/60 border-rose-500/80 text-rose-200"
+          }`}
         >
-          <div className="flex items-center gap-2 text-rose-400 font-bold text-sm">
-            <span>🟥</span>
-            <span>Intento no acertado</span>
+          <div className="flex items-center gap-2 font-bold text-sm">
+            <span>{lastFeedback?.isCorrect || currentAnswer?.isCorrect ? "✅ ¡Correcto!" : "❌ Respuesta incorrecta"}</span>
           </div>
 
-          <div className="flex flex-col gap-1 text-xs sm:text-sm">
-            <div className="text-neutral-400">
-              Tu respuesta:{" "}
-              <span className="text-neutral-200 font-medium">
-                {stageProgress.userAnswer || "(vacío)"}
-              </span>
-            </div>
-            <div className="text-neutral-300 font-medium">
-              Lectura correcta:{" "}
-              <span className="text-amber-300 font-bold text-base" lang="ja">
-                {stageProgress.revealedAnswer}
-              </span>
-            </div>
-          </div>
+          <p className="text-xs text-center text-neutral-300">
+            Lectura correcta:{" "}
+            <strong className="text-amber-300 font-bold font-serif text-sm ml-1" lang="ja">
+              {lastFeedback?.correctAnswer || currentAnswer?.correctAnswer}
+            </strong>
+          </p>
 
           <button
             type="button"
             onClick={advanceAfterFeedback}
-            className="w-full mt-1 py-2.5 px-4 rounded-xl bg-neutral-100 hover:bg-white text-neutral-950 font-bold text-xs sm:text-sm transition-transform active:scale-98 cursor-pointer shadow-lg"
+            className="w-full mt-1 py-2.5 px-4 bg-neutral-100 hover:bg-white text-neutral-900 font-extrabold rounded-xl text-xs sm:text-sm tracking-wide transition-all active:scale-98 cursor-pointer shadow-md"
           >
-            Continuar a la siguiente etapa →
+            {isLastQuestion ? "Completar Etapa de Lectura →" : `Siguiente pregunta (${currentQuestionIndex + 2}/${QUESTIONS_PER_STAGE}) →`}
           </button>
         </div>
       )}

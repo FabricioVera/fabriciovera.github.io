@@ -1,114 +1,81 @@
-# Tareas: Daily Kanji [/kanji] (Aprender Japonés)
+# Tareas de Implementación: Daily Kanji [/kanji] (20 Ítems por Modalidad)
 
 - **Spec Asociada:** [`spec.md`](spec.md)
-- **Plan Asociado:** [`plan.md`](plan.md)
-- **Estado General:** 10/10 completadas
+- **Plan Técnico:** [`plan.md`](plan.md)
+- **Estado:** completado
+- **Fecha:** 2026-10-04
 
 ---
 
-## 📋 Lista de Tareas Atómicas de Ejecución (20-30 min por ciclo)
+## 📋 Lista de Tareas Atómicas
 
-- [x] **T1. Dependencia `hanzi-writer` y Datasets Estáticos (`kana.json` y `n5.json`).** (Cubre: RF-1, RF-2, RF-6, RF-7)
-  - **Objetivo:** Instalar la librería cliente `hanzi-writer` en `package.json` y construir los datasets JSON en `src/data/kanji/` para kanas y kanjis JLPT N5 esenciales (con id, kanji, unicode, readings on/kun, meanings en español, romaji y palabras).
-  - **Archivos Involucrados:**
-    - `package.json`
-    - `src/data/kanji/kana.json`
-    - `src/data/kanji/n5.json`
-  - **Criterios de Aceptación (Hecho cuando):**
-    - `hanzi-writer` queda agregado a las dependencias del proyecto.
-    - `src/data/kanji/kana.json` contiene la colección de hiragana y katakana con romaji.
-    - `src/data/kanji/n5.json` contiene la colección estructurada de kanjis N5 con los campos requeridos.
-    - Los archivos JSON tienen sintaxis válida comprobada.
+### 🟩 Tarea T1: Modelos de Dominio y Lógica Pura Determinista de 20 Kanjis
+- **Objetivo:** Actualizar los contratos TypeScript y crear la función determinista para extraer los 20 kanjis únicos del día.
+- **Archivos:**
+  - `src/types/kanji.ts`
+  - `src/types/index.ts`
+  - `src/utils/kanji.ts`
+- **Detalle de implementación:**
+  1. Definir `StageAnswerRecord` con `kanjiId`, `kanjiCharacter`, `isCorrect`, `userAnswer` y `correctAnswer`.
+  2. Actualizar `KanjiStageProgress` para incluir `score: number` (aciertos sobre 20) y `answers: StageAnswerRecord[]`.
+  3. Actualizar `KanjiDailyState` incorporando `kanjiIds: string[]` (20 IDs del día), `currentQuestionIndex: number` (0 a 19) y `stages`.
+  4. Implementar `getDailyKanjiList(allKanjis, dateStr, 20)` usando Fisher-Yates determinista sobre `rand-seed` (`YYYYMMDDkanji`).
+  5. Asegurar que las opciones de selección múltiple se generen de manera determinista para cada uno de los 20 kanjis.
+- **Criterio de Aceptación:** Build limpio de TypeScript y test de determinismo donde una fecha genera exactamente los mismos 20 kanjis.
+- **Estado:** [x]
 
-- [x] **T2. Contratos y Tipos Estrictos de Dominio (`src/types/kanji.ts`).** (Cubre: RF-1 a RF-26, Art. V)
-  - **Objetivo:** Definir todas las interfaces y contratos TypeScript necesarios para los modelos de datos, estados de las 4 etapas, persistencia incremental, resultados (`🟩`/`🟥`) y opciones de compartir.
-  - **Archivos Involucrados:**
-    - `src/types/kanji.ts`
-  - **Criterios de Aceptación (Hecho cuando):**
-    - Exporta `KanjiN5`, `KanaItem`, `KanjiStageKey`, `StageOutcome`, `InputMode`, `KanjiStageProgress`, `KanjiDailyState`, `KanjiStats` y `ShareResultPayload`.
-    - Modo estricto sin uso de `any`.
-    - Compilación TypeScript sin errores.
+---
 
-- [x] **T3. Funciones Puras, Determinismo con `rand-seed` y Conversor Kana (`src/utils/kanji.ts` y `src/utils/kanaConverter.ts`).** (Cubre: RF-1, RF-2, RF-6, RF-7, RF-15, Art. I)
-  - **Objetivo:** Implementar la selección determinista del kanji diario (`getDailyKanji`) con semilla `YYYYMMDD + "kanji"`, el generador de distractores para selección múltiple, el conversor fonético en tiempo real romaji ➔ hiragana (`convertRomajiToHiragana`) y la función de normalización de respuestas.
-  - **Archivos Involucrados:**
-    - `src/utils/kanji.ts`
-    - `src/utils/kanaConverter.ts`
-  - **Criterios de Aceptación (Hecho cuando):**
-    - `getDailyKanji` devuelve el mismo kanji para la misma fecha local y mismo catálogo.
-    - `getMeaningOptions` genera 4 opciones estables (1 correcta y 3 distractores deterministas).
-    - `convertRomajiToHiragana` transforma secuencias como "ka", "shi", "tsu", "kyo" a sus caracteres hiragana respectivos en tiempo real.
-    - Cero errores de tipado.
+### 🟩 Tarea T2: Persistencia Granular en Repositorio y Store de Zustand para el Ciclo de 20 Ítems
+- **Objetivo:** Implementar la máquina de estados y persistencia en `localStorage` capaz de registrar y restaurar el progreso exacto `(etapa, sub-pregunta)`.
+- **Archivos:**
+  - `src/services/kanjiRepository.ts`
+  - `src/store/useKanjiStore.ts`
+- **Detalle de implementación:**
+  1. En `kanjiRepository`: adaptar serialización y carga de `KanjiDailyState` con array de 20 IDs y registro de respuestas.
+  2. En `useKanjiStore`:
+     - Estado con `dailyKanjis: KanjiN5[]` (20 ítems), `currentStageIndex` (0..3 o 4), `currentQuestionIndex` (0..19) y `stages`.
+     - `kanjiTarget`: apuntador computado a `dailyKanjis[currentQuestionIndex]`.
+     - `submitAnswer(answer)`: valida la respuesta para el kanji actual, actualiza score y respuestas de la etapa, abre feedback didáctico.
+     - `advanceAfterFeedback()`: avanza a la siguiente pregunta (`currentQuestionIndex + 1`). Si llega a 20, transiciona a la siguiente etapa (`currentStageIndex + 1`, `currentQuestionIndex = 0`). Si concluye la etapa 4, finaliza el juego y calcula la racha.
+- **Criterio de Aceptación:** El store maneja la secuencia de 20 preguntas con persistencia reactiva en cada respuesta.
+- **Estado:** [x]
 
-- [x] **T4. Repositorio de Persistencia Incremental en Almacenamiento Local (`src/services/kanjiRepository.ts`).** (Cubre: RF-20, RF-21, RF-22, RF-23, Art. III, Art. IV)
-  - **Objetivo:** Construir el servicio desacoplado `kanjiRepository` que gestione la lectura y guardado incremental del progreso por etapa (`KanjiDailyState`), la racha diaria de días consecutivos y las preferencias del toggle en `localStorage`.
-  - **Archivos Involucrados:**
-    - `src/services/kanjiRepository.ts`
-  - **Criterios de Aceptación (Hecho cuando):**
-    - `saveIncrementalProgress` almacena el avance tras resolver cada etapa individual.
-    - `getDailyProgress` restaura la partida conservando las etapas resueltas si la fecha coincide con la actual.
-    - `updateStreakAndStats` incrementa la racha si el último día jugado fue consecutivo o la reinicia a 1 si pasó más de un día.
-    - Tolerancia total a entornos sin `window` o con cuota restringida sin lanzar excepciones no controladas.
+---
 
-- [x] **T5. Store de Estado del Reto Diario con Zustand (`src/store/useKanjiStore.ts`).** (Cubre: RF-3, RF-5, RF-8 a RF-15, RF-20, RF-21, Art. II)
-  - **Objetivo:** Crear la máquina de estados en Zustand para orquestar el flujo diario exclusivo: etapas 0 a 4, regla de 1 solo intento por etapa con calificación `🟩`/`🟥`, activación de feedback pedagógico, toggle de modalidad de respuesta y sincronización automática con `kanjiRepository`.
-  - **Archivos Involucrados:**
-    - `src/store/useKanjiStore.ts`
-  - **Criterios de Aceptación (Hecho cuando):**
-    - El store expone el estado reactivo (`kanjiTarget`, `currentStageIndex`, `stages`, `inputMode`, `isFeedbackOpen`, `isCompleted`).
-    - Acciones `initializeDaily`, `setInputMode`, `submitStageAnswer`, `advanceToNextStage` y `completeStrokes` implementadas y verificadas.
-    - Cada envío de etapa persiste de inmediato en el repositorio.
+### 🟩 Tarea T3: Adaptación de Componentes de Etapas y Secuencia de 20 Trazos
+- **Objetivo:** Refactorizar las 4 etapas de juego para consumir el kanji activo de los 20, con contador progresivo y gestión de memoria en HanziWriter.
+- **Archivos:**
+  - `src/components/games/kanji/KanjiProgressBar.tsx`
+  - `src/components/games/kanji/stages/KanjiReadingStage.tsx`
+  - `src/components/games/kanji/stages/KanjiMeaningStage.tsx`
+  - `src/components/games/kanji/stages/KanjiRomajiStage.tsx`
+  - `src/components/games/kanji/stages/KanjiStrokeStage.tsx`
+  - `src/components/games/kanji/DailyKanjiGame.tsx`
+- **Detalle de implementación:**
+  1. `KanjiProgressBar`: mostrar etapa actual (`#1 Lectura`, etc.), sub-etiqueta `Pregunta X de 20`, aciertos acumulados (`X / 20`) y barra de progreso.
+  2. `KanjiReadingStage`, `KanjiMeaningStage`, `KanjiRomajiStage`: mostrar kanji activo, botones/input de respuesta y feedback de acierto/fallo.
+  3. `KanjiStrokeStage`: destruir la instancia previa de `HanziWriter` al cambiar de kanji (`writerRef.current.destroy()`) y cargar el siguiente hasta completar los 20 kanjis caligráficos.
+  4. `DailyKanjiGame`: orquestar las vistas y transiciones fluidas.
+- **Criterio de Aceptación:** Se pueden jugar las 20 preguntas de lectura, luego 20 significados, luego 20 romaji y 20 trazos continuos sin parpadeos ni errores.
+- **Estado:** [x]
 
-- [x] **T6. Componentes de Cabecera y Toggle de Modalidad (`KanjiProgressBar.tsx` y `KanjiModeToggle.tsx`).** (Cubre: RF-5, RF-8, RF-20, RF-21)
-  - **Objetivo:** Desarrollar los componentes visuales superiores: la barra de progreso que indica el estado de cada etapa (🟩 acierto, 🟥 fallo pedagógico, activa, pendiente) y el selector interactivo (toggle) accesible para alternar entre "Selección Múltiple" y "Escritura Directa".
-  - **Archivos Involucrados:**
-    - `src/components/games/kanji/KanjiProgressBar.tsx`
-    - `src/components/games/kanji/KanjiModeToggle.tsx`
-  - **Criterios de Aceptación (Hecho cuando):**
-    - `KanjiProgressBar` refleja dinámicamente los emojis/colores correspondientes a cada etapa según el store.
-    - `KanjiModeToggle` permite conmutar fluidamente entre modos de entrada y sincroniza con el store y el repositorio.
-    - Estilos coherentes con Tailwind v4.
+---
 
-- [x] **T7. Minijuegos Evaluativos 1 a 3 con Intento Único y Feedback Pedagógico (`KanjiReadingStage.tsx`, `KanjiMeaningStage.tsx`, `KanjiRomajiStage.tsx`).** (Cubre: RF-4 a RF-15)
-  - **Objetivo:** Implementar los componentes para las 3 etapas lingüísticas: Lectura (hiragana), Significado (español) y Romanización (romaji), soportando tanto selección de 4 opciones como input directo con conversión kana, restringiendo a 1 solo intento y mostrando la respuesta correcta ante fallo antes de avanzar.
-  - **Archivos Involucrados:**
-    - `src/components/games/kanji/stages/KanjiReadingStage.tsx`
-    - `src/components/games/kanji/stages/KanjiMeaningStage.tsx`
-    - `src/components/games/kanji/stages/KanjiRomajiStage.tsx`
-  - **Criterios de Aceptación (Hecho cuando):**
-    - Cada etapa procesa exactamente 1 intento y bloquea la interfaz de inmediato.
-    - Si el usuario falla, se destaca la respuesta correcta y se permite avanzar con un botón de continuación.
-    - En modo "Escritura Directa", el campo de lectura transcribe automáticamente el romaji escrito a hiragana.
-
-- [x] **T8. Minijuego de Trazos con Canvas Interactivo y Hanzi Writer (`KanjiStrokeStage.tsx`).** (Cubre: RF-16 a RF-19)
-  - **Objetivo:** Integrar la librería `hanzi-writer` dentro de un lienzo interactivo con cuadrícula de caligrafía, validación en tiempo real del orden y orientación de cada trazo, y animación de auxilio ante trazos erróneos.
-  - **Archivos Involucrados:**
-    - `src/components/games/kanji/stages/KanjiStrokeStage.tsx`
-  - **Criterios de Aceptación (Hecho cuando):**
-    - Renderiza el lienzo interactivo con el kanji del día y la cuadrícula guía.
-    - Detecta eventos táctiles y de puntero para dibujar los trazos.
-    - Si un trazo es erróneo, reproduce la animación del trazo correcto.
-    - Al completar todos los trazos con éxito, notifica al store para finalizar el juego con `🟩`.
-
-- [x] **T9. Modal de Resumen y Viralidad Social ("Toque a un amigo") (`KanjiSummaryModal.tsx` y `kanjiShare.ts`).** (Cubre: RF-24, RF-25, RF-26)
-  - **Objetivo:** Crear la utilidad `kanjiShare.ts` para construir el mensaje social con la racha, la cuadrícula de 4 emojis (`🟩`/`🟥`) y la URL, junto con el componente `KanjiSummaryModal.tsx` que ejecuta Web Share API con fallback a WhatsApp y copiado al portapapeles.
-  - **Archivos Involucrados:**
-    - `src/utils/kanjiShare.ts`
-    - `src/components/games/kanji/KanjiSummaryModal.tsx`
-  - **Criterios de Aceptación (Hecho cuando):**
-    - El modal muestra la racha actual, el resultado de las 4 etapas y el kanji del día con sus significados.
-    - El botón "Toque a un amigo" invoca `navigator.share` si está disponible.
-    - Si no está disponible o falla, abre la URL directa de WhatsApp con el mensaje codificado y permite copiar al portapapeles.
-
-- [x] **T10. Contenedor Raíz, Ruta Astro, Registro en Catálogo y Verificación Global (`DailyKanjiGame.tsx`, `index.astro`, `games.ts`, `docs/progress.md`).** (Cubre: Todos los RFs)
-  - **Objetivo:** Ensamblar el contenedor interactivo `DailyKanjiGame.tsx`, crear la página estática `src/pages/kanji/index.astro` con directiva `client:only="React"`, registrar `/kanji` en `src/data/games.ts` y validar el build completo del proyecto.
-  - **Archivos Involucrados:**
-    - `src/components/games/kanji/DailyKanjiGame.tsx`
-    - `src/pages/kanji/index.astro`
-    - `src/data/games.ts`
-    - `docs/progress.md`
-  - **Criterios de Aceptación (Hecho cuando):**
-    - La ruta `/kanji` renderiza fluidamente la experiencia diaria completa.
-    - `src/data/games.ts` expone `/kanji` en el catálogo de juegos.
-    - `npm run build` ejecuta sin ningún error de TypeScript, Astro ni Rollup.
-    - `docs/progress.md` queda actualizado reflejando la nueva feature en desarrollo/planificada.
+### 🟩 Tarea T4: Modal de Resumen Desglosado, Formateo Social y Verificación con Chrome DevTools
+- **Objetivo:** Implementar la pantalla final de resultados con desglose de las 4 modalidades (sobre 20 cada una) y verificar la aplicación completa.
+- **Archivos:**
+  - `src/components/games/kanji/KanjiSummaryModal.tsx`
+  - `src/utils/kanjiShare.ts`
+- **Detalle de implementación:**
+  1. `KanjiSummaryModal`: renderizar tarjetas de puntaje:
+     - 📖 Lectura: `X / 20`
+     - 💡 Significado: `Y / 20`
+     - 🔤 Romaji: `Z / 20`
+     - ✍️ Trazos: `20 / 20`
+     - 🏆 Puntuación Total: `Total / 80`
+     - Racha acumulada en días.
+  2. `kanjiShare.ts`: generar texto para WhatsApp/portapapeles con el desglose sobre 20 y URL del juego.
+  3. Ejecutar verificación interactiva con script DevTools Protocol y compilar con `npm run build`.
+- **Criterio de Aceptación:** Modal de resultados correcto, build en verde y 0 errores de consola en el navegador.
+- **Estado:** [x]

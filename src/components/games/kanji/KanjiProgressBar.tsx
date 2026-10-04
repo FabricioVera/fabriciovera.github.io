@@ -1,5 +1,5 @@
 import React from "react";
-import { useKanjiStore, STAGE_KEYS } from "../../../store/useKanjiStore";
+import { useKanjiStore, STAGE_KEYS, QUESTIONS_PER_STAGE } from "../../../store/useKanjiStore";
 import type { KanjiStageKey, StageOutcome } from "../../../types/kanji";
 
 interface StageMetadata {
@@ -53,26 +53,29 @@ export const KanjiProgressBar: React.FC<KanjiProgressBarProps> = ({
   selectedStageIndex,
 }) => {
   const currentStageIndex = useKanjiStore((state) => state.currentStageIndex);
+  const currentQuestionIndex = useKanjiStore((state) => state.currentQuestionIndex);
   const stages = useKanjiStore((state) => state.stages);
   const isCompleted = useKanjiStore((state) => state.isCompleted);
   const stats = useKanjiStore((state) => state.stats);
 
   const streak = stats?.currentStreak ?? 0;
+  const activeKey = STAGE_KEYS[Math.min(currentStageIndex, 3)];
+  const activeStage = stages[activeKey];
 
   return (
     <header
-      className={`w-full max-w-xl mx-auto flex flex-col gap-2 p-2 sm:p-3 bg-neutral-900/70 border border-neutral-800 rounded-2xl backdrop-blur-md shadow-lg ${className}`}
+      className={`w-full max-w-xl mx-auto flex flex-col gap-2.5 p-3 bg-neutral-900/80 border border-neutral-800 rounded-2xl backdrop-blur-md shadow-lg ${className}`}
       aria-label="Progreso del reto diario"
     >
       {/* Barra superior: Título del reto y contador de Racha */}
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-2">
           <span className="text-xs uppercase tracking-wider font-semibold text-neutral-400">
-            Reto Diario
+            Reto Diario • 20 por Etapa
           </span>
           {isCompleted && (
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-              Completado
+              Completado (80/80)
             </span>
           )}
         </div>
@@ -97,24 +100,21 @@ export const KanjiProgressBar: React.FC<KanjiProgressBarProps> = ({
         <ol className="grid grid-cols-4 gap-1.5 sm:gap-2">
           {STAGES_META.map((meta, idx) => {
             const stageProgress = stages[meta.key];
-            const outcome: StageOutcome = stageProgress?.outcome ?? "pending";
+            const isStageDone = stageProgress?.isCompleted || (idx < currentStageIndex);
             const isCurrent = currentStageIndex === idx && !isCompleted;
             const isSelected = selectedStageIndex === idx;
             const isClickable =
               Boolean(onSelectStage) &&
-              (isCompleted || outcome !== "pending" || isCurrent);
+              (isCompleted || isStageDone || isCurrent);
+
+            const score = stageProgress?.score ?? 0;
+            const answersCount = stageProgress?.answers?.length ?? 0;
 
             let statusStyles = "";
-            let outcomeIcon = meta.icon;
 
-            if (outcome === "correct") {
+            if (isStageDone) {
               statusStyles =
-                "bg-emerald-950/60 border-emerald-500 text-emerald-300 shadow-emerald-900/30";
-              outcomeIcon = "🟩";
-            } else if (outcome === "incorrect") {
-              statusStyles =
-                "bg-rose-950/60 border-rose-500 text-rose-300 shadow-rose-900/30";
-              outcomeIcon = "🟥";
+                "bg-emerald-950/60 border-emerald-500/80 text-emerald-300 shadow-emerald-900/30";
             } else if (isCurrent) {
               statusStyles =
                 "bg-amber-950/40 border-amber-400 text-amber-300 ring-2 ring-amber-400/50 shadow-amber-900/30 scale-[1.02]";
@@ -145,19 +145,19 @@ export const KanjiProgressBar: React.FC<KanjiProgressBarProps> = ({
                   }`}
                   title={
                     isClickable
-                      ? `Revisar etapa ${meta.stepNumber}: ${meta.title}`
+                      ? `Revisar etapa ${meta.stepNumber}: ${meta.title} (${score}/${QUESTIONS_PER_STAGE})`
                       : `Etapa ${meta.stepNumber}: Pendiente`
                   }
                 >
-                  {/* Indicador superior con paso o emoji */}
-                  <div className="flex items-center justify-center h-5 text-xs font-bold">
-                    {outcome === "correct" || outcome === "incorrect" ? (
-                      <span className="text-xs" aria-hidden="true">
-                        {outcomeIcon}
+                  {/* Indicador superior con paso o puntaje */}
+                  <div className="flex items-center justify-center h-5 text-xs font-bold font-mono">
+                    {isStageDone ? (
+                      <span className="text-[11px] text-emerald-300 font-bold">
+                        {score}/{QUESTIONS_PER_STAGE}
                       </span>
                     ) : (
                       <span
-                        className={`text-[11px] font-mono ${
+                        className={`text-[11px] ${
                           isCurrent
                             ? "text-amber-300 font-extrabold"
                             : "text-neutral-400"
@@ -181,6 +181,29 @@ export const KanjiProgressBar: React.FC<KanjiProgressBarProps> = ({
           })}
         </ol>
       </nav>
+
+      {/* Barra de Sub-progreso de la Etapa Activa (1 a 20) */}
+      {!isCompleted && currentStageIndex < 4 && (
+        <div className="w-full flex flex-col gap-1.5 pt-1 px-1 border-t border-neutral-800/80 text-xs">
+          <div className="flex items-center justify-between text-neutral-300">
+            <span className="font-medium text-amber-300">
+              Pregunta {currentQuestionIndex + 1} de {QUESTIONS_PER_STAGE}
+            </span>
+            <span className="font-mono text-neutral-400">
+              Aciertos: <strong className="text-emerald-400">{activeStage?.score ?? 0}</strong> / {QUESTIONS_PER_STAGE}
+            </span>
+          </div>
+
+          <div className="w-full h-1.5 bg-neutral-800 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-amber-500 to-yellow-400 rounded-full transition-all duration-300"
+              style={{
+                width: `${Math.min(100, ((currentQuestionIndex + 1) / QUESTIONS_PER_STAGE) * 100)}%`,
+              }}
+            />
+          </div>
+        </div>
+      )}
     </header>
   );
 };
