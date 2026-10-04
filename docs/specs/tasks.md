@@ -2,7 +2,7 @@
 
 - **Spec Asociada:** [`spec.md`](spec.md)
 - **Plan Asociado:** [`plan.md`](plan.md)
-- **Estado General:** 7/10 completadas
+- **Estado General:** 8/10 completadas
 
 ---
 
@@ -80,7 +80,7 @@
     - Si el usuario falla, se destaca la respuesta correcta y se permite avanzar con un botón de continuación.
     - En modo "Escritura Directa", el campo de lectura transcribe automáticamente el romaji escrito a hiragana.
 
-- [ ] **T8. Minijuego de Trazos con Canvas Interactivo y Hanzi Writer (`KanjiStrokeStage.tsx`).** (Cubre: RF-16 a RF-19)
+- [x] **T8. Minijuego de Trazos con Canvas Interactivo y Hanzi Writer (`KanjiStrokeStage.tsx`).** (Cubre: RF-16 a RF-19)
   - **Objetivo:** Integrar la librería `hanzi-writer` dentro de un lienzo interactivo con cuadrícula de caligrafía, validación en tiempo real del orden y orientación de cada trazo, y animación de auxilio ante trazos erróneos.
   - **Archivos Involucrados:**
     - `src/components/games/kanji/stages/KanjiStrokeStage.tsx`

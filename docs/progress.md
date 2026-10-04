@@ -41,7 +41,7 @@
 
 - 🟡 **Daily Kanji [/kanji] (Aprender Japonés)**:
   - En desarrollo activo bajo metodología SDD (`docs/specs/spec.md`, `plan.md`, `tasks.md`).
-  - Progreso: 7/10 tareas completadas.
+  - Progreso: 8/10 tareas completadas.
   - ✅ **T1 Completada:** Dependencia `hanzi-writer` (v3.7.3) instalada e integrada, y datasets estáticos creados en `src/data/kanji/kana.json` (104 kanas de cada tipo: Hiragana y Katakana) y `src/data/kanji/n5.json` (79 kanjis N5 esenciales estructurados con lecturas on/kun, significados y ejemplos).
   - ✅ **T2 Completada:** Contratos y tipos estrictos de dominio creados en `src/types/kanji.ts` (`KanaItem`, `KanjiWord`, `KanjiN5`, `KanjiStageKey`, `StageOutcome`, `InputMode`, `KanjiStageProgress`, `KanjiDailyState`, `KanjiStats`, `ShareResultPayload`, `KanjiRepositoryContract`) y re-exportados en `src/types/index.ts`.
   - ✅ **T3 Completada:** Funciones puras deterministas con `rand-seed` (`getDailyKanji`, `getMeaningOptions`, `getReadingOptions`, `getRomajiOptions`, `normalizeAnswer`, `isAnswerCorrect`) en `src/utils/kanji.ts` y motor conversor fonético en tiempo real (`convertRomajiToHiragana`, `convertRomajiToKatakana`, `normalizeRomaji`) en `src/utils/kanaConverter.ts`.
@@ -49,7 +49,8 @@
   - ✅ **T5 Completada:** Store reactivo de Zustand `useKanjiStore` (`src/store/useKanjiStore.ts`) con soporte para las 4 etapas, regla estricta de 1 solo intento por etapa, feedback educativo tras fallo, sincronización automática con `kanjiRepository` y gestión de trazos caligráficos.
   - ✅ **T6 Completada:** Componentes visuales de cabecera implementados: `KanjiProgressBar.tsx` (con visualización de los 4 pasos, estados 🟩/🟥, resaltado activo y contador de racha con 🔥) y `KanjiModeToggle.tsx` (selector accesible de "Múltiple" vs "Escritura" con bloqueo en etapa de trazos).
   - ✅ **T7 Completada:** Minijuegos evaluativos 1 a 3 implementados: `KanjiReadingStage.tsx` (lectura hiragana con conversión romaji instantánea en modo escritura), `KanjiMeaningStage.tsx` (significado en español con distractores deterministas) y `KanjiRomajiStage.tsx` (romanización Hepburn), con regla estricta de 1 intento y tarjeta de feedback pedagógico ante fallos.
-  - ⏳ **Próxima Tarea:** T8 (Minijuego de Trazos con Canvas Interactivo y Hanzi Writer en `src/components/games/kanji/stages/KanjiStrokeStage.tsx`).
+  - ✅ **T8 Completada:** Minijuego de trazos caligráficos interactivos (`KanjiStrokeStage.tsx`) con Hanzi Writer, cuadrícula de caligrafía (mizu-grid), validación en tiempo real de orden y dirección de trazos, animación correctiva pedagógica ante fallos, y finalización exitosa (`🟩`).
+  - ⏳ **Próxima Tarea:** T9 (Modal de Resumen y Viralidad Social "Toque a un amigo" en `KanjiSummaryModal.tsx` y `kanjiShare.ts`).
 - 🟡 **Adivina el Anime por Imagen (`AnimeGame` / `character-by-image`)**:
   - El componente existe en `src/components/games/guess-anime/GameContainer.tsx` y está registrado condicionalmente en `GameRenderer.astro`.
   - **Incompleto**: No está habilitado en `src/data/games.ts` (no aparece en la home ni en el sidebar).
