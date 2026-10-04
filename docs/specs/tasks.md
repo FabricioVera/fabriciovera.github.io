@@ -2,7 +2,7 @@
 
 - **Spec Asociada:** [`spec.md`](spec.md)
 - **Plan Asociado:** [`plan.md`](plan.md)
-- **Estado General:** 2/10 completadas
+- **Estado General:** 5/10 completadas
 
 ---
 
@@ -29,7 +29,7 @@
     - Modo estricto sin uso de `any`.
     - Compilación TypeScript sin errores.
 
-- [ ] **T3. Funciones Puras, Determinismo con `rand-seed` y Conversor Kana (`src/utils/kanji.ts` y `src/utils/kanaConverter.ts`).** (Cubre: RF-1, RF-2, RF-6, RF-7, RF-15, Art. I)
+- [x] **T3. Funciones Puras, Determinismo con `rand-seed` y Conversor Kana (`src/utils/kanji.ts` y `src/utils/kanaConverter.ts`).** (Cubre: RF-1, RF-2, RF-6, RF-7, RF-15, Art. I)
   - **Objetivo:** Implementar la selección determinista del kanji diario (`getDailyKanji`) con semilla `YYYYMMDD + "kanji"`, el generador de distractores para selección múltiple, el conversor fonético en tiempo real romaji ➔ hiragana (`convertRomajiToHiragana`) y la función de normalización de respuestas.
   - **Archivos Involucrados:**
     - `src/utils/kanji.ts`
@@ -40,7 +40,7 @@
     - `convertRomajiToHiragana` transforma secuencias como "ka", "shi", "tsu", "kyo" a sus caracteres hiragana respectivos en tiempo real.
     - Cero errores de tipado.
 
-- [ ] **T4. Repositorio de Persistencia Incremental en Almacenamiento Local (`src/services/kanjiRepository.ts`).** (Cubre: RF-20, RF-21, RF-22, RF-23, Art. III, Art. IV)
+- [x] **T4. Repositorio de Persistencia Incremental en Almacenamiento Local (`src/services/kanjiRepository.ts`).** (Cubre: RF-20, RF-21, RF-22, RF-23, Art. III, Art. IV)
   - **Objetivo:** Construir el servicio desacoplado `kanjiRepository` que gestione la lectura y guardado incremental del progreso por etapa (`KanjiDailyState`), la racha diaria de días consecutivos y las preferencias del toggle en `localStorage`.
   - **Archivos Involucrados:**
     - `src/services/kanjiRepository.ts`
@@ -50,7 +50,7 @@
     - `updateStreakAndStats` incrementa la racha si el último día jugado fue consecutivo o la reinicia a 1 si pasó más de un día.
     - Tolerancia total a entornos sin `window` o con cuota restringida sin lanzar excepciones no controladas.
 
-- [ ] **T5. Store de Estado del Reto Diario con Zustand (`src/store/useKanjiStore.ts`).** (Cubre: RF-3, RF-5, RF-8 a RF-15, RF-20, RF-21, Art. II)
+- [x] **T5. Store de Estado del Reto Diario con Zustand (`src/store/useKanjiStore.ts`).** (Cubre: RF-3, RF-5, RF-8 a RF-15, RF-20, RF-21, Art. II)
   - **Objetivo:** Crear la máquina de estados en Zustand para orquestar el flujo diario exclusivo: etapas 0 a 4, regla de 1 solo intento por etapa con calificación `🟩`/`🟥`, activación de feedback pedagógico, toggle de modalidad de respuesta y sincronización automática con `kanjiRepository`.
   - **Archivos Involucrados:**
     - `src/store/useKanjiStore.ts`
