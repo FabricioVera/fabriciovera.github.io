@@ -98,9 +98,6 @@ export const DailyKanjiGame: React.FC = () => {
         <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-200 to-amber-500">
           Daily Kanji
         </h1>
-        <p className="text-xs sm:text-sm text-neutral-400 mt-1 max-w-sm">
-          Domina 20 kanjis en 4 modalidades diarias (80 retos evaluativos).
-        </p>
       </div>
 
       {/* Selector de Modalidades / Barra de Progreso */}

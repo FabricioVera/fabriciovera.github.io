@@ -78,15 +78,12 @@ export const KanjiReadingStage: React.FC = () => {
         <h2 className="mt-2 text-base sm:text-lg font-bold text-neutral-100">
           ¿Cuál es la lectura en Hiragana?
         </h2>
-        <p className="text-xs text-neutral-400 mt-0.5">
-          Identifica la lectura principal (On&apos;yomi o Kun&apos;yomi) del ideograma.
-        </p>
       </div>
 
       {/* Tarjeta Visual del Kanji */}
       <div className="relative flex flex-col items-center justify-center w-36 h-36 sm:w-44 sm:h-44 rounded-2xl bg-neutral-950/80 border-2 border-neutral-800/90 shadow-inner group">
         <span
-          className="text-6xl sm:text-7xl font-bold font-serif text-neutral-50 select-none tracking-normal"
+          className="text-6xl sm:text-7xl font-bold text-neutral-50 select-none tracking-normal"
           lang="ja"
         >
           {kanjiTarget.kanji}

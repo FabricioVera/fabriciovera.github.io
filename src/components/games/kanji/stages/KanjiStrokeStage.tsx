@@ -158,9 +158,6 @@ export const KanjiStrokeStage: React.FC = () => {
         <h2 className="mt-2 text-base sm:text-lg font-bold text-neutral-100">
           Traza el kanji: <span className="text-amber-400 font-serif text-xl ml-1" lang="ja">{kanjiTarget.kanji}</span>
         </h2>
-        <p className="text-xs text-neutral-400 mt-0.5">
-          Dibuja cada trazo en el orden y sentido caligráfico correcto.
-        </p>
       </div>
 
       {/* Indicador de Trazo Activo o Estado Completado */}
