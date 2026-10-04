@@ -4,3 +4,4 @@ export * from "./stages/KanjiReadingStage";
 export * from "./stages/KanjiMeaningStage";
 export * from "./stages/KanjiRomajiStage";
 export * from "./stages/KanjiStrokeStage";
+export * from "./KanjiSummaryModal";

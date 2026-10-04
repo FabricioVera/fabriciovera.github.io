@@ -77,6 +77,7 @@ export interface KanjiStats {
 export interface ShareResultPayload {
   date: string;
   kanji: string;
+  meaning?: string;
   streak: number;
   stageOutcomes: [StageOutcome, StageOutcome, StageOutcome, StageOutcome];
   url: string;

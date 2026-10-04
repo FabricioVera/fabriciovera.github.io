@@ -2,7 +2,7 @@
 
 - **Spec Asociada:** [`spec.md`](spec.md)
 - **Plan Asociado:** [`plan.md`](plan.md)
-- **Estado General:** 8/10 completadas
+- **Estado General:** 9/10 completadas
 
 ---
 
@@ -90,7 +90,7 @@
     - Si un trazo es erróneo, reproduce la animación del trazo correcto.
     - Al completar todos los trazos con éxito, notifica al store para finalizar el juego con `🟩`.
 
-- [ ] **T9. Modal de Resumen y Viralidad Social ("Toque a un amigo") (`KanjiSummaryModal.tsx` y `kanjiShare.ts`).** (Cubre: RF-24, RF-25, RF-26)
+- [x] **T9. Modal de Resumen y Viralidad Social ("Toque a un amigo") (`KanjiSummaryModal.tsx` y `kanjiShare.ts`).** (Cubre: RF-24, RF-25, RF-26)
   - **Objetivo:** Crear la utilidad `kanjiShare.ts` para construir el mensaje social con la racha, la cuadrícula de 4 emojis (`🟩`/`🟥`) y la URL, junto con el componente `KanjiSummaryModal.tsx` que ejecuta Web Share API con fallback a WhatsApp y copiado al portapapeles.
   - **Archivos Involucrados:**
     - `src/utils/kanjiShare.ts`
