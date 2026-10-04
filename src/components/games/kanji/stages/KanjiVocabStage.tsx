@@ -101,13 +101,6 @@ export const KanjiVocabStage: React.FC = () => {
         >
           {targetWord.japanese}
         </span>
-        {/* Referencia al kanji evaluado */}
-        <div className="mt-2 flex items-center gap-1.5 text-[11px] text-neutral-400 bg-neutral-900/80 px-2.5 py-0.5 rounded-full border border-neutral-800">
-          <span className="text-neutral-500">Kanji objetivo:</span>
-          <span className="font-bold text-neutral-200">{kanjiTarget.kanji}</span>
-          <span>•</span>
-          <span className="text-neutral-300 capitalize">{kanjiTarget.meanings[0]}</span>
-        </div>
       </div>
 
       {/* Contenido interactivo: opciones o campo de texto */}

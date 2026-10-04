@@ -66,9 +66,6 @@ export const KanjiRomajiStage: React.FC = () => {
     >
       {/* Encabezado de la etapa */}
       <div className="text-center">
-        <span className="text-[11px] uppercase tracking-widest font-bold px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
-          Etapa 3 • Romaji ({currentQuestionIndex + 1} de {QUESTIONS_PER_STAGE})
-        </span>
         <h2 className="mt-2 text-base sm:text-lg font-bold text-neutral-100">
           ¿Cuál es la transcripción en Romaji?
         </h2>

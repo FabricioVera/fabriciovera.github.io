@@ -171,9 +171,6 @@ export const KanjiStrokeStage: React.FC = () => {
     >
       {/* Encabezado — Directiva de interfaz limpia sin subtítulos */}
       <div className="text-center flex flex-col items-center">
-        <span className="text-[11px] uppercase tracking-widest font-bold px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
-          Etapa 4 • Trazos ({currentQuestionIndex + 1} de {QUESTIONS_PER_STAGE})
-        </span>
 
         {isKanjiFinished ? (
           <div className="mt-2 flex flex-col items-center">
@@ -198,8 +195,6 @@ export const KanjiStrokeStage: React.FC = () => {
             <div className="flex items-center gap-2 text-xs font-mono text-neutral-400 bg-neutral-950/60 px-3 py-1 rounded-full border border-neutral-800">
               <span className="text-neutral-500">Lectura:</span>
               <span className="font-bold text-neutral-200">{primaryReading}</span>
-              <span>•</span>
-              <span className="text-neutral-300">{primaryRomaji}</span>
             </div>
           </div>
         )}
