@@ -2,7 +2,7 @@
 
 - **Spec Asociada:** [`spec.md`](spec.md)
 - **Plan Asociado:** [`plan.md`](plan.md)
-- **Estado General:** 1/10 completadas
+- **Estado General:** 2/10 completadas
 
 ---
 
@@ -20,7 +20,7 @@
     - `src/data/kanji/n5.json` contiene la colección estructurada de kanjis N5 con los campos requeridos.
     - Los archivos JSON tienen sintaxis válida comprobada.
 
-- [ ] **T2. Contratos y Tipos Estrictos de Dominio (`src/types/kanji.ts`).** (Cubre: RF-1 a RF-26, Art. V)
+- [x] **T2. Contratos y Tipos Estrictos de Dominio (`src/types/kanji.ts`).** (Cubre: RF-1 a RF-26, Art. V)
   - **Objetivo:** Definir todas las interfaces y contratos TypeScript necesarios para los modelos de datos, estados de las 4 etapas, persistencia incremental, resultados (`🟩`/`🟥`) y opciones de compartir.
   - **Archivos Involucrados:**
     - `src/types/kanji.ts`

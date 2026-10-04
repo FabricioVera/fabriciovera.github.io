@@ -41,9 +41,10 @@
 
 - 🟡 **Daily Kanji [/kanji] (Aprender Japonés)**:
   - En desarrollo activo bajo metodología SDD (`docs/specs/spec.md`, `plan.md`, `tasks.md`).
-  - Progreso: 1/10 tareas completadas.
+  - Progreso: 2/10 tareas completadas.
   - ✅ **T1 Completada:** Dependencia `hanzi-writer` (v3.7.3) instalada e integrada, y datasets estáticos creados en `src/data/kanji/kana.json` (104 kanas de cada tipo: Hiragana y Katakana) y `src/data/kanji/n5.json` (79 kanjis N5 esenciales estructurados con lecturas on/kun, significados y ejemplos).
-  - ⏳ **Próxima Tarea:** T2 (Contratos y Tipos Estrictos de Dominio en `src/types/kanji.ts`).
+  - ✅ **T2 Completada:** Contratos y tipos estrictos de dominio creados en `src/types/kanji.ts` (`KanaItem`, `KanjiWord`, `KanjiN5`, `KanjiStageKey`, `StageOutcome`, `InputMode`, `KanjiStageProgress`, `KanjiDailyState`, `KanjiStats`, `ShareResultPayload`, `KanjiRepositoryContract`) y re-exportados en `src/types/index.ts`.
+  - ⏳ **Próxima Tarea:** T3 (Funciones Puras, Determinismo con `rand-seed` y Conversor Kana en `src/utils/kanji.ts` y `src/utils/kanaConverter.ts`).
 - 🟡 **Adivina el Anime por Imagen (`AnimeGame` / `character-by-image`)**:
   - El componente existe en `src/components/games/guess-anime/GameContainer.tsx` y está registrado condicionalmente en `GameRenderer.astro`.
   - **Incompleto**: No está habilitado en `src/data/games.ts` (no aparece en la home ni en el sidebar).
