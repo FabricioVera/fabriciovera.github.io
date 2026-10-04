@@ -14,7 +14,7 @@ import type {
 const STAGE_KEYS: KanjiStageKey[] = [
   "reading",
   "meaning",
-  "romaji",
+  "vocabulary",
   "strokes",
 ];
 
@@ -49,7 +49,7 @@ export function generateEmojiGrid(
  * 🏆 Puntuación: 76/80 (95%)
  * 📖 Lectura: 19/20
  * 💡 Significado: 20/20
- * 🔤 Romaji: 18/20
+ * 📚 Vocabulario: 18/20
  * ✍️ Trazos: 19/20
  * 🔥 Racha: 5 días
  * https://fabriciovera.github.io/kanji
@@ -62,9 +62,9 @@ export function buildKanjiShareMessage(payload: ShareResultPayload): string {
   if (payload.stageScores) {
     const reading = payload.stageScores.reading ?? 0;
     const meaning = payload.stageScores.meaning ?? 0;
-    const romaji = payload.stageScores.romaji ?? 0;
+    const vocab = payload.stageScores.vocabulary ?? (payload.stageScores as any).romaji ?? 0;
     const strokes = payload.stageScores.strokes ?? 0;
-    const total = payload.totalScore ?? (reading + meaning + romaji + strokes);
+    const total = payload.totalScore ?? (reading + meaning + vocab + strokes);
     const max = payload.maxPossibleScore ?? 80;
     const pct = Math.round((total / max) * 100);
 
@@ -73,7 +73,7 @@ export function buildKanjiShareMessage(payload: ShareResultPayload): string {
       `🏆 Puntuación: ${total}/${max} (${pct}%)`,
       `📖 Lectura: ${reading}/20`,
       `💡 Significado: ${meaning}/20`,
-      `🔤 Romaji: ${romaji}/20`,
+      `📚 Vocabulario: ${vocab}/20`,
       `✍️ Trazos: ${strokes}/20`,
       `🔥 Racha: ${payload.streak} ${payload.streak === 1 ? "día" : "días"}`,
       url,

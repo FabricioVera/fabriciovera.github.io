@@ -26,12 +26,19 @@
   - ✅ Tablero interactivo con 16 tipos organizados por cuadrantes de personalidad.
   - ✅ Sistema de racha de puntos continuos que reinicia ante errores y guarda récord personal.
 - **Daily Kanji (Aprender Japonés)** (`/kanji`):
-  - ✅ Reto diario 100% determinista con semilla `YYYYMMDD + "kanji"` sobre 79 kanjis N5 esenciales y 208 kanas (`kana.json` y `n5.json`).
-  - ✅ Expansión a 20 desafíos por modalidad (80 retos diarios en total): 20 Lecturas, 20 Significados, 20 Romajis y 20 Trazos.
+  - ✅ Reto diario 100% determinista con semilla `YYYYMMDD + "kanji"` sobre kanjis y 208 kanas (`kana.json`).
+  - ✅ Expansión a 20 desafíos por modalidad (80 retos diarios en total): 20 Lecturas, 20 Significados, 20 Vocabularios (en desarrollo) y 20 Trazos.
   - ✅ Navegación no lineal y selector libre de modalidades: cambio instantáneo entre las 4 etapas mediante pestañas interactivas sin necesidad de haber concluido la anterior.
   - ✅ Barra de paginación interactiva del 1 al 20 sobre el kanji activo con salto directo a cada ejercicio y colores de estado (acierto `🟩`, fallo `🟥`, pendiente, activo).
   - ✅ Modo revisión e histórico de respuestas: visualización completa de la respuesta emitida por el usuario y la solución correcta en ejercicios ya respondidos (solo lectura, sin reintentos evaluativos).
   - ✅ Catálogo de 5 tipografías japonesas de alta legibilidad (*Noto Sans JP*, *Zen Kaku Gothic New*, *BIZ UDPGothic*, *Klee One*, *Zen Maru Gothic*) con selector interactivo en vivo y persistencia.
+  - ✅ **Fase Vocabulario, Trazos Inversos y 1000 Kanjis (T8-T13 Completada)**:
+    - ✅ `T8`: Catálogo extendido de 1000 kanjis Jouyou de alta frecuencia con compuestos y determinismo verificado (`top1000.json` y `jouyou1000.json`).
+    - ✅ `T9`: Modal y botón de silabarios Kana (Hiragana/Katakana con romaji en pestañas y grilla visual limpia).
+    - ✅ `T10`: Reemplazo de etapa Romaji por Vocabulario Compuesto (Jukugo: kanji + complemento con 4 opciones/escritura).
+    - ✅ `T11`: Modo Trazos Inversos (Español + pronunciación ➔ dibujar kanji objetivo desde cero sin silueta previa).
+    - ✅ `T12`: Navegación ágil por teclado con tecla `Enter` tras responder o en revisión.
+    - ✅ `T13`: Mantener la interfaz limpia y directa (cero subtítulos redundantes).
   - ✅ Selección determinista de 20 kanjis diarios sin duplicados con barajado PRNG reproducibles universalmente.
   - ✅ Regla innegociable de 1 solo intento evaluativo por desafío con revelación inmediata de feedback didáctico.
   - ✅ Persistencia incremental por pregunta desacoplada con `kanjiRepository` en `localStorage` (restauración exacta ante recargas o cierres de pestaña).

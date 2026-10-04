@@ -2,7 +2,7 @@
 
 - **Spec Asociada:** [`spec.md`](spec.md)
 - **Plan Técnico:** [`plan.md`](plan.md)
-- **Estado:** completado
+- **Estado:** en progreso (T1-T7 completadas, planificando T8-T13)
 - **Fecha:** 2026-10-04
 
 ---
@@ -131,4 +131,116 @@
   3. Crear `KanjiFontSelector.tsx`: selector accesible que permite cambiar entre las fuentes en vivo con vista previa.
   4. En `DailyKanjiGame.tsx`: aplicar la clase de fuente seleccionada al contenedor del juego y persistir la elección en `localStorage`.
 - **Criterio de Aceptación:** El usuario puede alternar entre las 5 tipografías en tiempo real y notar el cambio tipográfico inmediato en los kanjis y textos japoneses.
+- **Estado:** [x]
+
+---
+
+### 🟩 Tarea T8: Catálogo Extendido de 1000 Kanjis con Vocabulario Compuesto
+- **Objetivo:** Crear y cargar una base de datos estática con al menos 1000 kanjis más frecuentes (Jouyou) estructurados con lecturas, significados en español y palabras compuestas reales (`words: { japanese, kana, meaning }[]`).
+- **Archivos:**
+  - `src/data/kanji/top1000.json` (Nuevo)
+  - `public/data/kanji/jouyou1000.json` (Nuevo)
+  - `src/types/kanji.ts`
+  - `src/store/useKanjiStore.ts`
+- **Detalle de implementación:**
+  1. Compilar o generar `public/data/kanji/jouyou1000.json` y `src/data/kanji/top1000.json` con los 1000 kanjis más utilizados de Japón conteniendo `id`, `kanji`, `unicode`, `readings` (`on`, `kun`), `meanings` (español) y `words` (lista de compuestos reales con kanji, kana y significado en español).
+  2. Actualizar el cargador en `useKanjiStore` y `getDailyKanjiList` para utilizar este catálogo expandido, garantizando selección determinista PRNG de 20 kanjis diarios.
+  3. Proveer fallback seguro a `n5.json` en caso de fallo de red o contingencia.
+- **Criterio de Aceptación:** Dataset de 1000 kanjis válido, determinismo verificado sobre 1000 ítems y 0 errores de carga.
+- **Estado:** [x]
+
+---
+
+### 🟩 Tarea T9: Modal y Botón de Referencia Rápida de Kanas (Hiragana y Katakana)
+- **Objetivo:** Proveer un botón accesible en la cabecera del juego que abra un modal flotante con la tabla completa de caracteres Hiragana y Katakana junto a sus lecturas en Romaji.
+- **Archivos:**
+  - `src/components/games/kanji/KanaReferenceModal.tsx` (Nuevo)
+  - `src/components/games/kanji/DailyKanjiGame.tsx`
+- **Detalle de implementación:**
+  1. Crear `KanaReferenceModal.tsx` leyendo de `public/data/kana.json`:
+     - Pestañas accesibles para Hiragana y Katakana.
+     - Grilla visual limpia y ordenada por filas fonéticas (a, ka, sa, ta, na, ha, ma, ya, ra, wa, n + dakuon y diptongos) mostrando el caracter japonés en grande y su romaji debajo.
+     - Botón de cierre y cierre con tecla Escape o clic fuera.
+  2. En `DailyKanjiGame.tsx`: añadir botón compacto (ej. `[あ/ア Silabario]`) en la barra de herramientas superior junto al selector de fuentes.
+- **Criterio de Aceptación:** El modal se abre y cierra fluidamente sin perder el foco ni el estado de la pregunta activa.
+- **Estado:** [x]
+
+---
+
+### 🟩 Tarea T10: Reemplazo de Modalidad Romaji por Vocabulario Compuesto (Jukugo)
+- **Objetivo:** Sustituir la etapa de romaji por una modalidad pedagógica de vocabulario compuesto donde se presenta el kanji combinado con otros caracteres (ej. `大人` -> adulto).
+- **Archivos:**
+  - `src/types/kanji.ts`
+  - `src/utils/kanji.ts`
+  - `src/store/useKanjiStore.ts`
+  - `src/components/games/kanji/stages/KanjiVocabStage.tsx` (Nuevo)
+  - `src/components/games/kanji/DailyKanjiGame.tsx`
+  - `src/components/games/kanji/KanjiProgressBar.tsx`
+  - `src/components/games/kanji/KanjiSummaryModal.tsx`
+  - `src/utils/kanjiShare.ts`
+- **Detalle de implementación:**
+  1. En `src/types/kanji.ts`: actualizar `KanjiStageKey = "reading" | "meaning" | "vocabulary" | "strokes"`.
+  2. En `useKanjiStore`: actualizar configuración de etapas para inicializar y evaluar `vocabulary` en lugar de `romaji`.
+  3. Crear `KanjiVocabStage.tsx`:
+     - Selecciona deterministamente una palabra compuesta del kanji activo (`kanjiTarget.words`).
+     - Renderiza la palabra compuesta en tipografía destacada.
+     - Genera 4 alternativas (1 significado correcto y 3 distractores de otras palabras del catálogo) en modo selección múltiple, o valida la respuesta en modo escritura directa.
+     - Soporta modo revisión con respuestas históricas al navegar con la paginación.
+  4. Actualizar `KanjiSummaryModal.tsx` y `kanjiShare.ts` para mostrar `📚 Vocabulario: X / 20`.
+- **Criterio de Aceptación:** La etapa 3 evalúa palabras compuestas, registra aciertos y fallos, y actualiza el desglose en el resumen final.
+- **Estado:** [x]
+
+---
+
+### 🟩 Tarea T11: Modalidad de Trazos Inversos (Español + Pronunciación ➔ Dibujar Kanji)
+- **Objetivo:** Transformar la etapa de trazos en un desafío de memoria activa donde se proporciona la palabra en español y la lectura en kana/romaji, debiendo el jugador dibujar el kanji objetivo desde cero sin silueta previa.
+- **Archivos:**
+  - `src/components/games/kanji/stages/KanjiStrokeStage.tsx`
+  - `src/store/useKanjiStore.ts`
+- **Detalle de implementación:**
+  1. En `KanjiStrokeStage.tsx`:
+     - Ocultar la silueta inicial del kanji en el lienzo `HanziWriter` (`showOutline: false`, `showCharacter: false`).
+     - Presentar como consigna principal: palabra en español destacada y lectura fonética de apoyo (`hiragana` y `romaji`).
+     - Permitir al usuario trazar libremente en la cuadrícula de caligrafía.
+     - Validación en vivo de orden y orientación: trazo correcto se plasma en el lienzo.
+     - Ante error: animación ilustrativa del trazo correcto para guiar pedagógicamente al estudiante.
+     - Botón de asistencia didáctica "Ver trazo" para animar el siguiente trazo si el usuario lo necesita.
+     - Al completar todos los trazos: feedback de kanji dominado y avance al siguiente ítem.
+     - En modo revisión: permitir volver a practicar el kanji trazado sin alterar el puntaje.
+- **Criterio de Aceptación:** Se solicita el kanji a partir del español y la lectura, el lienzo comienza en blanco y guía correctamente ante errores.
+- **Estado:** [x]
+
+---
+
+### 🟩 Tarea T12: Navegación Fluida por Teclado con Tecla Enter
+- **Objetivo:** Permitir avanzar a la siguiente pregunta presionando la tecla `Enter` cuando la respuesta ya fue emitida (feedback visible) o cuando se revisa un ejercicio contestado.
+- **Archivos:**
+  - `src/components/games/kanji/DailyKanjiGame.tsx`
+- **Detalle de implementación:**
+  1. Registrar listener global `keydown` en `DailyKanjiGame.tsx`.
+  2. Al presionar `Enter`:
+     - Si hay feedback activo (`isFeedbackOpen`) o el ejercicio actual ya fue respondido (`hasAnsweredCurrent` en modo revisión):
+       - Ejecutar `advanceAfterFeedback()`.
+       - Prevenir comportamiento por defecto (`e.preventDefault()`).
+  3. Asegurar limpieza del listener en el unmount del efecto.
+- **Criterio de Aceptación:** Presionar Enter en teclado avanza instantáneamente a la siguiente pregunta tras responder.
+- **Estado:** [x]
+
+---
+
+### 🟩 Tarea T13: Mantener la Interfaz Limpia y Directa (Cero Subtítulos Redundantes)
+- **Objetivo:** Aplicar la regla de mantener la interfaz limpia eliminando todos los subtítulos y párrafos redundantes debajo de los encabezados en los componentes del juego Daily Kanji para una experiencia concisa y moderna.
+- **Archivos:**
+  - `src/components/games/kanji/DailyKanjiGame.tsx`
+  - `src/components/games/kanji/KanjiProgressBar.tsx`
+  - `src/components/games/kanji/stages/KanjiReadingStage.tsx`
+  - `src/components/games/kanji/stages/KanjiMeaningStage.tsx`
+  - `src/components/games/kanji/stages/KanjiVocabStage.tsx`
+  - `src/components/games/kanji/stages/KanjiStrokeStage.tsx`
+  - `src/components/games/kanji/KanjiSummaryModal.tsx`
+- **Detalle de implementación:**
+  1. Eliminar textos secundarios explicativos bajo títulos (ej. descripciones redundantes o subtítulos de progreso).
+  2. Mantener únicamente los encabezados esenciales, badges compactos y las consignas directas.
+  3. Ejecutar `npm run build` y verificar que la UI luce limpia, sin subtítulos y compila sin errores.
+- **Criterio de Aceptación:** Ningún componente o vista de Daily Kanji presenta subtítulos o párrafos descriptivos bajo sus encabezados.
 - **Estado:** [x]

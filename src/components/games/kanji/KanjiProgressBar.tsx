@@ -26,11 +26,11 @@ const STAGES_META: StageMetadata[] = [
     icon: "📖",
   },
   {
-    key: "romaji",
+    key: "vocabulary",
     stepNumber: 3,
-    title: "Romaji",
-    shortTitle: "Rom.",
-    icon: "abc",
+    title: "Vocabulario",
+    shortTitle: "Vocab.",
+    icon: "📚",
   },
   {
     key: "strokes",

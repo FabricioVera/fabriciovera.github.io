@@ -7,8 +7,10 @@
 
 import { create } from "zustand";
 import n5Data from "../data/kanji/n5.json";
+import top1000Data from "../data/kanji/top1000.json";
 import type {
   KanjiN5,
+  KanjiItem,
   KanjiStageKey,
   KanjiStageProgress,
   StageAnswerRecord,
@@ -17,10 +19,13 @@ import type {
   KanjiDailyState,
   KanjiFontFamily,
 } from "../types/kanji";
+
+const defaultKanjiCatalog: KanjiN5[] = ((top1000Data && top1000Data.length > 0 ? top1000Data : n5Data) as unknown) as KanjiN5[];
 import {
   getDailyKanjiList,
   getPrimaryReading,
   getPrimaryRomaji,
+  getDeterministicVocabWord,
   isAnswerCorrect,
 } from "../utils/kanji";
 import { convertKatakanaToHiragana } from "../utils/kanaConverter";
@@ -29,7 +34,7 @@ import { kanjiRepository } from "../services/kanjiRepository";
 export const STAGE_KEYS: KanjiStageKey[] = [
   "reading",
   "meaning",
-  "romaji",
+  "vocabulary",
   "strokes",
 ];
 
@@ -65,9 +70,9 @@ export function createInitialStages(): Record<KanjiStageKey, KanjiStageProgress>
       answers: [],
       isCompleted: false,
     },
-    romaji: {
-      stageKey: "romaji",
-      stage: "romaji",
+    vocabulary: {
+      stageKey: "vocabulary",
+      stage: "vocabulary",
       outcome: "pending",
       attempts: 0,
       attempted: false,
@@ -127,7 +132,7 @@ export interface KanjiStoreState {
 export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
   dailyKanjis: [],
   kanjiTarget: null,
-  allKanjis: n5Data as unknown as KanjiN5[],
+  allKanjis: defaultKanjiCatalog,
   currentStageIndex: 0,
   currentQuestionIndex: 0,
   stages: createInitialStages(),
@@ -150,10 +155,12 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
    */
   initializeDaily: (dateStr?: string) => {
     const todayDate = dateStr ?? getTodayDateString();
-    const kanjiList = (n5Data as unknown as KanjiN5[]) || [];
+    const kanjiList = (get().allKanjis && get().allKanjis.length > 0)
+      ? get().allKanjis
+      : defaultKanjiCatalog;
 
     if (kanjiList.length === 0) {
-      console.error("[useKanjiStore] El catálogo N5 está vacío");
+      console.error("[useKanjiStore] El catálogo de kanjis está vacío");
       set({ isLoading: false });
       return;
     }
@@ -176,13 +183,34 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
         : Math.min(savedProgress.currentQuestionIndex ?? 0, QUESTIONS_PER_STAGE - 1);
       const activeKanji = dailyKanjis[qIdx] || dailyKanjis[0];
 
+      const restoredStages = { ...savedProgress.stages } as Record<KanjiStageKey, KanjiStageProgress>;
+      if (!restoredStages.vocabulary && (restoredStages as any).romaji) {
+        restoredStages.vocabulary = {
+          ...(restoredStages as any).romaji,
+          stageKey: "vocabulary",
+          stage: "vocabulary",
+        };
+      }
+      if (!restoredStages.vocabulary) {
+        restoredStages.vocabulary = {
+          stageKey: "vocabulary",
+          stage: "vocabulary",
+          outcome: "pending",
+          attempts: 0,
+          attempted: false,
+          score: 0,
+          answers: [],
+          isCompleted: false,
+        };
+      }
+
       set({
         dailyKanjis,
         kanjiTarget: activeKanji,
         allKanjis: kanjiList,
         currentStageIndex: stageIdx,
         currentQuestionIndex: qIdx,
-        stages: savedProgress.stages,
+        stages: restoredStages,
         inputMode: savedProgress.inputMode ?? savedMode,
         selectedFont: savedFont,
         isFeedbackOpen: false,
@@ -404,12 +432,15 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
       correctAnswer = kanjiTarget.meanings[0];
       isCorrect = isAnswerCorrect(answer, kanjiTarget.meanings, false);
     } else if (currentStageIndex === 2) {
-      // Etapa 2: Transcripción Romaji
-      correctAnswer = getPrimaryRomaji(kanjiTarget);
-      const acceptableRomaji = kanjiTarget.romaji && kanjiTarget.romaji.length > 0
-        ? kanjiTarget.romaji
-        : [correctAnswer];
-      isCorrect = isAnswerCorrect(answer, acceptableRomaji, true);
+      // Etapa 2: Vocabulario Compuesto (Jukugo)
+      const targetWord = getDeterministicVocabWord(kanjiTarget, date, currentQuestionIndex);
+      correctAnswer = targetWord.meaning;
+      const acceptableAnswers = [
+        targetWord.meaning,
+        targetWord.kana,
+        targetWord.japanese,
+      ];
+      isCorrect = isAnswerCorrect(answer, acceptableAnswers, false);
     } else {
       // Etapa 3 (Trazos) se resuelve vía completeCurrentStrokeKanji
       return { isCorrect: false, correctAnswer: "" };
@@ -497,6 +528,14 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
 
     const currentKey = STAGE_KEYS[currentStageIndex];
     const currentStage = stages[currentKey];
+
+    // En modo revisión de una etapa ya completada, avanzar a la siguiente pregunta en orden
+    if (currentStage.isCompleted) {
+      const nextQ = (currentQuestionIndex + 1) % QUESTIONS_PER_STAGE;
+      get().goToQuestion(nextQ);
+      return;
+    }
+
     const answeredIds = new Set((currentStage.answers || []).map((a) => a.kanjiId));
     const isStageFullyAnswered = dailyKanjis.every((k) => answeredIds.has(k.id));
 
@@ -562,7 +601,7 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
         const totalScore =
           updatedStages.reading.score +
           updatedStages.meaning.score +
-          updatedStages.romaji.score +
+          updatedStages.vocabulary.score +
           updatedStages.strokes.score;
         const isPerfect = totalScore === QUESTIONS_PER_STAGE * 4;
         const newStats = kanjiRepository.recordDailyCompletion(date, isPerfect);
@@ -657,6 +696,13 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
 
     if (!kanjiTarget) return;
 
+    // En modo revisión de la etapa de trazos ya completada, avanzar a la siguiente pregunta
+    if (stages.strokes.isCompleted) {
+      const nextQ = (currentQuestionIndex + 1) % QUESTIONS_PER_STAGE;
+      get().goToQuestion(nextQ);
+      return;
+    }
+
     const alreadyAnswered = (stages.strokes.answers || []).some(
       (a) => a.kanjiId === kanjiTarget.id
     );
@@ -749,7 +795,7 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
         const totalScore =
           newStages.reading.score +
           newStages.meaning.score +
-          newStages.romaji.score +
+          newStages.vocabulary.score +
           newStages.strokes.score;
         const isPerfect = totalScore === QUESTIONS_PER_STAGE * 4;
         const newStats = kanjiRepository.recordDailyCompletion(date, isPerfect);

@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useKanjiStore } from "../../../store/useKanjiStore";
-import type { KanjiFontFamily } from "../../../types/kanji";
+import type { KanjiFontFamily, KanjiStageKey } from "../../../types/kanji";
 import { KanjiProgressBar } from "./KanjiProgressBar";
 import { KanjiPaginationBar } from "./KanjiPaginationBar";
 import { KanjiFontSelector } from "./KanjiFontSelector";
 import { KanjiModeToggle } from "./KanjiModeToggle";
 import { KanjiReadingStage } from "./stages/KanjiReadingStage";
 import { KanjiMeaningStage } from "./stages/KanjiMeaningStage";
-import { KanjiRomajiStage } from "./stages/KanjiRomajiStage";
+import { KanjiVocabStage } from "./stages/KanjiVocabStage";
 import { KanjiStrokeStage } from "./stages/KanjiStrokeStage";
 import { KanjiSummaryModal } from "./KanjiSummaryModal";
+import { KanaReferenceModal } from "./KanaReferenceModal";
 
 const FONT_CLASS_MAP: Record<KanjiFontFamily, string> = {
   "noto-sans-jp": "font-noto-sans-jp",
@@ -28,9 +29,14 @@ export const DailyKanjiGame: React.FC = () => {
   const date = useKanjiStore((state) => state.date);
   const initializeDaily = useKanjiStore((state) => state.initializeDaily);
   const setCurrentStage = useKanjiStore((state) => state.setCurrentStage);
+  const stages = useKanjiStore((state) => state.stages);
+  const isFeedbackOpen = useKanjiStore((state) => state.isFeedbackOpen);
+  const advanceAfterFeedback = useKanjiStore((state) => state.advanceAfterFeedback);
+  const completeCurrentStrokeKanji = useKanjiStore((state) => state.completeCurrentStrokeKanji);
 
-  // Control del modal de resumen
+  // Control de modales
   const [showSummary, setShowSummary] = useState(false);
+  const [showKanaModal, setShowKanaModal] = useState(false);
 
   // Inicialización de la partida diaria al montar el componente
   useEffect(() => {
@@ -46,6 +52,48 @@ export const DailyKanjiGame: React.FC = () => {
 
   const activeStage = Math.min(currentStageIndex, 3);
   const fontClass = FONT_CLASS_MAP[selectedFont] || "font-noto-sans-jp";
+
+  // Navegación por teclado: pasar a la siguiente pregunta con Enter cuando ya se respondió
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Enter") return;
+
+      // Si hay un modal visible, no interferir con la navegación del juego
+      if (showSummary || showKanaModal) return;
+
+      const stageKeys: KanjiStageKey[] = ["reading", "meaning", "vocabulary", "strokes"];
+      const currentKey = stageKeys[activeStage];
+      const stageProgress = stages[currentKey];
+      const isCurrentAnswered = Boolean(
+        kanjiTarget &&
+        stageProgress?.answers?.some((a) => a.kanjiId === kanjiTarget.id)
+      );
+
+      // Avanzar si el feedback está abierto o si la pregunta actual ya fue respondida (modo revisión)
+      if (isFeedbackOpen || isCurrentAnswered) {
+        e.preventDefault();
+        if (activeStage === 3) {
+          completeCurrentStrokeKanji();
+        } else {
+          advanceAfterFeedback();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [
+    showSummary,
+    showKanaModal,
+    activeStage,
+    stages,
+    kanjiTarget,
+    isFeedbackOpen,
+    advanceAfterFeedback,
+    completeCurrentStrokeKanji,
+  ]);
 
   // Renderizado del spinner de carga
   if (isLoading || !kanjiTarget) {
@@ -106,10 +154,21 @@ export const DailyKanjiGame: React.FC = () => {
         selectedStageIndex={activeStage}
       />
 
-      {/* Barra de Opciones y Accesibilidad: Toggle de Modalidad + Selector de Tipografía */}
-      <div className="w-full max-w-xl flex items-center justify-between gap-2 px-1">
+      {/* Barra de Opciones y Accesibilidad: Toggle de Modalidad + Botón Silabario + Selector de Tipografía */}
+      <div className="w-full max-w-xl flex flex-wrap items-center justify-between gap-2 px-1">
         <KanjiModeToggle />
-        <KanjiFontSelector />
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowKanaModal(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-neutral-800/80 hover:bg-neutral-800 text-neutral-300 hover:text-amber-300 border border-neutral-700/60 hover:border-amber-500/40 transition-all cursor-pointer shadow-sm active:scale-95"
+            title="Abrir tabla de referencia de Hiragana y Katakana"
+          >
+            <span className="font-bold text-amber-400">あ/ア</span>
+            <span className="hidden sm:inline font-medium">Silabario</span>
+          </button>
+          <KanjiFontSelector />
+        </div>
       </div>
 
       {/* Paginación de 20 Ejercicios (directamente sobre el kanji activo) */}
@@ -119,9 +178,15 @@ export const DailyKanjiGame: React.FC = () => {
       <main className="w-full flex justify-center transition-all duration-300">
         {activeStage === 0 && <KanjiReadingStage />}
         {activeStage === 1 && <KanjiMeaningStage />}
-        {activeStage === 2 && <KanjiRomajiStage />}
+        {activeStage === 2 && <KanjiVocabStage />}
         {activeStage === 3 && <KanjiStrokeStage />}
       </main>
+
+      {/* Modal de Referencia Kana */}
+      <KanaReferenceModal
+        isOpen={showKanaModal}
+        onClose={() => setShowKanaModal(false)}
+      />
 
       {/* Modal de Resumen y Compartir Social */}
       <KanjiSummaryModal

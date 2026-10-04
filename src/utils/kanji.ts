@@ -5,7 +5,7 @@
  */
 
 import Rand from "rand-seed";
-import type { KanjiN5 } from "../types/kanji";
+import type { KanjiN5, KanjiWord } from "../types/kanji";
 import { convertKatakanaToHiragana, normalizeRomaji } from "./kanaConverter";
 
 /**
@@ -183,6 +183,76 @@ export function getRomajiOptions(
   }
 
   const options = [correctRomaji, ...distractors];
+  return deterministicShuffle(options, () => rand.next());
+}
+
+/**
+ * Obtiene de forma determinista la palabra de vocabulario compuesto asignada al kanji para el día.
+ */
+export function getDeterministicVocabWord(
+  kanji: KanjiN5,
+  dateStr?: string,
+  questionIndex: number = 0
+): KanjiWord {
+  if (!kanji.words || kanji.words.length === 0) {
+    const meaning = kanji.meanings && kanji.meanings.length > 0 ? kanji.meanings[0] : "elemento";
+    const reading = getPrimaryReading(kanji);
+    return {
+      japanese: kanji.kanji,
+      word: kanji.kanji,
+      kana: reading,
+      reading: reading,
+      meaning: meaning,
+    };
+  }
+  const seed = getDailySeed(dateStr, `vocab_${kanji.id}_${questionIndex}`);
+  const rand = new Rand(seed);
+  const wordIdx = Math.floor(rand.next() * kanji.words.length);
+  return kanji.words[wordIdx];
+}
+
+/**
+ * Genera exactamente 4 opciones de significado para la palabra compuesta de vocabulario
+ * (1 correcta y 3 distractores deterministas de otras palabras compuestas del catálogo).
+ */
+export function getVocabOptions(
+  targetWord: KanjiWord,
+  kanji: KanjiN5,
+  allKanjis: KanjiN5[],
+  dateStr?: string,
+  questionIndex: number = 0
+): string[] {
+  const seed = getDailySeed(dateStr, `vocab_options_${kanji.id}_${questionIndex}`);
+  const rand = new Rand(seed);
+
+  const correctMeaning = targetWord.meaning.trim();
+  const chosenMeanings = new Set<string>([correctMeaning.toLowerCase()]);
+  const distractors: string[] = [];
+
+  const candidates = allKanjis.filter((k) => k.id !== kanji.id);
+  const shuffledCandidates = deterministicShuffle(candidates, () => rand.next());
+
+  for (const candidate of shuffledCandidates) {
+    if (distractors.length >= 3) break;
+    if (candidate.words && candidate.words.length > 0) {
+      const candidateWord = candidate.words[0];
+      const meaning = candidateWord.meaning.trim();
+      const norm = meaning.toLowerCase();
+      if (meaning && !chosenMeanings.has(norm)) {
+        distractors.push(meaning);
+        chosenMeanings.add(norm);
+      }
+    } else if (candidate.meanings && candidate.meanings.length > 0) {
+      const meaning = candidate.meanings[0].trim();
+      const norm = meaning.toLowerCase();
+      if (meaning && !chosenMeanings.has(norm)) {
+        distractors.push(meaning);
+        chosenMeanings.add(norm);
+      }
+    }
+  }
+
+  const options = [correctMeaning, ...distractors];
   return deterministicShuffle(options, () => rand.next());
 }
 

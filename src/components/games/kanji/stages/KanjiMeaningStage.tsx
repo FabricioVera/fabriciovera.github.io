@@ -197,9 +197,10 @@ export const KanjiMeaningStage: React.FC = () => {
           <button
             type="button"
             onClick={advanceAfterFeedback}
-            className="w-full mt-1 py-2.5 px-4 bg-neutral-100 hover:bg-white text-neutral-900 font-extrabold rounded-xl text-xs sm:text-sm tracking-wide transition-all active:scale-98 cursor-pointer shadow-md"
+            className="w-full mt-1 py-2.5 px-4 bg-neutral-100 hover:bg-white text-neutral-900 font-extrabold rounded-xl text-xs sm:text-sm tracking-wide transition-all active:scale-98 cursor-pointer shadow-md flex items-center justify-center gap-2"
           >
-            {isLastQuestion ? "Siguiente pendiente o completar →" : "Siguiente pregunta →"}
+            <span>{isLastQuestion ? "Siguiente pendiente o completar →" : "Siguiente pregunta →"}</span>
+            <span className="text-[10px] text-neutral-500 font-mono hidden sm:inline">(o pulsa Enter)</span>
           </button>
         </div>
       )}

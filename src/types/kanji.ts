@@ -3,7 +3,8 @@
  * FabricioVera / FabriGames — Conforme con docs/constitution.md (Art. V)
  */
 
-export type KanjiStageKey = "reading" | "meaning" | "romaji" | "strokes";
+export type KanjiStageKey = "reading" | "meaning" | "vocabulary" | "strokes";
+export type LegacyKanjiStageKey = KanjiStageKey | "romaji";
 
 export type StageOutcome = "correct" | "incorrect" | "pending";
 
@@ -58,6 +59,9 @@ export interface KanjiN5 {
   words: KanjiWord[];
 }
 
+/** Alias para ítems de kanji del catálogo expandido (Jouyou / Top 1000) */
+export type KanjiItem = KanjiN5;
+
 /** Registro de respuesta individual para cada pregunta de una etapa (1..20) */
 export interface StageAnswerRecord {
   kanjiId: string;
@@ -86,7 +90,7 @@ export interface KanjiDailyState {
   date: string; // Formato "YYYY-MM-DD"
   kanjiId?: string; // ID del kanji inicial/activo para compatibilidad
   kanjiIds: string[]; // 20 IDs ordenados deterministas del día
-  currentStageIndex: number; // 0: reading, 1: meaning, 2: romaji, 3: strokes, 4: completed
+  currentStageIndex: number; // 0: reading, 1: meaning, 2: vocabulary, 3: strokes, 4: completed
   currentQuestionIndex: number; // 0..19 (sub-progreso de la etapa activa)
   stages: Record<KanjiStageKey, KanjiStageProgress>;
   inputMode: InputMode;

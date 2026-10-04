@@ -48,10 +48,10 @@ export const KanjiSummaryModal: React.FC<KanjiSummaryModalProps> = ({
 
   const readingScore = stages.reading?.score ?? 0;
   const meaningScore = stages.meaning?.score ?? 0;
-  const romajiScore = stages.romaji?.score ?? 0;
+  const vocabScore = stages.vocabulary?.score ?? (stages as any).romaji?.score ?? 0;
   const strokesScore = stages.strokes?.score ?? (stages.strokes?.answers?.length || 0);
 
-  const totalScore = readingScore + meaningScore + romajiScore + strokesScore;
+  const totalScore = readingScore + meaningScore + vocabScore + strokesScore;
   const maxScore = QUESTIONS_PER_STAGE * 4; // 80 puntos
   const percentage = Math.round((totalScore / maxScore) * 100);
   const isPerfect = totalScore === maxScore;
@@ -59,7 +59,7 @@ export const KanjiSummaryModal: React.FC<KanjiSummaryModalProps> = ({
   const stageScores = {
     reading: readingScore,
     meaning: meaningScore,
-    romaji: romajiScore,
+    vocabulary: vocabScore,
     strokes: strokesScore,
   };
 
@@ -117,7 +117,7 @@ export const KanjiSummaryModal: React.FC<KanjiSummaryModalProps> = ({
   const stageBreakdown = [
     { title: "Lectura", icon: "📖", score: readingScore, max: QUESTIONS_PER_STAGE },
     { title: "Significado", icon: "💡", score: meaningScore, max: QUESTIONS_PER_STAGE },
-    { title: "Romaji", icon: "🔤", score: romajiScore, max: QUESTIONS_PER_STAGE },
+    { title: "Vocabulario", icon: "📚", score: vocabScore, max: QUESTIONS_PER_STAGE },
     { title: "Trazos", icon: "✍️", score: strokesScore, max: QUESTIONS_PER_STAGE },
   ];
 
