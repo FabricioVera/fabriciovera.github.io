@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { BaseGameEntity, GameStatus } from "@types/game";
+import type { BaseGameEntity, GameStatus } from "@appTypes/game";
 import { type DailyGameState } from "@services/dailyStorageRepository";
 import { logger } from "@services/logger";
 import { saveDailyScore } from "@services/scoreRepository";
@@ -154,6 +154,12 @@ export function createGameStore<TItem extends BaseGameEntity, TTarget>(
 
     reset: () => set({ guesses: [], gameStatus: "playing" }),
 
-    surrender: () => set({ gameStatus: "lost" }),
+    surrender: () => {
+      const { gameMode, gameId, guesses } = get();
+      set({ gameStatus: "lost" });
+      if (gameMode === "daily") {
+        config.saveDailyProgress(gameId, guesses, "lost");
+      }
+    },
   }));
 }

@@ -1,4 +1,4 @@
-import type { GameStatus } from "@types/game";
+import type { GameStatus } from "@appTypes/game";
 
 interface CorrectBannerProps {
   imageURL: string;

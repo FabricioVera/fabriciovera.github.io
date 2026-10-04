@@ -11,9 +11,9 @@ import { logger } from "@services/logger";
 import {
   GAME_VOICE_TRACKS,
   type VoiceTrackConfig,
-} from "src/config/arknightdleVoiceTracks";
-import type { GameStatus } from "../../../types/game";
-import { AudioIcon, MuteIcon } from "../../Icons";
+} from "@config/arknightdleVoiceTracks";
+import type { GameStatus } from "@appTypes/game";
+import { AudioIcon, MuteIcon } from "@components/Icons";
 
 const cleanName = (name: string): string => {
   return name.replace(new RegExp("[ ]", "g"), "_");
@@ -142,6 +142,7 @@ const SingleVoicePlayer = ({
   const [audioNum, setAudioNum] = useState<string>(initialAudioNum);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [volume, setVolume] = useState<number>(0.5);
+  const [retryCount, setRetryCount] = useState<number>(0);
 
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
@@ -153,7 +154,8 @@ const SingleVoicePlayer = ({
     setStatus("loading");
     setIsPlaying(false);
     setCurrentTime(0);
-  }, [initialAudioNum]);
+    setRetryCount(0);
+  }, [initialAudioNum, targetName]);
 
   useEffect(() => {
     if (!audioRef.current) return;
@@ -164,15 +166,30 @@ const SingleVoicePlayer = ({
   const handleCanPlay = () => setStatus("ready");
 
   const handleError = () => {
-    logger.warn(`Audio ${audioNum} no existe, recalculando...`);
-    setAudioNum(generateAudioNumber());
+    if (retryCount < 5) {
+      logger.warn(`Audio ${audioNum} no existe, recalculando... (Intento ${retryCount + 1}/5)`);
+      setRetryCount((prev) => prev + 1);
+      setAudioNum(generateAudioNumber());
+    } else {
+      logger.error(`No se encontraron audios válidos para ${targetName}`);
+      setStatus("error");
+    }
   };
 
   const togglePlay = () => {
     if (!audioRef.current || status !== "ready") return;
-    if (isPlaying) audioRef.current.pause();
-    else audioRef.current.play();
-    setIsPlaying(!isPlaying);
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch((err) => {
+          logger.warn("Audio play prevented or failed:", err);
+          setIsPlaying(false);
+        });
+    }
   };
 
   const handleVolumeChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -226,7 +243,7 @@ const SingleVoicePlayer = ({
         preload="metadata"
         onCanPlayThrough={handleCanPlay}
         onError={handleError}
-        onEnded={togglePlay}
+        onEnded={() => setIsPlaying(false)}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
       />

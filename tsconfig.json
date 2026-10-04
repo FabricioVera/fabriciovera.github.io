@@ -14,6 +14,7 @@
       "@store/*": ["src/store/*"],
       "@lib/*": ["src/lib/*"],
       "@types/*": ["src/types/*"],
+      "@appTypes/*": ["src/types/*"],
       "@services/*": ["src/services/*"],
       "@utils/*": ["src/utils/*"],
       "@auth/*": ["src/components/auth/*"],

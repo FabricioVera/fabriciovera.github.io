@@ -1,0 +1,1266 @@
+[
+  {
+    "id": "n5-01",
+    "kanji": "日",
+    "unicode": "U+65E5",
+    "readings": {
+      "on": ["ニチ", "ジツ"],
+      "kun": ["ひ", "び", "か"]
+    },
+    "meanings": ["día", "sol"],
+    "romaji": ["nichi", "jitsu", "hi", "bi", "ka"],
+    "words": [
+      { "japanese": "日本", "word": "日本", "kana": "にほん", "reading": "にほん", "meaning": "Japón" },
+      { "japanese": "日曜日", "word": "日曜日", "kana": "にちようび", "reading": "にちようび", "meaning": "domingo" },
+      { "japanese": "毎日", "word": "毎日", "kana": "まいにち", "reading": "まいにち", "meaning": "todos los días" }
+    ]
+  },
+  {
+    "id": "n5-02",
+    "kanji": "一",
+    "unicode": "U+4E00",
+    "readings": {
+      "on": ["イチ", "イツ"],
+      "kun": ["ひと", "ひとつ"]
+    },
+    "meanings": ["uno"],
+    "romaji": ["ichi", "itsu", "hito", "hitotsu"],
+    "words": [
+      { "japanese": "一つ", "word": "一つ", "kana": "ひとつ", "reading": "ひとつ", "meaning": "uno (objeto)" },
+      { "japanese": "一人", "word": "一人", "kana": "ひとり", "reading": "ひとり", "meaning": "una persona, solo" },
+      { "japanese": "一日", "word": "一日", "kana": "ついたち", "reading": "ついたち", "meaning": "primer día del mes" }
+    ]
+  },
+  {
+    "id": "n5-03",
+    "kanji": "国",
+    "unicode": "U+56FD",
+    "readings": {
+      "on": ["コク"],
+      "kun": ["くに"]
+    },
+    "meanings": ["país", "nación"],
+    "romaji": ["koku", "kuni"],
+    "words": [
+      { "japanese": "外国", "word": "外国", "kana": "がいこく", "reading": "がいこく", "meaning": "país extranjero" },
+      { "japanese": "中国", "word": "中国", "kana": "ちゅうごく", "reading": "ちゅうごく", "meaning": "China" },
+      { "japanese": "国籍", "word": "国籍", "kana": "こくせき", "reading": "こくせき", "meaning": "nacionalidad" }
+    ]
+  },
+  {
+    "id": "n5-04",
+    "kanji": "会",
+    "unicode": "U+4F1A",
+    "readings": {
+      "on": ["カイ", "エ"],
+      "kun": ["あ.う"]
+    },
+    "meanings": ["reunirse", "encuentro", "asociación"],
+    "romaji": ["kai", "e", "au"],
+    "words": [
+      { "japanese": "会社", "word": "会社", "kana": "かいしゃ", "reading": "かいしゃ", "meaning": "empresa, compañía" },
+      { "japanese": "会う", "word": "会う", "kana": "あう", "reading": "あう", "meaning": "encontrarse, verse" },
+      { "japanese": "会話", "word": "会話", "kana": "かいわ", "reading": "かいわ", "meaning": "conversación" }
+    ]
+  },
+  {
+    "id": "n5-05",
+    "kanji": "人",
+    "unicode": "U+4EBA",
+    "readings": {
+      "on": ["ジン", "ニン"],
+      "kun": ["ひと"]
+    },
+    "meanings": ["persona", "ser humano"],
+    "romaji": ["jin", "nin", "hito"],
+    "words": [
+      { "japanese": "日本人", "word": "日本人", "kana": "にほんじん", "reading": "にほんじん", "meaning": "persona japonesa" },
+      { "japanese": "三人", "word": "三人", "kana": "さんにん", "reading": "さんにん", "meaning": "tres personas" },
+      { "japanese": "大人", "word": "大人", "kana": "おとな", "reading": "おとな", "meaning": "adulto" }
+    ]
+  },
+  {
+    "id": "n5-06",
+    "kanji": "年",
+    "unicode": "U+5E74",
+    "readings": {
+      "on": ["ネン"],
+      "kun": ["とし"]
+    },
+    "meanings": ["año"],
+    "romaji": ["nen", "toshi"],
+    "words": [
+      { "japanese": "今年", "word": "今年", "kana": "ことし", "reading": "ことし", "meaning": "este año" },
+      { "japanese": "来年", "word": "来年", "kana": "らいねん", "reading": "らいねん", "meaning": "el año próximo" },
+      { "japanese": "去年", "word": "去年", "kana": "きょねん", "reading": "きょねん", "meaning": "el año pasado" }
+    ]
+  },
+  {
+    "id": "n5-07",
+    "kanji": "大",
+    "unicode": "U+5927",
+    "readings": {
+      "on": ["ダイ", "タイ"],
+      "kun": ["おお", "おお.きい"]
+    },
+    "meanings": ["grande"],
+    "romaji": ["dai", "tai", "oo", "ookii"],
+    "words": [
+      { "japanese": "大学", "word": "大学", "kana": "だいがく", "reading": "だいがく", "meaning": "universidad" },
+      { "japanese": "大きい", "word": "大きい", "kana": "おおきい", "reading": "おおきい", "meaning": "grande" },
+      { "japanese": "大変", "word": "大変", "kana": "たいへん", "reading": "たいへん", "meaning": "muy, difícil, grave" }
+    ]
+  },
+  {
+    "id": "n5-08",
+    "kanji": "十",
+    "unicode": "U+5341",
+    "readings": {
+      "on": ["ジュウ", "ジッ"],
+      "kun": ["とお", "と"]
+    },
+    "meanings": ["diez"],
+    "romaji": ["juu", "ji", "too"],
+    "words": [
+      { "japanese": "十", "word": "十", "kana": "じゅう", "reading": "じゅう", "meaning": "diez" },
+      { "japanese": "十日", "word": "十日", "kana": "とおか", "reading": "とおか", "meaning": "día diez, diez días" },
+      { "japanese": "十分", "word": "十分", "kana": "じゅっぷん", "reading": "じゅっぷん", "meaning": "diez minutos" }
+    ]
+  },
+  {
+    "id": "n5-09",
+    "kanji": "二",
+    "unicode": "U+4E8C",
+    "readings": {
+      "on": ["ニ", "ジ"],
+      "kun": ["ふた", "ふた.つ"]
+    },
+    "meanings": ["dos"],
+    "romaji": ["ni", "ji", "futa", "futatsu"],
+    "words": [
+      { "japanese": "二つ", "word": "二つ", "kana": "ふたつ", "reading": "ふたつ", "meaning": "dos (objetos)" },
+      { "japanese": "二月", "word": "二月", "kana": "にがつ", "reading": "にがつ", "meaning": "febrero" },
+      { "japanese": "二人", "word": "二人", "kana": "ふたり", "reading": "ふたり", "meaning": "dos personas" }
+    ]
+  },
+  {
+    "id": "n5-10",
+    "kanji": "本",
+    "unicode": "U+672C",
+    "readings": {
+      "on": ["ホン"],
+      "kun": ["もと"]
+    },
+    "meanings": ["libro", "origen", "base"],
+    "romaji": ["hon", "moto"],
+    "words": [
+      { "japanese": "本", "word": "本", "kana": "ほん", "reading": "ほん", "meaning": "libro" },
+      { "japanese": "本日", "word": "本日", "kana": "ほんじつ", "reading": "ほんじつ", "meaning": "hoy" },
+      { "japanese": "山本", "word": "山本", "kana": "やまもと", "reading": "やまもと", "meaning": "Yamamoto (apellido)" }
+    ]
+  },
+  {
+    "id": "n5-11",
+    "kanji": "中",
+    "unicode": "U+4E2D",
+    "readings": {
+      "on": ["チュウ"],
+      "kun": ["なか"]
+    },
+    "meanings": ["dentro", "medio", "centro"],
+    "romaji": ["chuu", "naka"],
+    "words": [
+      { "japanese": "中", "word": "中", "kana": "なか", "reading": "なか", "meaning": "dentro, medio" },
+      { "japanese": "一日中", "word": "一日中", "kana": "いちにちじゅう", "reading": "いちにちじゅう", "meaning": "todo el día" },
+      { "japanese": "中学校", "word": "中学校", "kana": "ちゅうがっこう", "reading": "ちゅうがっこう", "meaning": "escuela secundaria" }
+    ]
+  },
+  {
+    "id": "n5-12",
+    "kanji": "長",
+    "unicode": "U+9577",
+    "readings": {
+      "on": ["チョウ"],
+      "kun": ["なが.い"]
+    },
+    "meanings": ["largo", "jefe", "líder"],
+    "romaji": ["chou", "nagai"],
+    "words": [
+      { "japanese": "長い", "word": "長い", "kana": "ながい", "reading": "ながい", "meaning": "largo" },
+      { "japanese": "校長", "word": "校長", "kana": "こうちょう", "reading": "こうちょう", "meaning": "director de escuela" },
+      { "japanese": "社長", "word": "社長", "kana": "しゃちょう", "reading": "しゃちょう", "meaning": "presidente de empresa" }
+    ]
+  },
+  {
+    "id": "n5-13",
+    "kanji": "出",
+    "unicode": "U+51FA",
+    "readings": {
+      "on": ["シュツ", "スイ"],
+      "kun": ["で.る", "だ.す"]
+    },
+    "meanings": ["salir", "sacar"],
+    "romaji": ["shutsu", "deru", "dasu"],
+    "words": [
+      { "japanese": "出る", "word": "出る", "kana": "でる", "reading": "でる", "meaning": "salir" },
+      { "japanese": "出す", "word": "出す", "kana": "だす", "reading": "だす", "meaning": "sacar" },
+      { "japanese": "出口", "word": "出口", "kana": "でぐち", "reading": "でぐち", "meaning": "salida" }
+    ]
+  },
+  {
+    "id": "n5-14",
+    "kanji": "三",
+    "unicode": "U+4E09",
+    "readings": {
+      "on": ["サン", "ゾウ"],
+      "kun": ["み", "み.つ", "みっ.つ"]
+    },
+    "meanings": ["tres"],
+    "romaji": ["san", "zou", "mi", "mitsu", "mittsu"],
+    "words": [
+      { "japanese": "三つ", "word": "三つ", "kana": "みっつ", "reading": "みっつ", "meaning": "tres (objetos)" },
+      { "japanese": "三月", "word": "三月", "kana": "さんがつ", "reading": "さんがつ", "meaning": "marzo" },
+      { "japanese": "三人", "word": "三人", "kana": "さんにん", "reading": "さんにん", "meaning": "tres personas" }
+    ]
+  },
+  {
+    "id": "n5-15",
+    "kanji": "同",
+    "unicode": "U+540C",
+    "readings": {
+      "on": ["ドウ"],
+      "kun": ["おな.じ"]
+    },
+    "meanings": ["mismo", "igual"],
+    "romaji": ["dou", "onaji"],
+    "words": [
+      { "japanese": "同じ", "word": "同じ", "kana": "おなじ", "reading": "おなじ", "meaning": "mismo, igual" },
+      { "japanese": "同時", "word": "同時", "kana": "どうじ", "reading": "どうじ", "meaning": "al mismo tiempo" },
+      { "japanese": "同僚", "word": "同僚", "kana": "どうりょう", "reading": "どうりょう", "meaning": "colega" }
+    ]
+  },
+  {
+    "id": "n5-16",
+    "kanji": "時",
+    "unicode": "U+6642",
+    "readings": {
+      "on": ["ジ"],
+      "kun": ["とき", "どき"]
+    },
+    "meanings": ["tiempo", "hora"],
+    "romaji": ["ji", "toki", "doki"],
+    "words": [
+      { "japanese": "時", "word": "時", "kana": "とき", "reading": "とき", "meaning": "tiempo, momento" },
+      { "japanese": "時間", "word": "時間", "kana": "じかん", "reading": "じかん", "meaning": "tiempo, hora" },
+      { "japanese": "時計", "word": "時計", "kana": "とけい", "reading": "とけい", "meaning": "reloj" }
+    ]
+  },
+  {
+    "id": "n5-17",
+    "kanji": "行",
+    "unicode": "U+884C",
+    "readings": {
+      "on": ["コウ", "ギョウ", "アン"],
+      "kun": ["い.く", "ゆ.く", "おこな.う"]
+    },
+    "meanings": ["ir", "conducta", "fila"],
+    "romaji": ["kou", "gyou", "iku", "yuku", "okonau"],
+    "words": [
+      { "japanese": "行く", "word": "行く", "kana": "いく", "reading": "いく", "meaning": "ir" },
+      { "japanese": "旅行", "word": "旅行", "kana": "りょこう", "reading": "りょこう", "meaning": "viaje" },
+      { "japanese": "銀行", "word": "銀行", "kana": "ぎんこう", "reading": "ぎんこう", "meaning": "banco" }
+    ]
+  },
+  {
+    "id": "n5-18",
+    "kanji": "見",
+    "unicode": "U+898B",
+    "readings": {
+      "on": ["ケン"],
+      "kun": ["み.る", "み.える", "み.せる"]
+    },
+    "meanings": ["ver", "mirar"],
+    "romaji": ["ken", "miru", "mieru", "miseru"],
+    "words": [
+      { "japanese": "見る", "word": "見る", "kana": "みる", "reading": "みる", "meaning": "ver, mirar" },
+      { "japanese": "見せる", "word": "見せる", "kana": "みせる", "reading": "みせる", "meaning": "mostrar" },
+      { "japanese": "意見", "word": "意見", "kana": "いけん", "reading": "いけん", "meaning": "opinión" }
+    ]
+  },
+  {
+    "id": "n5-19",
+    "kanji": "月",
+    "unicode": "U+6708",
+    "readings": {
+      "on": ["ゲツ", "ガツ"],
+      "kun": ["つき"]
+    },
+    "meanings": ["luna", "mes"],
+    "romaji": ["getsu", "gatsu", "tsuki"],
+    "words": [
+      { "japanese": "月曜日", "word": "月曜日", "kana": "げつようび", "reading": "げつようび", "meaning": "lunes" },
+      { "japanese": "今月", "word": "今月", "kana": "こんげつ", "reading": "こんげつ", "meaning": "este mes" },
+      { "japanese": "月", "word": "月", "kana": "つき", "reading": "つき", "meaning": "luna" }
+    ]
+  },
+  {
+    "id": "n5-20",
+    "kanji": "分",
+    "unicode": "U+5206",
+    "readings": {
+      "on": ["ブン", "フン", "ブ"],
+      "kun": ["わ.ける", "わ.かる"]
+    },
+    "meanings": ["minuto", "parte", "entender", "dividir"],
+    "romaji": ["bun", "fun", "bu", "wakeru", "wakaru"],
+    "words": [
+      { "japanese": "分かる", "word": "分かる", "kana": "わかる", "reading": "わかる", "meaning": "comprender, entender" },
+      { "japanese": "五分", "word": "五分", "kana": "ごふん", "reading": "ごふん", "meaning": "cinco minutos" },
+      { "japanese": "半分", "word": "半分", "kana": "はんぶん", "reading": "はんぶん", "meaning": "la mitad" }
+    ]
+  },
+  {
+    "id": "n5-21",
+    "kanji": "後",
+    "unicode": "U+5F8C",
+    "readings": {
+      "on": ["ゴ", "コウ"],
+      "kun": ["のち", "うし.ろ", "あと"]
+    },
+    "meanings": ["después", "detrás"],
+    "romaji": ["go", "kou", "nochi", "ushiro", "ato"],
+    "words": [
+      { "japanese": "後ろ", "word": "後ろ", "kana": "うしろ", "reading": "うしろ", "meaning": "detrás" },
+      { "japanese": "午後", "word": "午後", "kana": "ごご", "reading": "ごご", "meaning": "tarde, p.m." },
+      { "japanese": "後で", "word": "後で", "kana": "あとで", "reading": "あとで", "meaning": "después, más tarde" }
+    ]
+  },
+  {
+    "id": "n5-22",
+    "kanji": "前",
+    "unicode": "U+524D",
+    "readings": {
+      "on": ["ゼン"],
+      "kun": ["まえ"]
+    },
+    "meanings": ["delante", "antes"],
+    "romaji": ["zen", "mae"],
+    "words": [
+      { "japanese": "前", "word": "前", "kana": "まえ", "reading": "まえ", "meaning": "delante, antes" },
+      { "japanese": "午前", "word": "午前", "kana": "ごぜん", "reading": "ごぜん", "meaning": "mañana, a.m." },
+      { "japanese": "名前", "word": "名前", "kana": "なまえ", "reading": "なまえ", "meaning": "nombre" }
+    ]
+  },
+  {
+    "id": "n5-23",
+    "kanji": "生",
+    "unicode": "U+751F",
+    "readings": {
+      "on": ["セイ", "ショウ"],
+      "kun": ["い.きる", "う.まれる", "なま"]
+    },
+    "meanings": ["vida", "nacer", "crudo", "estudiante"],
+    "romaji": ["sei", "shou", "ikiru", "umareru", "nama"],
+    "words": [
+      { "japanese": "先生", "word": "先生", "kana": "せんせい", "reading": "せんせい", "meaning": "profesor, maestro" },
+      { "japanese": "学生", "word": "学生", "kana": "がくせい", "reading": "がくせい", "meaning": "estudiante" },
+      { "japanese": "生まれる", "word": "生まれる", "kana": "うまれる", "reading": "うまれる", "meaning": "nacer" }
+    ]
+  },
+  {
+    "id": "n5-24",
+    "kanji": "五",
+    "unicode": "U+4E94",
+    "readings": {
+      "on": ["ゴ"],
+      "kun": ["いつ", "いつ.つ"]
+    },
+    "meanings": ["cinco"],
+    "romaji": ["go", "itsu", "itsutsu"],
+    "words": [
+      { "japanese": "五つ", "word": "五つ", "kana": "いつつ", "reading": "いつつ", "meaning": "cinco (objetos)" },
+      { "japanese": "五月", "word": "五月", "kana": "ごがつ", "reading": "ごがつ", "meaning": "mayo" },
+      { "japanese": "五日", "word": "五日", "kana": "いつか", "reading": "いつか", "meaning": "día cinco" }
+    ]
+  },
+  {
+    "id": "n5-25",
+    "kanji": "間",
+    "unicode": "U+9593",
+    "readings": {
+      "on": ["カン", "ケン"],
+      "kun": ["あいだ", "ま"]
+    },
+    "meanings": ["intervalo", "espacio", "entre"],
+    "romaji": ["kan", "ken", "aida", "ma"],
+    "words": [
+      { "japanese": "間", "word": "間", "kana": "あいだ", "reading": "あいだ", "meaning": "entre, durante" },
+      { "japanese": "時間", "word": "時間", "kana": "じかん", "reading": "じかん", "meaning": "tiempo, hora" },
+      { "japanese": "間に合う", "word": "間に合う", "kana": "まにあう", "reading": "まにあう", "meaning": "llegar a tiempo" }
+    ]
+  },
+  {
+    "id": "n5-26",
+    "kanji": "上",
+    "unicode": "U+4E0A",
+    "readings": {
+      "on": ["ジョウ", "ショウ"],
+      "kun": ["うえ", "あ.がる"]
+    },
+    "meanings": ["arriba", "encima", "subir"],
+    "romaji": ["jou", "shou", "ue", "agaru"],
+    "words": [
+      { "japanese": "上", "word": "上", "kana": "うえ", "reading": "うえ", "meaning": "arriba, sobre" },
+      { "japanese": "上がる", "word": "上がる", "kana": "あがる", "reading": "あがる", "meaning": "subir, elevarse" },
+      { "japanese": "上手", "word": "上手", "kana": "じょうず", "reading": "じょうず", "meaning": "habilidoso" }
+    ]
+  },
+  {
+    "id": "n5-27",
+    "kanji": "東",
+    "unicode": "U+6771",
+    "readings": {
+      "on": ["トウ"],
+      "kun": ["ひがし"]
+    },
+    "meanings": ["este", "oriente"],
+    "romaji": ["tou", "higashi"],
+    "words": [
+      { "japanese": "東", "word": "東", "kana": "ひがし", "reading": "ひがし", "meaning": "este" },
+      { "japanese": "東京", "word": "東京", "kana": "とうきょう", "reading": "とうきょう", "meaning": "Tokio" },
+      { "japanese": "東口", "word": "東口", "kana": "ひがしぐち", "reading": "ひがしぐち", "meaning": "salida este" }
+    ]
+  },
+  {
+    "id": "n5-28",
+    "kanji": "四",
+    "unicode": "U+56DB",
+    "readings": {
+      "on": ["シ"],
+      "kun": ["よ", "よ.つ", "よっ.つ", "よん"]
+    },
+    "meanings": ["cuatro"],
+    "romaji": ["shi", "yo", "yotsu", "yottsu", "yon"],
+    "words": [
+      { "japanese": "四つ", "word": "四つ", "kana": "よっつ", "reading": "よっつ", "meaning": "cuatro (objetos)" },
+      { "japanese": "四月", "word": "四月", "kana": "しがつ", "reading": "しがつ", meaning: "abril" },
+      { "japanese": "四季", "word": "四季", "kana": "しき", "reading": "しき", "meaning": "las cuatro estaciones" }
+    ]
+  },
+  {
+    "id": "n5-29",
+    "kanji": "今",
+    "unicode": "U+4ECA",
+    "readings": {
+      "on": ["コン", "キン"],
+      "kun": ["いま"]
+    },
+    "meanings": ["ahora"],
+    "romaji": ["kon", "kin", "ima"],
+    "words": [
+      { "japanese": "今", "word": "今", "kana": "いま", "reading": "いま", "meaning": "ahora" },
+      { "japanese": "今日", "word": "今日", "kana": "きょう", "reading": "きょう", "meaning": "hoy" },
+      { "japanese": "今週", "word": "今週", "kana": "こんしゅう", "reading": "こんしゅう", "meaning": "esta semana" }
+    ]
+  },
+  {
+    "id": "n5-30",
+    "kanji": "金",
+    "unicode": "U+91D1",
+    "readings": {
+      "on": ["キン", "コン"],
+      "kun": ["かね", "かな"]
+    },
+    "meanings": ["oro", "dinero", "metal"],
+    "romaji": ["kin", "kon", "kane", "kana"],
+    "words": [
+      { "japanese": "お金", "word": "お金", "kana": "おかね", "reading": "おかね", "meaning": "dinero" },
+      { "japanese": "金曜日", "word": "金曜日", "kana": "きんようび", "reading": "きんようび", "meaning": "viernes" },
+      { "japanese": "金色", "word": "金色", "kana": "きんいろ", "reading": "きんいろ", "meaning": "color dorado" }
+    ]
+  },
+  {
+    "id": "n5-31",
+    "kanji": "九",
+    "unicode": "U+4E5D",
+    "readings": {
+      "on": ["キュウ", "ク"],
+      "kun": ["ここの", "ここの.つ"]
+    },
+    "meanings": ["nueve"],
+    "romaji": ["kyuu", "ku", "kokono", "kokonotsu"],
+    "words": [
+      { "japanese": "九つ", "word": "九つ", "kana": "ここのつ", "reading": "ここのつ", "meaning": "nueve (objetos)" },
+      { "japanese": "九月", "word": "九月", "kana": "くがつ", "reading": "くがつ", "meaning": "septiembre" },
+      { "japanese": "九州", "word": "九州", "kana": "きゅうしゅう", "reading": "きゅうしゅう", "meaning": "Kyushu" }
+    ]
+  },
+  {
+    "id": "n5-32",
+    "kanji": "入",
+    "unicode": "U+5165",
+    "readings": {
+      "on": ["ニュウ"],
+      "kun": ["はい.る", "い.る", "い.れる"]
+    },
+    "meanings": ["entrar", "meter"],
+    "romaji": ["nyuu", "hairu", "iru", "ireru"],
+    "words": [
+      { "japanese": "入る", "word": "入る", "kana": "はいる", "reading": "はいる", "meaning": "entrar" },
+      { "japanese": "入れる", "word": "入れる", "kana": "いれる", "reading": "いれる", "meaning": "meter, insertar" },
+      { "japanese": "入口", "word": "入口", "kana": "いりぐち", "reading": "いりぐち", "meaning": "entrada" }
+    ]
+  },
+  {
+    "id": "n5-33",
+    "kanji": "学",
+    "unicode": "U+5B66",
+    "readings": {
+      "on": ["ガク"],
+      "kun": ["まな.ぶ"]
+    },
+    "meanings": ["estudio", "aprender", "ciencia"],
+    "romaji": ["gaku", "manabu"],
+    "words": [
+      { "japanese": "学校", "word": "学校", "kana": "がっこう", "reading": "がっこう", "meaning": "escuela" },
+      { "japanese": "学ぶ", "word": "学ぶ", "kana": "まなぶ", "reading": "まなぶ", "meaning": "aprender" },
+      { "japanese": "学者", "word": "学者", "kana": "がくしゃ", "reading": "がくしゃ", "meaning": "erudito" }
+    ]
+  },
+  {
+    "id": "n5-34",
+    "kanji": "高",
+    "unicode": "U+9AD8",
+    "readings": {
+      "on": ["コウ"],
+      "kun": ["たか.い", "たか"]
+    },
+    "meanings": ["alto", "caro"],
+    "romaji": ["kou", "takai", "taka"],
+    "words": [
+      { "japanese": "高い", "word": "高い", "kana": "たかい", "reading": "たかい", "meaning": "alto, caro" },
+      { "japanese": "高校", "word": "高校", "kana": "こうこう", "reading": "こうこう", "meaning": "escuela preparatoria" },
+      { "japanese": "最高", "word": "最高", "kana": "さいこう", "reading": "さいこう", "meaning": "lo mejor, máximo" }
+    ]
+  },
+  {
+    "id": "n5-35",
+    "kanji": "円",
+    "unicode": "U+5186",
+    "readings": {
+      "on": ["エン"],
+      "kun": ["まる.い"]
+    },
+    "meanings": ["círculo", "yen"],
+    "romaji": ["en", "marui"],
+    "words": [
+      { "japanese": "百円", "word": "百円", "kana": "ひゃくえん", "reading": "ひゃくえん", "meaning": "cien yenes" },
+      { "japanese": "円高", "word": "円高", "kana": "えんだか", "reading": "えんだか", "meaning": "yen alto" },
+      { "japanese": "円い", "word": "円い", "kana": "まるい", "reading": "まるい", "meaning": "redondo" }
+    ]
+  },
+  {
+    "id": "n5-36",
+    "kanji": "子",
+    "unicode": "U+5B50",
+    "readings": {
+      "on": ["シ", "ス"],
+      "kun": ["こ"]
+    },
+    "meanings": ["niño", "hijo"],
+    "romaji": ["shi", "su", "ko"],
+    "words": [
+      { "japanese": "子供", "word": "子供", "kana": "こども", "reading": "こども", "meaning": "niño, niños" },
+      { "japanese": "女の子", "word": "女の子", "kana": "おんなのこ", "reading": "おんなのこ", "meaning": "niña" },
+      { "japanese": "男の子", "word": "男の子", "kana": "おとこのこ", reading: "おとこのこ", "meaning": "niño" }
+    ]
+  },
+  {
+    "id": "n5-37",
+    "kanji": "外",
+    "unicode": "U+5916",
+    "readings": {
+      "on": ["ガイ", "ゲ"],
+      "kun": ["そと", "ほか", "はず.す"]
+    },
+    "meanings": ["fuera", "exterior", "otro"],
+    "romaji": ["gai", "ge", "soto", "hoka", "hazusu"],
+    "words": [
+      { "japanese": "外", "word": "外", "kana": "そと", "reading": "そと", "meaning": "afuera" },
+      { "japanese": "外国", "word": "外国", "kana": "がいこく", "reading": "がいこく", "meaning": "país extranjero" },
+      { "japanese": "外国人", "word": "外国人", "kana": "がいこくじん", "reading": "がいこくじん", "meaning": "extranjero" }
+    ]
+  },
+  {
+    "id": "n5-38",
+    "kanji": "八",
+    "unicode": "U+516B",
+    "readings": {
+      "on": ["ハチ"],
+      "kun": ["や", "や.つ", "やっ.つ", "よう"]
+    },
+    "meanings": ["ocho"],
+    "romaji": ["hachi", "ya", "yatsu", "yattsu", "you"],
+    "words": [
+      { "japanese": "八つ", "word": "八つ", "kana": "やっつ", "reading": "やっつ", "meaning": "ocho (objetos)" },
+      { "japanese": "八月", "word": "八月", "kana": "はちがつ", "reading": "はちがつ", "meaning": "agosto" },
+      { "japanese": "八日", "word": "八日", "kana": "ようか", "reading": "ようか", "meaning": "día ocho" }
+    ]
+  },
+  {
+    "id": "n5-39",
+    "kanji": "六",
+    "unicode": "U+516D",
+    "readings": {
+      "on": ["ロク"],
+      "kun": ["む", "む.つ", "むっ.つ", "むい"]
+    },
+    "meanings": ["seis"],
+    "romaji": ["roku", "mu", "mutsu", "muttsu", "mui"],
+    "words": [
+      { "japanese": "六つ", "word": "六つ", "kana": "むっつ", "reading": "むっつ", "meaning": "seis (objetos)" },
+      { "japanese": "六月", "word": "六月", "kana": "ろくがつ", "reading": "ろくがつ", "meaning": "junio" },
+      { "japanese": "六日", "word": "六日", "kana": "むいか", "reading": "むいか", "meaning": "día seis" }
+    ]
+  },
+  {
+    "id": "n5-40",
+    "kanji": "下",
+    "unicode": "U+4E0B",
+    "readings": {
+      "on": ["カ", "ゲ"],
+      "kun": ["した", "しも", "さ.がる", "くだ.る"]
+    },
+    "meanings": ["abajo", "debajo", "descender"],
+    "romaji": ["ka", "ge", "shita", "shimo", "sagaru", "kudaru"],
+    "words": [
+      { "japanese": "下", "word": "下", "kana": "した", "reading": "した", "meaning": "abajo, debajo" },
+      { "japanese": "地下鉄", "word": "地下鉄", "kana": "ちかてつ", "reading": "ちかてつ", "meaning": "metro subterráneo" },
+      { "japanese": "下手", "word": "下手", "kana": "へた", "reading": "へた", "meaning": "torpe, malo en algo" }
+    ]
+  },
+  {
+    "id": "n5-41",
+    "kanji": "来",
+    "unicode": "U+6765",
+    "readings": {
+      "on": ["ライ", "タイ"],
+      "kun": ["く.る", "きた.る"]
+    },
+    "meanings": ["venir", "llegar", "próximo"],
+    "romaji": ["rai", "tai", "kuru", "kitaru"],
+    "words": [
+      { "japanese": "来る", "word": "来る", "kana": "くる", "reading": "くる", "meaning": "venir" },
+      { "japanese": "来年", "word": "来年", "kana": "らいねん", "reading": "らいねん", "meaning": "el año que viene" },
+      { "japanese": "未来", "word": "未来", "kana": "みらい", "reading": "みらい", "meaning": "futuro" }
+    ]
+  },
+  {
+    "id": "n5-42",
+    "kanji": "気",
+    "unicode": "U+6C17",
+    "readings": {
+      "on": ["キ", "ケ"],
+      "kun": ["いき"]
+    },
+    "meanings": ["espíritu", "energía", "ánimo", "aire"],
+    "romaji": ["ki", "ke", "iki"],
+    "words": [
+      { "japanese": "元気", "word": "元気", "kana": "げんき", "reading": "げんき", "meaning": "enérgico, con ánimo" },
+      { "japanese": "天気", "word": "天気", "kana": "てんき", "reading": "てんき", "meaning": "clima" },
+      { "japanese": "気持ち", "word": "気持ち", "kana": "きもち", "reading": "きもち", "meaning": "sentimiento" }
+    ]
+  },
+  {
+    "id": "n5-43",
+    "kanji": "小",
+    "unicode": "U+5C0F",
+    "readings": {
+      "on": ["ショウ"],
+      "kun": ["ちい.さい", "こ", "お"]
+    },
+    "meanings": ["pequeño"],
+    "romaji": ["shou", "chiisai", "ko", "o"],
+    "words": [
+      { "japanese": "小さい", "word": "小さい", "kana": "ちいさい", "reading": "ちいさい", "meaning": "pequeño" },
+      { "japanese": "小学校", "word": "小学校", "kana": "しょうがっこう", "reading": "しょうがっこう", "meaning": "escuela primaria" },
+      { "japanese": "小川", "word": "小川", "kana": "おがわ", "reading": "おがわ", "meaning": "arroyo" }
+    ]
+  },
+  {
+    "id": "n5-44",
+    "kanji": "七",
+    "unicode": "U+4E03",
+    "readings": {
+      "on": ["シチ"],
+      "kun": ["なな", "なな.つ", "なの"]
+    },
+    "meanings": ["siete"],
+    "romaji": ["shichi", "nana", "nanatsu", "nano"],
+    "words": [
+      { "japanese": "七つ", "word": "七つ", "kana": "ななつ", "reading": "ななつ", "meaning": "siete (objetos)" },
+      { "japanese": "七月", "word": "七月", "kana": "しちがつ", "reading": "しちがつ", "meaning": "julio" },
+      { "japanese": "七日", "word": "七日", "kana": "なのか", "reading": "なのか", "meaning": "día siete" }
+    ]
+  },
+  {
+    "id": "n5-45",
+    "kanji": "山",
+    "unicode": "U+5C71",
+    "readings": {
+      "on": ["サン", "セン"],
+      "kun": ["やま"]
+    },
+    "meanings": ["montaña"],
+    "romaji": ["san", "sen", "yama"],
+    "words": [
+      { "japanese": "山", "word": "山", "kana": "やま", "reading": "やま", "meaning": "montaña" },
+      { "japanese": "富士山", "word": "富士山", "kana": "ふじさん", "reading": "ふじさん", "meaning": "Monte Fuji" },
+      { "japanese": "登山", "word": "登山", "kana": "とざん", "reading": "とざん", "meaning": "escalada de montaña" }
+    ]
+  },
+  {
+    "id": "n5-46",
+    "kanji": "話",
+    "unicode": "U+8A71",
+    "readings": {
+      "on": ["ワ"],
+      "kun": ["はな.す", "はなし"]
+    },
+    "meanings": ["hablar", "conversación", "historia"],
+    "romaji": ["wa", "hanasu", "hanashi"],
+    "words": [
+      { "japanese": "話す", "word": "話す", "kana": "はなす", "reading": "はなす", "meaning": "hablar" },
+      { "japanese": "電話", "word": "電話", "kana": "でんわ", "reading": "でんわ", "meaning": "teléfono" },
+      { "japanese": "話", "word": "話", "kana": "はなし", "reading": "はなし", "meaning": "charla, conversación" }
+    ]
+  },
+  {
+    "id": "n5-47",
+    "kanji": "女",
+    "unicode": "U+5973",
+    "readings": {
+      "on": ["ジョ", "ニョ"],
+      "kun": ["おんな", "め"]
+    },
+    "meanings": ["mujer", "femenino"],
+    "romaji": ["jo", "nyo", "onna", "me"],
+    "words": [
+      { "japanese": "女の人", "word": "女の人", "kana": "おんなのひと", "reading": "おんなのひと", "meaning": "mujer" },
+      { "japanese": "女の子", "word": "女の子", "kana": "おんなのこ", "reading": "おんなのこ", "meaning": "niña" },
+      { "japanese": "彼女", "word": "彼女", "kana": "かのじょ", "reading": "かのじょ", "meaning": "ella, novia" }
+    ]
+  },
+  {
+    "id": "n5-48",
+    "kanji": "北",
+    "unicode": "U+5317",
+    "readings": {
+      "on": ["ホク"],
+      "kun": ["きた"]
+    },
+    "meanings": ["norte"],
+    "romaji": ["hoku", "kita"],
+    "words": [
+      { "japanese": "北", "word": "北", "kana": "きた", "reading": "きた", "meaning": "norte" },
+      { "japanese": "北海道", "word": "北海道", "kana": "ほっかいどう", "reading": "ほっかいどう", "meaning": "Hokkaido" },
+      { "japanese": "北口", "word": "北口", "kana": "きたぐち", "reading": "きたぐち", "meaning": "salida norte" }
+    ]
+  },
+  {
+    "id": "n5-49",
+    "kanji": "午",
+    "unicode": "U+5348",
+    "readings": {
+      "on": ["ゴ"],
+      "kun": ["うま"]
+    },
+    "meanings": ["mediodía", "signo del caballo"],
+    "romaji": ["go", "uma"],
+    "words": [
+      { "japanese": "午前", "word": "午前", "kana": "ごぜん", "reading": "ごぜん", "meaning": "mañana, a.m." },
+      { "japanese": "午後", "word": "午後", "kana": "ごご", "reading": "ごご", "meaning": "tarde, p.m." },
+      { "japanese": "正午", "word": "正午", "kana": "しょうご", "reading": "しょうご", "meaning": "mediodía en punto" }
+    ]
+  },
+  {
+    "id": "n5-50",
+    "kanji": "百",
+    "unicode": "U+767E",
+    "readings": {
+      "on": ["ヒャク", "ビャク"],
+      "kun": ["もも"]
+    },
+    "meanings": ["cien"],
+    "romaji": ["hyaku", "byaku", "momo"],
+    "words": [
+      { "japanese": "百", "word": "百", "kana": "ひゃく", "reading": "ひゃく", "meaning": "cien" },
+      { "japanese": "三百", "word": "三百", "kana": "さんびゃく", "reading": "さんびゃく", "meaning": "trescientos" },
+      { "japanese": "百貨店", "word": "百貨店", "kana": "ひゃっかてん", "reading": "ひゃっかてん", "meaning": "grandes almacenes" }
+    ]
+  },
+  {
+    "id": "n5-51",
+    "kanji": "書",
+    "unicode": "U+66F8",
+    "readings": {
+      "on": ["ショ"],
+      "kun": ["か.く"]
+    },
+    "meanings": ["escribir", "documento", "libro"],
+    "romaji": ["sho", "kaku"],
+    "words": [
+      { "japanese": "書く", "word": "書く", "kana": "かく", "reading": "かく", "meaning": "escribir" },
+      { "japanese": "図書館", "word": "図書館", "kana": "としょかん", "reading": "としょかん", "meaning": "biblioteca" },
+      { "japanese": "辞書", "word": "辞書", "kana": "じしょ", "reading": "じしょ", "meaning": "diccionario" }
+    ]
+  },
+  {
+    "id": "n5-52",
+    "kanji": "先",
+    "unicode": "U+5148",
+    "readings": {
+      "on": ["セン"],
+      "kun": ["さき", "ま.ず"]
+    },
+    "meanings": ["anterior", "antes", "futuro", "punta"],
+    "romaji": ["sen", "saki", "mazu"],
+    "words": [
+      { "japanese": "先生", "word": "先生", "kana": "せんせい", "reading": "せんせい", "meaning": "profesor" },
+      { "japanese": "先週", "word": "先週", "kana": "せんしゅう", "reading": "せんしゅう", "meaning": "la semana pasada" },
+      { "japanese": "お先に", "word": "お先に", "kana": "おさきに", "reading": "おさきに", "meaning": "antes, adelantado" }
+    ]
+  },
+  {
+    "id": "n5-53",
+    "kanji": "名",
+    "unicode": "U+540D",
+    "readings": {
+      "on": ["メイ", "ミョウ"],
+      "kun": ["な"]
+    },
+    "meanings": ["nombre", "fama", "reputación"],
+    "romaji": ["mei", "myou", "na"],
+    "words": [
+      { "japanese": "名前", "word": "名前", "kana": "なまえ", "reading": "なまえ", "meaning": "nombre" },
+      { "japanese": "有名", "word": "有名", "kana": "ゆうめい", "reading": "ゆうめい", "meaning": "famoso" },
+      { "japanese": "名字", "word": "名字", "kana": "みょうじ", "reading": "みょうじ", "meaning": "apellido" }
+    ]
+  },
+  {
+    "id": "n5-54",
+    "kanji": "川",
+    "unicode": "U+5DDD",
+    "readings": {
+      "on": ["セン"],
+      "kun": ["かわ"]
+    },
+    "meanings": ["río"],
+    "romaji": ["sen", "kawa"],
+    "words": [
+      { "japanese": "川", "word": "川", "kana": "かわ", "reading": "かわ", "meaning": "río" },
+      { "japanese": "小川", "word": "小川", "kana": "おがわ", "reading": "おがわ", "meaning": "riachuelo" },
+      { "japanese": "川岸", "word": "川岸", "kana": "かわぎし", "reading": "かわぎし", "meaning": "orilla del río" }
+    ]
+  },
+  {
+    "id": "n5-55",
+    "kanji": "水",
+    "unicode": "U+6C34",
+    "readings": {
+      "on": ["スイ"],
+      "kun": ["みず"]
+    },
+    "meanings": ["agua"],
+    "romaji": ["sui", "mizu"],
+    "words": [
+      { "japanese": "水", "word": "水", "kana": "みず", "reading": "みず", "meaning": "agua" },
+      { "japanese": "水曜日", "word": "水曜日", "kana": "すいようび", "reading": "すいようび", "meaning": "miércoles" },
+      { "japanese": "水泳", "word": "水泳", "kana": "すいえい", "reading": "すいえい", "meaning": "natación" }
+    ]
+  },
+  {
+    "id": "n5-56",
+    "kanji": "半",
+    "unicode": "U+534A",
+    "readings": {
+      "on": ["ハン"],
+      "kun": ["なか.ば"]
+    },
+    "meanings": ["mitad", "medio"],
+    "romaji": ["han", "nakaba"],
+    "words": [
+      { "japanese": "半分", "word": "半分", "kana": "はんぶん", "reading": "はんぶん", "meaning": "la mitad" },
+      { "japanese": "一時半", "word": "一時半", "kana": "いちじはん", "reading": "いちじはん", "meaning": "la una y media" },
+      { "japanese": "半年", "word": "半年", "kana": "はんとし", "reading": "はんとし", "meaning": "medio año" }
+    ]
+  },
+  {
+    "id": "n5-57",
+    "kanji": "男",
+    "unicode": "U+7537",
+    "readings": {
+      "on": ["ダン", "ナン"],
+      "kun": ["おとこ"]
+    },
+    "meanings": ["hombre", "masculino"],
+    "romaji": ["dan", "nan", "otoko"],
+    "words": [
+      { "japanese": "男の人", "word": "男の人", "kana": "おとこのひと", "reading": "おとこのひと", "meaning": "hombre" },
+      { "japanese": "男の子", "word": "男の子", "kana": "おとこのこ", "reading": "おとこのこ", "meaning": "niño" },
+      { "japanese": "男性", "word": "男性", "kana": "だんせい", "reading": "だんせい", "meaning": "masculino, varón" }
+    ]
+  },
+  {
+    "id": "n5-58",
+    "kanji": "校",
+    "unicode": "U+6821",
+    "readings": {
+      "on": ["コウ"],
+      "kun": []
+    },
+    "meanings": ["escuela", "colegio"],
+    "romaji": ["kou"],
+    "words": [
+      { "japanese": "学校", "word": "学校", "kana": "がっこう", "reading": "がっこう", "meaning": "escuela" },
+      { "japanese": "高校", "word": "高校", "kana": "こうこう", "reading": "こうこう", "meaning": "bachillerato" },
+      { "japanese": "校長", "word": "校長", "kana": "こうちょう", "reading": "こうちょう", "meaning": "director de colegio" }
+    ]
+  },
+  {
+    "id": "n5-59",
+    "kanji": "語",
+    "unicode": "U+8A9E",
+    "readings": {
+      "on": ["ゴ"],
+      "kun": ["かた.る"]
+    },
+    "meanings": ["idioma", "palabra", "contar"],
+    "romaji": ["go", "kataru"],
+    "words": [
+      { "japanese": "日本語", "word": "日本語", "kana": "にほんご", "reading": "にほんご", "meaning": "idioma japonés" },
+      { "japanese": "英語", "word": "英語", "kana": "えいご", "reading": "えいご", "meaning": "idioma inglés" },
+      { "japanese": "単語", "word": "単語", "kana": "たんご", "reading": "たんご", "meaning": "palabra, vocabulario" }
+    ]
+  },
+  {
+    "id": "n5-60",
+    "kanji": "土",
+    "unicode": "U+571F",
+    "readings": {
+      "on": ["ド", "ト"],
+      "kun": ["つち"]
+    },
+    "meanings": ["tierra", "suelo"],
+    "romaji": ["do", "to", "tsuchi"],
+    "words": [
+      { "japanese": "土曜日", "word": "土曜日", "kana": "どようび", "reading": "どようび", "meaning": "sábado" },
+      { "japanese": "土地", "word": "土地", "kana": "とち", "reading": "とち", "meaning": "tierra, terreno" },
+      { "japanese": "お土産", "word": "お土産", "kana": "おみやげ", "reading": "おみやげ", "meaning": "souvenir" }
+    ]
+  },
+  {
+    "id": "n5-61",
+    "kanji": "木",
+    "unicode": "U+6728",
+    "readings": {
+      "on": ["ボク", "モク"],
+      "kun": ["き", "こ"]
+    },
+    "meanings": ["árbol", "madera"],
+    "romaji": ["boku", "moku", "ki", "ko"],
+    "words": [
+      { "japanese": "木", "word": "木", "kana": "き", "reading": "き", "meaning": "árbol" },
+      { "japanese": "木曜日", "word": "木曜日", "kana": "もくようび", "reading": "もくようび", "meaning": "jueves" },
+      { "japanese": "木材", "word": "木材", "kana": "もくざい", "reading": "もくざい", "meaning": "madera" }
+    ]
+  },
+  {
+    "id": "n5-62",
+    "kanji": "聞",
+    "unicode": "U+805E",
+    "readings": {
+      "on": ["ブン", "モン"],
+      "kun": ["き.く", "き.こえる"]
+    },
+    "meanings": ["escuchar", "oír", "preguntar"],
+    "romaji": ["bun", "mon", "kiku", "kikoeru"],
+    "words": [
+      { "japanese": "聞く", "word": "聞く", "kana": "きく", "reading": "きく", "meaning": "escuchar, preguntar" },
+      { "japanese": "新聞", "word": "新聞", "kana": "しんぶん", "reading": "しんぶん", "meaning": "periódico" },
+      { "japanese": "聞こえる", "word": "聞こえる", "kana": "きこえる", "reading": "きこえる", "meaning": "oírse" }
+    ]
+  },
+  {
+    "id": "n5-63",
+    "kanji": "食",
+    "unicode": "U+98DF",
+    "readings": {
+      "on": ["ショク", "ジキ"],
+      "kun": ["た.べる", "く.う"]
+    },
+    "meanings": ["comer", "comida", "alimento"],
+    "romaji": ["shoku", "jiki", "taberu", "kuu"],
+    "words": [
+      { "japanese": "食べる", "word": "食べる", "kana": "たべる", "reading": "たべる", "meaning": "comer" },
+      { "japanese": "食堂", "word": "食堂", "kana": "しょくどう", "reading": "しょくどう", "meaning": "comedor" },
+      { "japanese": "食事", "word": "食事", "kana": "しょくじ", "reading": "しょくじ", "meaning": "comida" }
+    ]
+  },
+  {
+    "id": "n5-64",
+    "kanji": "車",
+    "unicode": "U+8ECA",
+    "readings": {
+      "on": ["シャ"],
+      "kun": ["くるま"]
+    },
+    "meanings": ["coche", "automóvil", "vehículo"],
+    "romaji": ["sha", "kuruma"],
+    "words": [
+      { "japanese": "車", "word": "車", "kana": "くるま", "reading": "くるま", "meaning": "coche, auto" },
+      { "japanese": "電車", "word": "電車", "kana": "でんしゃ", "reading": "でんしゃ", "meaning": "tren eléctrico" },
+      { "japanese": "自転車", "word": "自転車", "kana": "じてんしゃ", "reading": "じてんしゃ", "meaning": "bicicleta" }
+    ]
+  },
+  {
+    "id": "n5-65",
+    "kanji": "何",
+    "unicode": "U+4F55",
+    "readings": {
+      "on": ["カ"],
+      "kun": ["なに", "なん"]
+    },
+    "meanings": ["qué"],
+    "romaji": ["ka", "nani", "nan"],
+    "words": [
+      { "japanese": "何", "word": "何", "kana": "なに", "reading": "なに", "meaning": "qué" },
+      { "japanese": "何時", "word": "何時", "kana": "なんじ", "reading": "なんじ", "meaning": "¿qué hora?" },
+      { "japanese": "何人", "word": "何人", "kana": "なんにん", "reading": "なんにん", "meaning": "¿cuántas personas?" }
+    ]
+  },
+  {
+    "id": "n5-66",
+    "kanji": "南",
+    "unicode": "U+5357",
+    "readings": {
+      "on": ["ナン", "ナ"],
+      "kun": ["みなみ"]
+    },
+    "meanings": ["sur"],
+    "romaji": ["nan", "na", "minami"],
+    "words": [
+      { "japanese": "南", "word": "南", "kana": "みなみ", "reading": "みなみ", "meaning": "sur" },
+      { "japanese": "南口", "word": "南口", "kana": "みなみぐち", "reading": "みなみぐち", "meaning": "salida sur" },
+      { "japanese": "東南アジア", "word": "東南アジア", "kana": "とうなんあじあ", "reading": "とうなんあじあ", "meaning": "Sudeste Asiático" }
+    ]
+  },
+  {
+    "id": "n5-67",
+    "kanji": "万",
+    "unicode": "U+4E07",
+    "readings": {
+      "on": ["マン", "バン"],
+      "kun": []
+    },
+    "meanings": ["diez mil", "muchos"],
+    "romaji": ["man", "ban"],
+    "words": [
+      { "japanese": "一万", "word": "一万", "kana": "いちまん", "reading": "いちまん", "meaning": "diez mil" },
+      { "japanese": "万国", "word": "万国", "kana": "ばんこく", "reading": "ばんこく", "meaning": "todas las naciones" },
+      { "japanese": "万年筆", "word": "万年筆", "kana": "まんねんひつ", "reading": "まんねんひつ", "meaning": "pluma estilográfica" }
+    ]
+  },
+  {
+    "id": "n5-68",
+    "kanji": "毎",
+    "unicode": "U+6BCE",
+    "readings": {
+      "on": ["マイ"],
+      "kun": ["ごと"]
+    },
+    "meanings": ["cada", "todos los..."],
+    "romaji": ["mai", "goto"],
+    "words": [
+      { "japanese": "毎日", "word": "毎日", "kana": "まいにち", "reading": "まいにち", "meaning": "todos los días" },
+      { "japanese": "毎週", "word": "毎週", "kana": "まいしゅう", "reading": "まいしゅう", "meaning": "todas las semanas" },
+      { "japanese": "毎朝", "word": "毎朝", "kana": "まいあさ", "reading": "まいあさ", "meaning": "todas las mañanas" }
+    ]
+  },
+  {
+    "id": "n5-69",
+    "kanji": "白",
+    "unicode": "U+767D",
+    "readings": {
+      "on": ["ハク", "ビャク"],
+      "kun": ["しろ", "しろ.い"]
+    },
+    "meanings": ["blanco"],
+    "romaji": ["haku", "byaku", "shiro", "shiroi"],
+    "words": [
+      { "japanese": "白い", "word": "白い", "kana": "しろい", "reading": "しろい", "meaning": "blanco" },
+      { "japanese": "白黒", "word": "白黒", "kana": "しろくろ", "reading": "しろくろ", "meaning": "blanco y negro" },
+      { "japanese": "面白い", "word": "面白い", "kana": "おもしろい", "reading": "おもしろい", "meaning": "interesante" }
+    ]
+  },
+  {
+    "id": "n5-70",
+    "kanji": "天",
+    "unicode": "U+5929",
+    "readings": {
+      "on": ["テン"],
+      "kun": ["あまつ", "あめ"]
+    },
+    "meanings": ["cielo", "paraíso", "celeste"],
+    "romaji": ["ten", "amatsu", "ame"],
+    "words": [
+      { "japanese": "天気", "word": "天気", "kana": "てんき", "reading": "てんき", "meaning": "tiempo meteorológico" },
+      { "japanese": "天国", "word": "天国", "kana": "てんごく", "reading": "てんごく", "meaning": "paraíso, cielo" },
+      { "japanese": "天才", "word": "天才", "kana": "てんさい", "reading": "てんさい", "meaning": "genio" }
+    ]
+  },
+  {
+    "id": "n5-71",
+    "kanji": "母",
+    "unicode": "U+6BCD",
+    "readings": {
+      "on": ["ボ"],
+      "kun": ["はは"]
+    },
+    "meanings": ["madre"],
+    "romaji": ["bo", "haha"],
+    "words": [
+      { "japanese": "母", "word": "母", "kana": "はは", "reading": "はは", "meaning": "madre (propia)" },
+      { "japanese": "お母さん", "word": "お母さん", "kana": "おかあさん", "reading": "おかあさん", "meaning": "madre" },
+      { "japanese": "母国", "word": "母国", "kana": "ぼこく", "reading": "ぼこく", "meaning": "patria" }
+    ]
+  },
+  {
+    "id": "n5-72",
+    "kanji": "火",
+    "unicode": "U+706B",
+    "readings": {
+      "on": ["カ"],
+      "kun": ["ひ", "ほ"]
+    },
+    "meanings": ["fuego"],
+    "romaji": ["ka", "hi", "ho"],
+    "words": [
+      { "japanese": "火", "word": "火", "kana": "ひ", "reading": "ひ", "meaning": "fuego" },
+      { "japanese": "火曜日", "word": "火曜日", "kana": "かようび", "reading": "かようび", "meaning": "martes" },
+      { "japanese": "花火", "word": "花火", "kana": "はなび", "reading": "はなび", "meaning": "fuegos artificiales" }
+    ]
+  },
+  {
+    "id": "n5-73",
+    "kanji": "右",
+    "unicode": "U+53F3",
+    "readings": {
+      "on": ["ウ", "ユウ"],
+      "kun": ["みぎ"]
+    },
+    "meanings": ["derecha"],
+    "romaji": ["u", "yuu", "migi"],
+    "words": [
+      { "japanese": "右", "word": "右", "kana": "みぎ", "reading": "みぎ", "meaning": "derecha" },
+      { "japanese": "右手", "word": "右手", "kana": "みぎて", "reading": "みぎて", "meaning": "mano derecha" },
+      { "japanese": "右側", "word": "右側", "kana": "みぎがわ", "reading": "みぎがわ", "meaning": "lado derecho" }
+    ]
+  },
+  {
+    "id": "n5-74",
+    "kanji": "読",
+    "unicode": "U+8AAD",
+    "readings": {
+      "on": ["ドク", "トク", "トウ"],
+      "kun": ["よ.む"]
+    },
+    "meanings": ["leer"],
+    "romaji": ["doku", "toku", "tou", "yomu"],
+    "words": [
+      { "japanese": "読む", "word": "読む", "kana": "よむ", "reading": "よむ", "meaning": "leer" },
+      { "japanese": "読書", "word": "読書", "kana": "どくしょ", "reading": "どくしょ", "meaning": "lectura" },
+      { "japanese": "読み方", "word": "読み方", "kana": "よみかた", "reading": "よみかた", "meaning": "forma de leer" }
+    ]
+  },
+  {
+    "id": "n5-75",
+    "kanji": "友",
+    "unicode": "U+53CB",
+    "readings": {
+      "on": ["ユウ"],
+      "kun": ["とも"]
+    },
+    "meanings": ["amigo"],
+    "romaji": ["yuu", "tomo"],
+    "words": [
+      { "japanese": "友達", "word": "友達", "kana": "ともだち", "reading": "ともだち", "meaning": "amigo" },
+      { "japanese": "親友", "word": "親友", "kana": "しんゆう", "reading": "しんゆう", "meaning": "mejor amigo" },
+      { "japanese": "友人", "word": "友人", "kana": "ゆうじん", "reading": "ゆうじん", "meaning": "amigo (formal)" }
+    ]
+  },
+  {
+    "id": "n5-76",
+    "kanji": "左",
+    "unicode": "U+5DE6",
+    "readings": {
+      "on": ["サ", "シャ"],
+      "kun": ["ひだり"]
+    },
+    "meanings": ["izquierda"],
+    "romaji": ["sa", "sha", "hidari"],
+    "words": [
+      { "japanese": "左", "word": "左", "kana": "ひだり", "reading": "ひだり", "meaning": "izquierda" },
+      { "japanese": "左手", "word": "左手", "kana": "ひだりて", "reading": "ひだりて", "meaning": "mano izquierda" },
+      { "japanese": "左側", "word": "左側", "kana": "ひだりがわ", "reading": "ひだりがわ", "meaning": "lado izquierdo" }
+    ]
+  },
+  {
+    "id": "n5-77",
+    "kanji": "休",
+    "unicode": "U+4F11",
+    "readings": {
+      "on": ["キュウ"],
+      "kun": ["やす.む", "やす.まる", "やす.める"]
+    },
+    "meanings": ["descansar", "reposo", "vacaciones"],
+    "romaji": ["kyuu", "yasumu", "yasumaru", "yasumeru"],
+    "words": [
+      { "japanese": "休む", "word": "休む", "kana": "やすむ", "reading": "やすむ", "meaning": "descansar" },
+      { "japanese": "休み", "word": "休み", "kana": "やすみ", "reading": "やすみ", "meaning": "descanso, vacaciones" },
+      { "japanese": "休日", "word": "休日", "kana": "きゅうじつ", "reading": "きゅうじつ", "meaning": "día de descanso" }
+    ]
+  },
+  {
+    "id": "n5-78",
+    "kanji": "父",
+    "unicode": "U+7236",
+    "readings": {
+      "on": ["フ"],
+      "kun": ["ちち"]
+    },
+    "meanings": ["padre"],
+    "romaji": ["fu", "chichi"],
+    "words": [
+      { "japanese": "父", "word": "父", "kana": "ちち", "reading": "ちち", "meaning": "padre (propio)" },
+      { "japanese": "お父さん", "word": "お父さん", "kana": "おとうさん", "reading": "おとうさん", "meaning": "padre" },
+      { "japanese": "父母", "word": "父母", "kana": "ふぼ", "reading": "ふぼ", "meaning": "padre y madre" }
+    ]
+  },
+  {
+    "id": "n5-79",
+    "kanji": "雨",
+    "unicode": "U+96E8",
+    "readings": {
+      "on": ["ウ"],
+      "kun": ["あめ", "あま"]
+    },
+    "meanings": ["lluvia"],
+    "romaji": ["u", "ame", "ama"],
+    "words": [
+      { "japanese": "雨", "word": "雨", "kana": "あめ", "reading": "あめ", "meaning": "lluvia" },
+      { "japanese": "大雨", "word": "大雨", "kana": "おおあめ", "reading": "おおあめ", "meaning": "lluvia fuerte" },
+      { "japanese": "雨期", "word": "雨期", "kana": "うき", "reading": "うき", "meaning": "temporada de lluvias" }
+    ]
+  }
+]

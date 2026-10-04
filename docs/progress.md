@@ -33,11 +33,17 @@
 - **Persistencia de GameMode Unificada**: Servicio centralizado `gameModeRepository` con cookies (`SameSite=Lax`) y caducidad al final del día (23:59:59).
 - **Theming**: Paletas dinámicas por juego mediante atributos `data-theme`, tokens en `@theme` de Tailwind v4 y cursor temático retro.
 - **Observabilidad / Logger**: `AppLogger` con reporte asíncrono de errores a Supabase (`app_errors`) en producción.
+- **Metodología SDD (Spec-Driven Development)**: Infraestructura de skills en `.agents/skills/`, agentes especializados en `.agents/agents/` (`coordinator`, `planner`, `implementer`, `reviewer`), principios innegociables en `docs/constitution.md` y plantillas canónicas en `docs/specs/` preparadas para gobernar las nuevas features bajo el modelo de coexistencia.
 
 ---
 
 ## 2. Características Incompletas o a Medias (Work In Progress)
 
+- 🟡 **Daily Kanji [/kanji] (Aprender Japonés)**:
+  - En desarrollo activo bajo metodología SDD (`docs/specs/spec.md`, `plan.md`, `tasks.md`).
+  - Progreso: 1/10 tareas completadas.
+  - ✅ **T1 Completada:** Dependencia `hanzi-writer` (v3.7.3) instalada e integrada, y datasets estáticos creados en `src/data/kanji/kana.json` (104 kanas de cada tipo: Hiragana y Katakana) y `src/data/kanji/n5.json` (79 kanjis N5 esenciales estructurados con lecturas on/kun, significados y ejemplos).
+  - ⏳ **Próxima Tarea:** T2 (Contratos y Tipos Estrictos de Dominio en `src/types/kanji.ts`).
 - 🟡 **Adivina el Anime por Imagen (`AnimeGame` / `character-by-image`)**:
   - El componente existe en `src/components/games/guess-anime/GameContainer.tsx` y está registrado condicionalmente en `GameRenderer.astro`.
   - **Incompleto**: No está habilitado en `src/data/games.ts` (no aparece en la home ni en el sidebar).
@@ -53,4 +59,13 @@
 
 | Severidad | Archivo(s) Afectado(s) | Descripción del Problema / Bug |
 | :--- | :--- | :--- |
-| 🔴 **Alta** | `src/components/games/guess-anime/hooks/useAnimeGame.ts` | **Lógica de validación rota y endpoint faltante**: Llama a `/api/character` inexistente y ejecuta `normalizedName.split("").includes(normalizedGuess)`, lo que compara letras individuales en vez de palabras. |
+| 🔴 **Alta** | `src/components/games/guess-anime/hooks/useAnimeGame.ts` | **Lógica de validación rota y endpoint faltante**: Llama a `/api/character` inexistente en SSG y ejecuta `normalizedName.split("").includes(normalizedGuess)`, lo que compara letras individuales en vez de palabras. Además, el estado de error es sobreescrito de inmediato por `setStatus("playing")`. |
+| 🔴 **Alta** | Varios (`useGameStorage.ts`, `CorrectBanner.tsx`, `useArknightStore.tsx`, `warframedle`, `ability.ts`) | **Error TS6137 de resolución de tipos**: Uso del prefijo `@types/` en paths locales en conflicto con DefinitelyTyped. Requiere estandarización al alias `@appTypes/*`. |
+| 🟠 **Media** | `src/components/ui/Autocomplete/useAutocomplete.ts` | **Fallo al seleccionar sugerencia con Enter**: No ejecuta `e.preventDefault()`, disparando el submit del form con el valor previo no actualizado y mostrando error de validación. |
+| 🟠 **Media** | `src/store/useGameStorage.ts` y `useArknightStore.tsx` | **Pérdida de persistencia en Surrender diario**: Al rendirse en modo `daily`, no guarda el estado `"lost"` en `localStorage`, restableciendo la partida al recargar. |
+| 🟡 **Baja** | `src/components/ui/Player/VoicePlayer.tsx` | **Bucle de peticiones en 404**: `handleError` no limitaba los reintentos al fallar un track de audio, pudiendo saturar la red. |
+| 🟡 **Baja** | `src/utils/ability.ts` | **Variabilidad nula en transformaciones de habilidades**: No utiliza `targetId` en la semilla de `Rand`, generando idéntico recorte/rotación para todas las habilidades del día en modo aleatorio. |
+| 🟡 **Baja** | `src/components/games/arknights/ArknightdleAbility.tsx` | **Propiedad `key` faltante**: Renderizado de lista de íconos de habilidad sin prop `key`. |
+| 🟡 **Baja** | `src/styles/global.css` | **Sintaxis CSS `@import` anidada**: `@import` de fuentes Oswald dentro de selector `[data-theme="..."]`. |
+| 🟡 **Baja** | `src/components/Icons.tsx` | **Propiedades SVG en kebab-case**: `fill-rule`, `clip-rule`, `stroke-width` provocan advertencias en consola de React. |
+| 🟡 **Baja** | `src/layouts/GameLayout.astro` | **Error de sintaxis en meta viewport**: Comillas y coma mal formateadas en `<meta name="viewport" ...>`. |

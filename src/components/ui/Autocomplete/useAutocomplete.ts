@@ -42,8 +42,8 @@ export function useAutocomplete<T extends BaseGameEntity>(
       );
       setSelectDirection(1);
     } else if (e.key === "Enter" && selectedSuggestion >= 0) {
-      setInputValue(suggestions[selectedSuggestion].name);
-      resetSuggestions();
+      e.preventDefault();
+      processGuess(suggestions[selectedSuggestion].name);
     }
   };
 

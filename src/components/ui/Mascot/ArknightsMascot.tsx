@@ -1,4 +1,4 @@
-import { imageCredits } from "public/imageCredits";
+import { imageCredits } from "@config/imageCredits";
 
 export function ArknightsMascot({ imageURL }: { imageURL: string }) {
   const imageCredit = imageCredits.find(

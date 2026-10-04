@@ -1,4 +1,4 @@
-import type { GameStatus } from "@types/game";
+import type { GameStatus } from "@appTypes/game";
 import Rand from "rand-seed";
 
 /**
@@ -39,7 +39,7 @@ export const abilityVisuals = (
     today.getDate()
   ).toString();
 
-  const rand = new Rand(seed + "abilities");
+  const rand = new Rand(seed + "-abilities-" + targetId);
   const randomValue = rand.next();
 
   // Rotación aleatoria completa (0 a 359 grados)

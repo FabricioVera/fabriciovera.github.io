@@ -32,3 +32,6 @@ scrap_operators.py
 operadores_arknightsV1.json
 
 __pycache__/
+
+.agents/
+.agents

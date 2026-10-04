@@ -175,11 +175,20 @@ Ubicación: `src/utils/game.ts`
 │   ├── store/                  # Stores globales (playerStore, featureFlagsStore, useGameStorage)
 │   ├── styles/                 # Estilos globales y tokens Tailwind (@theme)
 │   ├── types/                  # Tipados TypeScript organizados por dominio
-├── docs/                       # Memory Bank: Documentación viva del proyecto
-│   ├── specs.md                # Especificaciones funcionales y catálogo de juegos
+├── docs/                       # Documentación viva y especificaciones
+│   ├── constitution.md         # Principios inmutables y reglas de ingeniería (SDD)
+│   ├── specs.md                # Catálogo consolidado de juegos existentes (Legacy)
 │   ├── design.md               # Arquitectura técnica, diseño y patrones
 │   ├── progress.md             # Estado actual del desarrollo y catálogo de bugs
-│   └── task.md                 # Hoja de ruta y tareas pendientes por fases
+│   ├── task.md                 # Hoja de ruta y tareas pendientes legacy
+│   └── specs/                  # Especificaciones activas por feature (SDD)
+│       ├── _template.md        # Plantilla canónica de especificación
+│       ├── _template_plan.md   # Plantilla canónica de plan técnico
+│       ├── _template_tasks.md  # Plantilla canónica de desglose de tareas
+│       └── NNN-feature/        # Carpetas de nuevas features (spec.md, plan.md, tasks.md)
+├── .agents/                    # Configuración de agentes y skills SDD
+│   ├── agents/                 # Agentes especializados (coordinator, planner, implementer, reviewer)
+│   └── skills/                 # Skills operativas para Antigravity (sdd, sdd-spec, etc.)
 ├── GEMINI.md                   # Directivas y reglas del sistema para agentes/devs
 ├── astro.config.mjs            # Configuración de Astro, Tailwind v4 y React
 ├── package.json                # Dependencias y scripts del proyecto
@@ -218,3 +227,21 @@ Ubicación: `src/utils/game.ts`
 | `context` | `jsonb` | Metadatos y contexto adicional del error |
 | `url` | `text` | URL / Vista donde ocurrió el incidente |
 | `created_at` | `timestamptz` | Timestamp del evento |
+
+---
+
+## 8. Metodología de Desarrollo: SDD & Modelo de Coexistencia
+
+A partir de la evolución del proyecto, se incorpora la metodología **Spec-Driven Development (SDD)** manteniendo la estabilidad de la base de código existente:
+
+1. **Nuevas Features (`docs/specs/NNN-{nombre}/`):**
+   - Se gestionan de forma atómica e independiente con su propia tripleta documental:
+     - `spec.md`: Especificación funcional y de negocio (sintaxis EARS en español).
+     - `plan.md`: Diseño técnico, arquitectura de componentes, contratos TypeScript y verificación.
+     - `tasks.md`: Desglose en tareas secuenciales (máx. 10 de 20-30 min) ejecutadas una a una.
+   - Sometidas a los 5 artículos inmutables de [`docs/constitution.md`](constitution.md).
+
+2. **Código Preexistente y Mantenimiento Legacy:**
+   - Las características consolidadas permanecen descritas en [`docs/specs.md`](specs.md) y se mantienen con la hoja de ruta en [`docs/task.md`](task.md).
+   - No se realizará migración documental retroactiva para features antiguas, salvo que sean objeto de rediseño arquitectónico o reestructuración mayor.
+

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css?family=Oswald:700|Oswald:400");
 
 @theme {
   --dark-red-900: #1a0000;
@@ -131,7 +132,6 @@
 [data-theme="arknightdle"],
 [data-theme="arknightdleability"],
 [data-theme="arknightdlevoicelines"] {
-  @import url("https://fonts.googleapis.com/css?family=Oswald:700|Oswald:400");
   font-family: "Oswald";
   font-weight: 400;
 

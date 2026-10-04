@@ -1,20 +1,35 @@
-# GEMINI.md — Directivas y Reglas del Sistema (Memory Bank)
+# GEMINI.md — Directivas y Reglas del Sistema (Memory Bank & SDD)
 
 Este archivo define las instrucciones operativas, directivas de seguridad, estándares de código y reglas de arquitectura para cualquier asistente o desarrollador que trabaje en el repositorio **FabriGames** (`fabriciovera.github.io`).
 
 ---
 
-## 🧠 1. Flujo de Trabajo y Protocolo del Memory Bank
+## 🧠 1. Flujo de Trabajo y Metodología (Memory Bank & SDD)
+
+El proyecto opera bajo un modelo híbrido: **Memory Bank** para la gobernanza global del repositorio y **Spec-Driven Development (SDD)** para el ciclo de vida de nuevas funcionalidades.
 
 ### 1.1. Lectura Previa Obligatoria (Contexto en Silencio)
 > **Directiva Obligatoria:**
-> Antes de proponer cualquier cambio estructural o escribir código nuevo, debes revisar en silencio `docs/design.md` y `docs/progress.md` para mantener el contexto del estado actual, las convenciones arquitectónicas y las tareas en curso.
+> Antes de proponer cualquier cambio estructural o escribir código nuevo, debes revisar en silencio:
+> 1. [`docs/constitution.md`](docs/constitution.md) (Principios innegociables de ingeniería).
+> 2. [`docs/design.md`](docs/design.md) (Arquitectura y stack técnico).
+> 3. [`docs/progress.md`](docs/progress.md) (Estado actual y lecciones aprendidas).
 
-### 1.2. Mantenimiento y Actualización Continua de `docs/progress.md` y `docs/task.md`
+### 1.2. Regla de Coexistencia: Nuevas Features vs. Código Legacy
+- **Nuevas Features (SDD Obligatorio):**
+  - Toda nueva funcionalidad, modo de juego adicional o mecánica mayor debe gestionarse mediante **Spec-Driven Development** en su propia carpeta: `docs/specs/NNN-{nombre}/`.
+  - El ciclo de desarrollo es estricto: `spec.md` ➔ `plan.md` ➔ `tasks.md` ➔ implementación paso a paso con verificación.
+  - Se debe utilizar el set de skills de `.agents/skills/` (`/sdd`, `/sdd-spec`, `/sdd-clarify`, `/sdd-plan`, `/sdd-tasks`, `/sdd-implement`, `/sdd-validate`, `/sdd-change`, `/sdd-status`).
+- **Features Consolidadas y Código Preexistente (Legacy):**
+  - Las características ya implementadas permanecen documentadas en [`docs/specs.md`](docs/specs.md) y [`docs/task.md`](docs/task.md).
+  - **NO se deben migrar retroactivamente a SDD** las features antiguas salvo que se encare un rediseño estructural, una refactorización de gran impacto o un cambio de alcance mayor sobre las mismas.
+  - Corrección de bugs menores o parches de estabilidad sobre features legacy continúan registrándose en [`docs/task.md`](docs/task.md) y [`docs/progress.md`](docs/progress.md).
+
+### 1.3. Mantenimiento y Actualización Continua de `docs/progress.md`
 > **Directiva de Sincronización:**
-> Cada vez que se resuelva un bug, se complete una funcionalidad o se introduzca una modificación relevante en la arquitectura:
-> 1. Actualiza inmediatamente el archivo `docs/progress.md` reflejando el nuevo estado de las características y eliminando los bugs que hayan sido resueltos.
-> 2. Marca con `[x]` las tareas completadas en `docs/task.md` y añade nuevas subtareas si surgen durante el desarrollo.
+> Cada vez que se resuelva un bug, se complete una tarea de una spec o se finalice una funcionalidad:
+> 1. Actualiza inmediatamente el archivo [`docs/progress.md`](docs/progress.md) reflejando el nuevo estado de las características y eliminando los bugs que hayan sido resueltos.
+> 2. Si la tarea pertenece a una spec SDD, márcala con `[x]` en su respectivo `docs/specs/NNN-{nombre}/tasks.md`. Si pertenece a la hoja de ruta legacy, márcala en [`docs/task.md`](docs/task.md).
 
 ---
 
@@ -37,6 +52,7 @@ Este archivo define las instrucciones operativas, directivas de seguridad, está
 - **Comillas:** Comillas dobles (`"`) en archivos TypeScript, TSX y JSON; comillas simples o dobles consistentes en imports y plantillas Astro.
 - **Punto y coma:** Uso consistente de `;` al final de cada sentencia.
 - **Tipado Estricto:** TypeScript en modo estricto (`astro/tsconfigs/strict`). Prohibido el uso indiscriminado de `any` salvo en transformaciones dinámicas justificadas de DTOs externos.
+- **Idioma del Código:** Identificadores en **inglés** (variables, funciones, componentes, types, interfaces). Documentación, especificaciones y comentarios explicativos en **español**.
 
 ### 3.2. Convenciones de Nomenclatura
 - **Componentes React / Astro:** `PascalCase` (ej. `GuessesTable.tsx`, `ArknightdleAbility.tsx`, `GameLayout.astro`).
