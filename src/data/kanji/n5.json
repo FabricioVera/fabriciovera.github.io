@@ -443,7 +443,7 @@
     "romaji": ["shi", "yo", "yotsu", "yottsu", "yon"],
     "words": [
       { "japanese": "四つ", "word": "四つ", "kana": "よっつ", "reading": "よっつ", "meaning": "cuatro (objetos)" },
-      { "japanese": "四月", "word": "四月", "kana": "しがつ", "reading": "しがつ", meaning: "abril" },
+      { "japanese": "四月", "word": "四月", "kana": "しがつ", "reading": "しがつ", "meaning": "abril" },
       { "japanese": "四季", "word": "四季", "kana": "しき", "reading": "しき", "meaning": "las cuatro estaciones" }
     ]
   },
@@ -572,7 +572,7 @@
     "words": [
       { "japanese": "子供", "word": "子供", "kana": "こども", "reading": "こども", "meaning": "niño, niños" },
       { "japanese": "女の子", "word": "女の子", "kana": "おんなのこ", "reading": "おんなのこ", "meaning": "niña" },
-      { "japanese": "男の子", "word": "男の子", "kana": "おとこのこ", reading: "おとこのこ", "meaning": "niño" }
+      { "japanese": "男の子", "word": "男の子", "kana": "おとこのこ", "reading": "おとこのこ", "meaning": "niño" }
     ]
   },
   {

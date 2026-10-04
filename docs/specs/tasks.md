@@ -2,7 +2,7 @@
 
 - **Spec Asociada:** [`spec.md`](spec.md)
 - **Plan Asociado:** [`plan.md`](plan.md)
-- **Estado General:** 5/10 completadas
+- **Estado General:** 7/10 completadas
 
 ---
 
@@ -59,7 +59,7 @@
     - Acciones `initializeDaily`, `setInputMode`, `submitStageAnswer`, `advanceToNextStage` y `completeStrokes` implementadas y verificadas.
     - Cada envío de etapa persiste de inmediato en el repositorio.
 
-- [ ] **T6. Componentes de Cabecera y Toggle de Modalidad (`KanjiProgressBar.tsx` y `KanjiModeToggle.tsx`).** (Cubre: RF-5, RF-8, RF-20, RF-21)
+- [x] **T6. Componentes de Cabecera y Toggle de Modalidad (`KanjiProgressBar.tsx` y `KanjiModeToggle.tsx`).** (Cubre: RF-5, RF-8, RF-20, RF-21)
   - **Objetivo:** Desarrollar los componentes visuales superiores: la barra de progreso que indica el estado de cada etapa (🟩 acierto, 🟥 fallo pedagógico, activa, pendiente) y el selector interactivo (toggle) accesible para alternar entre "Selección Múltiple" y "Escritura Directa".
   - **Archivos Involucrados:**
     - `src/components/games/kanji/KanjiProgressBar.tsx`
@@ -69,7 +69,7 @@
     - `KanjiModeToggle` permite conmutar fluidamente entre modos de entrada y sincroniza con el store y el repositorio.
     - Estilos coherentes con Tailwind v4.
 
-- [ ] **T7. Minijuegos Evaluativos 1 a 3 con Intento Único y Feedback Pedagógico (`KanjiReadingStage.tsx`, `KanjiMeaningStage.tsx`, `KanjiRomajiStage.tsx`).** (Cubre: RF-4 a RF-15)
+- [x] **T7. Minijuegos Evaluativos 1 a 3 con Intento Único y Feedback Pedagógico (`KanjiReadingStage.tsx`, `KanjiMeaningStage.tsx`, `KanjiRomajiStage.tsx`).** (Cubre: RF-4 a RF-15)
   - **Objetivo:** Implementar los componentes para las 3 etapas lingüísticas: Lectura (hiragana), Significado (español) y Romanización (romaji), soportando tanto selección de 4 opciones como input directo con conversión kana, restringiendo a 1 solo intento y mostrando la respuesta correcta ante fallo antes de avanzar.
   - **Archivos Involucrados:**
     - `src/components/games/kanji/stages/KanjiReadingStage.tsx`
