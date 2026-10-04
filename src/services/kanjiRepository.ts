@@ -8,6 +8,7 @@ import type {
   KanjiDailyState,
   KanjiStats,
   InputMode,
+  KanjiFontFamily,
   KanjiRepositoryContract,
 } from "../types/kanji";
 
@@ -15,6 +16,7 @@ export const KANJI_STORAGE_KEYS = {
   PROGRESS: "kanji_daily_progress",
   STATS: "kanji_stats",
   INPUT_MODE: "kanji_input_mode",
+  FONT_FAMILY: "kanji_font_family",
 } as const;
 
 /** Almacenamiento en memoria volátil para fallback ante SSR o cuota restringida */
@@ -275,6 +277,35 @@ export const kanjiRepository: KanjiRepositoryContract & {
       safeSetItem(KANJI_STORAGE_KEYS.INPUT_MODE, mode);
     } catch (err) {
       console.error("[kanjiRepository] Error al guardar input mode preference:", err);
+    }
+  },
+
+  /**
+   * Obtiene la preferencia tipográfica guardada (por defecto "noto-sans-jp").
+   */
+  getFontFamilyPreference(): KanjiFontFamily {
+    const raw = safeGetItem(KANJI_STORAGE_KEYS.FONT_FAMILY) as KanjiFontFamily | null;
+    const validFonts: KanjiFontFamily[] = [
+      "noto-sans-jp",
+      "zen-kaku-gothic",
+      "biz-ud-gothic",
+      "klee-one",
+      "zen-maru-gothic",
+    ];
+    if (raw && validFonts.includes(raw)) {
+      return raw;
+    }
+    return "noto-sans-jp";
+  },
+
+  /**
+   * Guarda la tipografía japonesa seleccionada por el usuario.
+   */
+  saveFontFamilyPreference(font: KanjiFontFamily): void {
+    try {
+      safeSetItem(KANJI_STORAGE_KEYS.FONT_FAMILY, font);
+    } catch (err) {
+      console.error("[kanjiRepository] Error al guardar font preference:", err);
     }
   },
 

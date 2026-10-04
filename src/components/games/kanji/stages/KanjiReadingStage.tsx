@@ -23,8 +23,15 @@ export const KanjiReadingStage: React.FC = () => {
   }, [currentQuestionIndex, kanjiTarget]);
 
   // Verificar si la pregunta actual ya fue respondida
-  const currentAnswer = stageProgress.answers?.[currentQuestionIndex];
+  const currentAnswer = stageProgress.answers?.find(
+    (a) => a.kanjiId === kanjiTarget.id
+  );
   const hasAttempted = isFeedbackOpen || Boolean(currentAnswer);
+  const answeredRecord = currentAnswer || (lastFeedback ? {
+    userAnswer: lastFeedback.userAnswer,
+    correctAnswer: lastFeedback.correctAnswer,
+    isCorrect: lastFeedback.isCorrect,
+  } : null);
 
   // Generación determinista de 4 opciones de lectura para el kanji actual
   const options = useMemo(() => {
@@ -61,7 +68,7 @@ export const KanjiReadingStage: React.FC = () => {
   return (
     <section
       aria-label="Etapa 1: Lectura del Kanji"
-      className="w-full max-w-lg mx-auto flex flex-col items-center gap-5 p-4 sm:p-6 bg-neutral-900/90 border border-neutral-800 rounded-3xl shadow-xl backdrop-blur-md"
+      className="w-full max-w-lg mx-auto flex flex-col items-center gap-4 sm:gap-5 p-4 sm:p-6 bg-neutral-900/90 border border-neutral-800 rounded-3xl shadow-xl backdrop-blur-md"
     >
       {/* Encabezado de la etapa */}
       <div className="text-center">
@@ -90,80 +97,122 @@ export const KanjiReadingStage: React.FC = () => {
       </div>
 
       {/* Contenido interactivo: opciones o escritura */}
-      {!hasAttempted && (
-        <div className="w-full">
-          {inputMode === "choice" ? (
-            /* Modo Selección Múltiple */
-            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 w-full">
-              {options.map((opt, idx) => (
+      <div className="w-full">
+        {inputMode === "choice" ? (
+          /* Modo Selección Múltiple */
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-3 w-full">
+            {options.map((opt, idx) => {
+              let optStyles =
+                "bg-neutral-800/80 hover:bg-neutral-800 border-neutral-700/80 text-neutral-100";
+
+              if (hasAttempted && answeredRecord) {
+                const isUserChoice = answeredRecord.userAnswer === opt;
+                const isCorrectOpt =
+                  answeredRecord.correctAnswer === opt ||
+                  opt === answeredRecord.correctAnswer;
+
+                if (isCorrectOpt) {
+                  optStyles =
+                    "bg-emerald-950/80 border-emerald-500 text-emerald-200 ring-2 ring-emerald-500/50";
+                } else if (isUserChoice && !answeredRecord.isCorrect) {
+                  optStyles =
+                    "bg-rose-950/80 border-rose-500 text-rose-300 line-through opacity-90";
+                } else {
+                  optStyles = "bg-neutral-900/40 border-neutral-800 text-neutral-600 opacity-50";
+                }
+              }
+
+              return (
                 <button
                   key={`${opt}-${idx}`}
                   type="button"
                   onClick={() => handleChoiceClick(opt)}
                   disabled={hasAttempted}
-                  className="flex items-center justify-center min-h-[48px] px-3 py-2.5 rounded-xl bg-neutral-800/80 hover:bg-neutral-800 border border-neutral-700/80 hover:border-amber-400/60 text-sm sm:text-base font-semibold text-neutral-100 transition-all duration-150 active:scale-95 cursor-pointer shadow-sm"
+                  className={`flex items-center justify-center min-h-[48px] px-3 py-2.5 rounded-xl border text-sm sm:text-base font-semibold transition-all duration-150 shadow-sm ${
+                    hasAttempted
+                      ? "cursor-default"
+                      : "cursor-pointer hover:border-amber-400/60 active:scale-95"
+                  } ${optStyles}`}
                 >
                   <span lang="ja">{opt}</span>
+                  {hasAttempted && answeredRecord?.userAnswer === opt && (
+                    <span className="ml-1.5 text-xs">
+                      {answeredRecord.isCorrect ? "✓" : "✗"}
+                    </span>
+                  )}
                 </button>
-              ))}
+              );
+            })}
+          </div>
+        ) : (
+          /* Modo Escritura Directa */
+          <form onSubmit={handleInputSubmit} className="flex flex-col gap-3 w-full">
+            <div className="relative">
+              <input
+                type="text"
+                value={hasAttempted ? answeredRecord?.userAnswer ?? "" : inputText}
+                onChange={handleInputChange}
+                placeholder={hasAttempted ? "Respuesta enviada" : "Escribe en romaji (ej. hi, mizu)..."}
+                disabled={hasAttempted}
+                autoFocus={!hasAttempted}
+                className={`w-full px-4 py-3 bg-neutral-950/90 border rounded-xl placeholder-neutral-500 text-center font-medium text-base tracking-wide outline-none transition-all shadow-inner ${
+                  hasAttempted
+                    ? answeredRecord?.isCorrect
+                      ? "border-emerald-500 text-emerald-200 bg-emerald-950/30"
+                      : "border-rose-500 text-rose-300 bg-rose-950/30"
+                    : "border-neutral-700 focus:border-amber-400 text-neutral-100"
+                }`}
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-neutral-500 font-mono">
+                {hasAttempted ? "Revisión" : "IME activo"}
+              </span>
             </div>
-          ) : (
-            /* Modo Escritura Directa */
-            <form onSubmit={handleInputSubmit} className="flex flex-col gap-3 w-full">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={inputText}
-                  onChange={handleInputChange}
-                  placeholder="Escribe en romaji (ej. hi, mizu)..."
-                  disabled={hasAttempted}
-                  autoFocus
-                  className="w-full px-4 py-3 bg-neutral-950/90 border border-neutral-700 focus:border-amber-400 rounded-xl text-neutral-100 placeholder-neutral-500 text-center font-medium text-base tracking-wide outline-none transition-all shadow-inner"
-                />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-neutral-500 font-mono">
-                  IME activo
-                </span>
-              </div>
 
+            {!hasAttempted && (
               <button
                 type="submit"
-                disabled={!inputText.trim() || hasAttempted}
+                disabled={!inputText.trim()}
                 className="w-full py-2.5 px-4 bg-amber-500 hover:bg-amber-400 disabled:bg-neutral-800 disabled:text-neutral-500 text-neutral-950 font-bold rounded-xl text-sm transition-all duration-150 active:scale-98 cursor-pointer disabled:cursor-not-allowed shadow-md"
               >
                 Confirmar lectura
               </button>
-            </form>
-          )}
-        </div>
-      )}
+            )}
+          </form>
+        )}
+      </div>
 
-      {/* Retroalimentación didáctica inmediata y botón siguiente */}
-      {hasAttempted && (
+      {/* Retroalimentación didáctica / Panel de Revisión */}
+      {hasAttempted && answeredRecord && (
         <div
           role="alert"
-          className={`w-full p-4 rounded-2xl border flex flex-col items-center gap-3 transition-all animate-fadeIn ${
-            lastFeedback?.isCorrect || currentAnswer?.isCorrect
+          className={`w-full p-4 rounded-2xl border flex flex-col items-center gap-2.5 transition-all animate-fadeIn ${
+            answeredRecord.isCorrect
               ? "bg-emerald-950/60 border-emerald-500/80 text-emerald-200"
               : "bg-rose-950/60 border-rose-500/80 text-rose-200"
           }`}
         >
           <div className="flex items-center gap-2 font-bold text-sm">
-            <span>{lastFeedback?.isCorrect || currentAnswer?.isCorrect ? "✅ ¡Correcto!" : "❌ Respuesta incorrecta"}</span>
+            <span>{answeredRecord.isCorrect ? "✅ ¡Respuesta correcta!" : "❌ Respuesta incorrecta"}</span>
           </div>
 
-          <p className="text-xs text-center text-neutral-300">
-            Lectura correcta:{" "}
-            <strong className="text-amber-300 font-bold font-serif text-sm ml-1" lang="ja">
-              {lastFeedback?.correctAnswer || currentAnswer?.correctAnswer}
-            </strong>
-          </p>
+          <div className="w-full flex flex-col sm:flex-row items-center justify-around gap-1 sm:gap-4 py-1.5 px-3 bg-neutral-950/60 rounded-xl text-xs">
+            <span className="text-neutral-300">
+              Tu respuesta: <strong className="font-semibold text-neutral-100">{answeredRecord.userAnswer}</strong>
+            </span>
+            <span className="text-neutral-300">
+              Lectura correcta:{" "}
+              <strong className="text-amber-300 font-bold font-serif text-sm ml-1" lang="ja">
+                {answeredRecord.correctAnswer}
+              </strong>
+            </span>
+          </div>
 
           <button
             type="button"
             onClick={advanceAfterFeedback}
             className="w-full mt-1 py-2.5 px-4 bg-neutral-100 hover:bg-white text-neutral-900 font-extrabold rounded-xl text-xs sm:text-sm tracking-wide transition-all active:scale-98 cursor-pointer shadow-md"
           >
-            {isLastQuestion ? "Completar Etapa de Lectura →" : `Siguiente pregunta (${currentQuestionIndex + 2}/${QUESTIONS_PER_STAGE}) →`}
+            {isLastQuestion ? "Siguiente pendiente o completar →" : "Siguiente pregunta →"}
           </button>
         </div>
       )}

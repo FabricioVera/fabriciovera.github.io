@@ -163,12 +163,18 @@ export const KanjiStrokeStage: React.FC = () => {
         </p>
       </div>
 
-      {/* Indicador de Trazo Activo y Contador de Kanjis de la serie */}
-      <div className="flex items-center justify-between w-full max-w-[260px] text-xs font-semibold text-neutral-300 px-3 py-1 rounded-full bg-neutral-800/80 border border-neutral-700/80">
+      {/* Indicador de Trazo Activo o Estado Completado */}
+      <div className="flex items-center justify-between w-full max-w-[260px] text-xs font-semibold text-neutral-300 px-3 py-1.5 rounded-full bg-neutral-800/80 border border-neutral-700/80">
         <span>Kanji {currentQuestionIndex + 1}/{QUESTIONS_PER_STAGE}</span>
-        <span className="text-amber-400 font-mono font-bold">
-          Trazo {Math.min(currentStroke + 1, totalStrokes || 1)}/{totalStrokes || "?"}
-        </span>
+        {isKanjiFinished ? (
+          <span className="text-emerald-400 font-bold flex items-center gap-1">
+            <span>✓</span> Completado
+          </span>
+        ) : (
+          <span className="text-amber-400 font-mono font-bold">
+            Trazo {Math.min(currentStroke + 1, totalStrokes || 1)}/{totalStrokes || "?"}
+          </span>
+        )}
       </div>
 
       {/* Lienzo Interactivo con Cuadrícula de Caligrafía Tradicional (Mizu-Grid) */}
@@ -270,18 +276,16 @@ export const KanjiStrokeStage: React.FC = () => {
           <span>{isAnimating ? "Animando..." : "Ver animación"}</span>
         </button>
 
-        {!isKanjiFinished && (
-          <button
-            type="button"
-            onClick={handleReset}
-            disabled={isLoading || isAnimating}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-neutral-800 hover:bg-neutral-700/80 border border-neutral-700 text-neutral-300 text-xs font-semibold transition-all active:scale-95 disabled:opacity-50 cursor-pointer shadow-sm"
-            title="Reiniciar lienzo para volver a trazar este kanji"
-          >
-            <span>🔄</span>
-            <span>Reiniciar</span>
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={handleReset}
+          disabled={isLoading || isAnimating}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-neutral-800 hover:bg-neutral-700/80 border border-neutral-700 text-neutral-300 text-xs font-semibold transition-all active:scale-95 disabled:opacity-50 cursor-pointer shadow-sm"
+          title="Reiniciar lienzo para volver a trazar este kanji"
+        >
+          <span>🔄</span>
+          <span>{isKanjiFinished ? "Practicar de nuevo" : "Reiniciar"}</span>
+        </button>
 
         {isKanjiFinished && !isCompleted && (
           <button
@@ -289,7 +293,7 @@ export const KanjiStrokeStage: React.FC = () => {
             onClick={() => completeCurrentStrokeKanji()}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all active:scale-95 cursor-pointer shadow-md"
           >
-            <span>Siguiente kanji ({currentQuestionIndex + 2}/{QUESTIONS_PER_STAGE}) →</span>
+            <span>Siguiente pendiente o avanzar →</span>
           </button>
         )}
       </div>

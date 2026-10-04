@@ -27,10 +27,13 @@
   - ✅ Sistema de racha de puntos continuos que reinicia ante errores y guarda récord personal.
 - **Daily Kanji (Aprender Japonés)** (`/kanji`):
   - ✅ Reto diario 100% determinista con semilla `YYYYMMDD + "kanji"` sobre 79 kanjis N5 esenciales y 208 kanas (`kana.json` y `n5.json`).
-  - ✅ Expansión a 20 desafíos por modalidad (80 retos diarios en total): 20 Lecturas ➔ 20 Significados ➔ 20 Romajis ➔ 20 Trazos.
+  - ✅ Expansión a 20 desafíos por modalidad (80 retos diarios en total): 20 Lecturas, 20 Significados, 20 Romajis y 20 Trazos.
+  - ✅ Navegación no lineal y selector libre de modalidades: cambio instantáneo entre las 4 etapas mediante pestañas interactivas sin necesidad de haber concluido la anterior.
+  - ✅ Barra de paginación interactiva del 1 al 20 sobre el kanji activo con salto directo a cada ejercicio y colores de estado (acierto `🟩`, fallo `🟥`, pendiente, activo).
+  - ✅ Modo revisión e histórico de respuestas: visualización completa de la respuesta emitida por el usuario y la solución correcta en ejercicios ya respondidos (solo lectura, sin reintentos evaluativos).
+  - ✅ Catálogo de 5 tipografías japonesas de alta legibilidad (*Noto Sans JP*, *Zen Kaku Gothic New*, *BIZ UDPGothic*, *Klee One*, *Zen Maru Gothic*) con selector interactivo en vivo y persistencia.
   - ✅ Selección determinista de 20 kanjis diarios sin duplicados con barajado PRNG reproducibles universalmente.
-  - ✅ 4 etapas evaluativas secuenciales con sub-progreso en tiempo real (`Pregunta X de 20`) y puntuación granular (`X/20` por etapa, `X/80` global).
-  - ✅ Regla innegociable de 1 solo intento por desafío con revelación inmediata de feedback didáctico.
+  - ✅ Regla innegociable de 1 solo intento evaluativo por desafío con revelación inmediata de feedback didáctico.
   - ✅ Persistencia incremental por pregunta desacoplada con `kanjiRepository` en `localStorage` (restauración exacta ante recargas o cierres de pestaña).
   - ✅ Trazos interactivos con Hanzi Writer adaptados al kanji activo con limpieza de memoria SVG, cuadrícula mizu-grid y animación de trazo correcto.
   - ✅ Modal de resumen con desglose detallado de aciertos por modalidad y viralidad social ("Toque a un amigo" con Web Share API, WhatsApp y portapapeles).

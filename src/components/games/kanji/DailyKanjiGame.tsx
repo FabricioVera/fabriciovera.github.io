@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useKanjiStore } from "../../../store/useKanjiStore";
+import type { KanjiFontFamily } from "../../../types/kanji";
 import { KanjiProgressBar } from "./KanjiProgressBar";
+import { KanjiPaginationBar } from "./KanjiPaginationBar";
+import { KanjiFontSelector } from "./KanjiFontSelector";
 import { KanjiModeToggle } from "./KanjiModeToggle";
 import { KanjiReadingStage } from "./stages/KanjiReadingStage";
 import { KanjiMeaningStage } from "./stages/KanjiMeaningStage";
@@ -8,19 +11,26 @@ import { KanjiRomajiStage } from "./stages/KanjiRomajiStage";
 import { KanjiStrokeStage } from "./stages/KanjiStrokeStage";
 import { KanjiSummaryModal } from "./KanjiSummaryModal";
 
+const FONT_CLASS_MAP: Record<KanjiFontFamily, string> = {
+  "noto-sans-jp": "font-noto-sans-jp",
+  "zen-kaku-gothic": "font-zen-kaku",
+  "biz-ud-gothic": "font-biz-ud",
+  "klee-one": "font-klee-one",
+  "zen-maru-gothic": "font-zen-maru",
+};
+
 export const DailyKanjiGame: React.FC = () => {
   const kanjiTarget = useKanjiStore((state) => state.kanjiTarget);
   const currentStageIndex = useKanjiStore((state) => state.currentStageIndex);
+  const selectedFont = useKanjiStore((state) => state.selectedFont);
   const isCompleted = useKanjiStore((state) => state.isCompleted);
   const isLoading = useKanjiStore((state) => state.isLoading);
   const date = useKanjiStore((state) => state.date);
   const initializeDaily = useKanjiStore((state) => state.initializeDaily);
+  const setCurrentStage = useKanjiStore((state) => state.setCurrentStage);
 
   // Control del modal de resumen
   const [showSummary, setShowSummary] = useState(false);
-
-  // Permite inspeccionar libremente etapas ya respondidas
-  const [inspectingStageIndex, setInspectingStageIndex] = useState<number | null>(null);
 
   // Inicialización de la partida diaria al montar el componente
   useEffect(() => {
@@ -34,21 +44,8 @@ export const DailyKanjiGame: React.FC = () => {
     }
   }, [isCompleted]);
 
-  // Si avanza a una nueva etapa durante el juego, enfocar la activa
-  useEffect(() => {
-    if (!isCompleted) {
-      setInspectingStageIndex(null);
-    }
-  }, [currentStageIndex, isCompleted]);
-
-  // Determinar qué etapa se está visualizando en pantalla
-  const activeViewIndex =
-    inspectingStageIndex !== null
-      ? inspectingStageIndex
-      : Math.min(currentStageIndex, 3);
-
-  const isInspectingPrevious =
-    inspectingStageIndex !== null && inspectingStageIndex !== currentStageIndex;
+  const activeStage = Math.min(currentStageIndex, 3);
+  const fontClass = FONT_CLASS_MAP[selectedFont] || "font-noto-sans-jp";
 
   // Renderizado del spinner de carga
   if (isLoading || !kanjiTarget) {
@@ -66,7 +63,7 @@ export const DailyKanjiGame: React.FC = () => {
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto flex flex-col items-center gap-4 sm:gap-6 px-3 py-4 sm:py-6">
+    <div className={`w-full max-w-2xl mx-auto flex flex-col items-center gap-4 sm:gap-5 px-3 py-4 sm:py-6 ${fontClass}`}>
       {/* Barra de Navegación y Cabecera Superior */}
       <div className="w-full flex items-center justify-between px-1">
         <a
@@ -102,39 +99,31 @@ export const DailyKanjiGame: React.FC = () => {
           Daily Kanji
         </h1>
         <p className="text-xs sm:text-sm text-neutral-400 mt-1 max-w-sm">
-          Domina 20 kanjis cada día en 4 etapas consecutivas (80 retos diarios).
+          Domina 20 kanjis en 4 modalidades diarias (80 retos evaluativos).
         </p>
       </div>
 
-      {/* Barra de Progreso de las 4 Etapas */}
+      {/* Selector de Modalidades / Barra de Progreso */}
       <KanjiProgressBar
-        onSelectStage={(idx) => setInspectingStageIndex(idx)}
-        selectedStageIndex={activeViewIndex}
+        onSelectStage={(idx) => setCurrentStage(idx)}
+        selectedStageIndex={activeStage}
       />
 
-      {/* Selector de Modo de Entrada (Múltiple vs Escritura) */}
-      <KanjiModeToggle />
+      {/* Barra de Opciones y Accesibilidad: Toggle de Modalidad + Selector de Tipografía */}
+      <div className="w-full max-w-xl flex items-center justify-between gap-2 px-1">
+        <KanjiModeToggle />
+        <KanjiFontSelector />
+      </div>
 
-      {/* Aviso contextual cuando se revisa una etapa anterior */}
-      {isInspectingPrevious && (
-        <div className="w-full max-w-lg flex items-center justify-between px-3 py-1.5 rounded-xl bg-neutral-800/70 border border-neutral-700 text-xs text-neutral-300 animate-fadeIn">
-          <span>Modo revisión: Etapa ya respondida.</span>
-          <button
-            type="button"
-            onClick={() => setInspectingStageIndex(null)}
-            className="text-amber-400 hover:text-amber-300 font-bold underline cursor-pointer"
-          >
-            Volver a etapa activa
-          </button>
-        </div>
-      )}
+      {/* Paginación de 20 Ejercicios (directamente sobre el kanji activo) */}
+      <KanjiPaginationBar />
 
-      {/* Contenedor Principal de la Etapa Evaluativa Activa */}
+      {/* Contenedor Principal de la Modalidad Activa */}
       <main className="w-full flex justify-center transition-all duration-300">
-        {activeViewIndex === 0 && <KanjiReadingStage />}
-        {activeViewIndex === 1 && <KanjiMeaningStage />}
-        {activeViewIndex === 2 && <KanjiRomajiStage />}
-        {activeViewIndex === 3 && <KanjiStrokeStage />}
+        {activeStage === 0 && <KanjiReadingStage />}
+        {activeStage === 1 && <KanjiMeaningStage />}
+        {activeStage === 2 && <KanjiRomajiStage />}
+        {activeStage === 3 && <KanjiStrokeStage />}
       </main>
 
       {/* Modal de Resumen y Compartir Social */}

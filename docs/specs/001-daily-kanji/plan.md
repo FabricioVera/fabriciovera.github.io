@@ -1,34 +1,46 @@
 # Plan Técnico: Daily Kanji [/kanji] — Formato 20 Ítems por Modalidad
 
 - **Spec Asociada:** [`spec.md`](spec.md)
-- **Estado:** borrador (adaptación técnica a 20 ítems por etapa)
+- **Estado:** en progreso (incorporando navegación libre, paginación, modo revisión y tipografías)
 - **Fecha:** 2026-10-04
 
 ---
 
 ## 🏗️ 1. Arquitectura y Responsabilidades de Archivos
 
-### Archivos a Modificar:
+### Archivos a Modificar / Crear:
 | Archivo | Capa / Módulo | Modificación |
 | :--- | :--- | :--- |
-| `src/types/kanji.ts` | Tipado / DTO | Modelar `dailyKanjis` (20 kanjis), sub-progreso `currentQuestionIndex` (0..19), registro de respuestas por pregunta `StageAnswerRecord` y puntajes por etapa `score` sobre 20. |
-| `src/utils/kanji.ts` | Utilidades Puras | Implementar `getDailyKanjiList()` con barajado determinista `rand-seed` (semilla `YYYYMMDDkanji`) seleccionando 20 kanjis sin duplicados y distractores para cada uno. |
-| `src/services/kanjiRepository.ts` | Persistencia / Repositorio | Adaptar la serialización/deserialización en `localStorage` para almacenar la tupla granular `(currentStageIndex, currentQuestionIndex, answers)` y restaurar la partida con fidelidad absoluta. |
-| `src/store/useKanjiStore.ts` | Estado (Zustand) | Incorporar ciclo de 20 preguntas por etapa: `submitAnswer`, `advanceAfterFeedback`, avance de pregunta `currentQuestionIndex` (0 a 19), transición de etapa y completado final tras los 20 trazos. |
-| `src/components/games/kanji/KanjiProgressBar.tsx` | UI (React) | Extender con indicador de sub-progreso (`Pregunta X de 20`), contador de aciertos en vivo (`X / 20`) y barra porcentual de la etapa activa. |
-| `src/components/games/kanji/stages/KanjiReadingStage.tsx` | UI (React) | Adaptar para responder el kanji activo de los 20, con transición animada entre preguntas y feedback educativo instantáneo. |
-| `src/components/games/kanji/stages/KanjiMeaningStage.tsx` | UI (React) | Adaptar para responder significados con distractores dinámicos para cada uno de los 20 kanjis. |
-| `src/components/games/kanji/stages/KanjiRomajiStage.tsx` | UI (React) | Adaptar para transcripción fonética romaji secuencial de los 20 kanjis. |
-| `src/components/games/kanji/stages/KanjiStrokeStage.tsx` | UI (React) | Administrar el carrusel caligráfico de los 20 kanjis: destrucción y recreación controlada de la instancia de `HanziWriter` por cada kanji, contador de trazo y avance automático. |
-| `src/components/games/kanji/KanjiSummaryModal.tsx` | UI (React) | Presentar resumen de resultados desglosado por modalidad: Lectura (X/20), Significado (Y/20), Romaji (Z/20), Trazos (20/20) y Total (Puntaje/80). |
-| `src/utils/kanjiShare.ts` | Utilidades / Social | Actualizar generador de texto para compartir con el desglose sobre 20 por modalidad y racha. |
-| `src/components/games/kanji/DailyKanjiGame.tsx` | UI (React Island) | Proveer contexto del kanji activo (`dailyKanjis[currentQuestionIndex]`) a las etapas hijas y coordinar modales intermedios o finales. |
+| `src/types/kanji.ts` | Tipado / DTO | Modelar `KanjiFontFamily`, estados de navegación libre, sub-progreso `currentQuestionIndex` (0..19), `StageAnswerRecord` y `KanjiDailyState`. |
+| `src/store/useKanjiStore.ts` | Estado (Zustand) | Incorporar `setCurrentStage(index: number)`, `goToQuestion(index: number)`, `selectedFont: KanjiFontFamily`, `setSelectedFont(font)`, modo consulta de respuestas y avance adaptativo. |
+| `src/components/games/kanji/KanjiPaginationBar.tsx` (Nuevo) | UI (React) | Barra interactiva de 20 botones (1..20) posicionada sobre el kanji con estados visuales (acierto `🟩`, fallo `🟥`, pendiente, activo) y navegación por clic. |
+| `src/components/games/kanji/KanjiFontSelector.tsx` (Nuevo) | UI (React) | Selector accesible de tipografías japonesas (Noto Sans JP, Zen Kaku Gothic, BIZ UDPGothic, Klee One, Zen Maru Gothic) para probar en vivo. |
+| `src/components/games/kanji/DailyKanjiGame.tsx` | UI (React Island) | Incorporar selector de pestañas para cambiar libremente de modalidad en cualquier momento, barra de paginación y contenedor con la fuente seleccionada. |
+| `src/components/games/kanji/stages/KanjiReadingStage.tsx` | UI (React) | Adaptar para modo revisión cuando el ejercicio ya fue respondido (mostrar respuesta previa, acierto/fallo y bloquear nuevo intento). |
+| `src/components/games/kanji/stages/KanjiMeaningStage.tsx` | UI (React) | Adaptar para modo revisión de respuestas emitidas y solución correcta en significados. |
+| `src/components/games/kanji/stages/KanjiRomajiStage.tsx` | UI (React) | Adaptar para modo revisión en transcripciones fonéticas romaji. |
+| `src/components/games/kanji/stages/KanjiStrokeStage.tsx` | UI (React) | Soportar navegación directa por paginación y modo práctica/revisión si el kanji ya fue trazado previamente. |
+| `src/styles/global.css` o `src/pages/kanji/index.astro` | Estilos / Fuentes | Importar las fuentes de Google Fonts (Noto Sans JP, Zen Kaku Gothic New, BIZ UDPGothic, Klee One, Zen Maru Gothic) con utilidades de clase font. |
 
 ---
 
 ## 📊 2. Impacto en Tipos y Datos (`src/types/kanji.ts`)
 
 ```typescript
+export type KanjiFontFamily = 
+  | "noto-sans-jp" 
+  | "zen-kaku-gothic" 
+  | "biz-ud-gothic" 
+  | "klee-one" 
+  | "zen-maru-gothic";
+
+export interface KanjiFontOption {
+  id: KanjiFontFamily;
+  name: string;
+  category: string;
+  cssFamily: string;
+}
+
 export type KanjiStageKey = "reading" | "meaning" | "romaji" | "strokes";
 export type StageOutcome = "correct" | "incorrect" | "pending";
 export type InputMode = "multiple_choice" | "direct_input";
@@ -56,60 +68,65 @@ export interface KanjiDailyState {
   currentQuestionIndex: number; // 0..19
   stages: Record<KanjiStageKey, KanjiStageProgress>;
   isCompleted: boolean;
-}
-
-export interface KanjiStats {
-  currentStreak: number;
-  maxStreak: number;
-  lastPlayedDate: string | null;
-  totalGamesCompleted: number;
-  totalScoreAccumulated: number;
+  selectedFont?: KanjiFontFamily;
 }
 ```
 
 ---
 
-## ⚙️ 3. Lógica Determinista y Flujo de Estados
+## ⚙️ 3. Lógica de Navegación Libre y Modo Revisión
 
-### 3.1. Selección Determinista de 20 Kanjis (`src/utils/kanji.ts`):
-```typescript
-export function getDailyKanjiList(allKanjis: KanjiN5[], dateStr?: string, count: number = 20): KanjiN5[] {
-  const seed = getDailySeed(dateStr, "kanji");
-  const rand = new Rand(seed);
-  const shuffled = deterministicShuffle(allKanjis, () => rand.next());
-  return shuffled.slice(0, Math.min(count, shuffled.length));
-}
-```
+### 3.1. Navegación No Lineal entre Modalidades:
+- El usuario puede presionar cualquiera de las 4 pestañas: `[📖 Lectura] [💡 Significado] [🔤 Romaji] [✍️ Trazos]`.
+- Al cambiar de etapa mediante `setCurrentStage(index)`:
+  - Se activa la etapa seleccionada.
+  - Se sitúa en el primer ejercicio pendiente de esa etapa (o en el ejercicio 0 si ya se respondieron todos o ninguno).
+  - El progreso y las respuestas de las demás etapas permanecen intactos en `kanjiRepository`.
 
-### 3.2. Máquina de Estados en Zustand (`useKanjiStore`):
-- `currentStageIndex`: 0 = Lectura, 1 = Significado, 2 = Romaji, 3 = Trazos, 4 = Finalizado.
-- `currentQuestionIndex`: 0 a 19 (índice del kanji activo dentro de la etapa).
-- `kanjiTarget`: `dailyKanjis[currentQuestionIndex]`.
-- Al enviar respuesta (`submitAnswer`):
-  1. Se evalúa la respuesta del kanji actual y se guarda el registro en `stages[stageKey].answers`.
-  2. Si es acierto, se suma 1 a `stages[stageKey].score`.
-  3. Se abre retroalimentación visual (`isFeedbackOpen: true`).
-- Al pulsar continuar o transicionar (`advanceAfterFeedback`):
-  1. `isFeedbackOpen = false`.
-  2. Si `currentQuestionIndex < 19`: `currentQuestionIndex++` (avanza al siguiente kanji).
-  3. Si `currentQuestionIndex === 19`: se marca `stages[stageKey].isCompleted = true`, se resetea `currentQuestionIndex = 0` y se incrementa `currentStageIndex++`.
-  4. Si `currentStageIndex === 4`: se declara `isCompleted = true` y se actualiza la racha diaria en `kanjiRepository`.
+### 3.2. Paginación Interactiva (1..20) y Modo Revisión:
+- `KanjiPaginationBar` renderiza 20 botones compactos numerados del 1 al 20 sobre el kanji actual.
+- Para cada botón `i` (0..19):
+  - Verifica si `stages[currentStageKey].answers` contiene una respuesta para `dailyKanjis[i].id`.
+  - Si no está respondido: estilo neutro (`bg-neutral-800 text-neutral-400`).
+  - Si está respondido y `isCorrect === true`: estilo verde (`bg-emerald-900/60 text-emerald-300 border-emerald-500/60`).
+  - Si está respondido y `isCorrect === false`: estilo rojo (`bg-rose-900/60 text-rose-300 border-rose-500/60`).
+  - Si `i === currentQuestionIndex`: anillo brillante de foco (`ring-2 ring-indigo-400`).
+- Al pulsar el botón `i`: llama a `goToQuestion(i)`.
+
+### 3.3. Modo Consulta en las Etapas:
+- Al renderizar la etapa actual, se comprueba si el kanji activo ya tiene un registro en `answers`:
+  - Si existe registro previo:
+    - Se deshabilitan los botones o inputs de envío.
+    - Se marca la opción seleccionada por el usuario (verde si acertó, rojo si falló).
+    - Si falló, se resalta la respuesta correcta con borde/fondo verde.
+    - Se despliega un banner de revisión: *"Ejercicio ya respondido: Tu respuesta fue [X] (Correcta/Incorrecta). Solución: [Y]"*.
+    - Se ofrece un botón *"Siguiente ejercicio"* o se puede pulsar cualquier número en la paginación.
+  - Si no existe respuesta previa:
+    - Se despliegan los controles de respuesta habituales y se evalúa el intento único.
 
 ---
 
-## 🎨 4. Ciclo de Vida y Limpieza en Canvas de Trazos (`KanjiStrokeStage.tsx`)
+## 🔤 4. Integración y Prueba de Tipografías Japonesas
 
-Para evitar fugas de memoria (*memory leaks*) en el renderizado de 20 kanjis sucesivos con `hanzi-writer`:
-1. Cada cambio de `currentQuestionIndex` desmonta el contenedor previo o ejecuta `writerRef.current.destroy()`.
-2. Se instancia el nuevo kanji objetivo de forma idempotente con `HanziWriter.create(...)`.
-3. Al completar todos los trazos del kanji actual, se dispara automáticamente el avance hacia el siguiente kanji (o finalización si era el kanji 20).
+Se importan las familias de Google Fonts con soporte para kanjis japoneses:
+```css
+@import url('https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Klee+One:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;700&family=Zen+Maru+Gothic:wght@400;700&display=swap');
+```
+Clases CSS asignadas según la fuente activa:
+- `font-noto-sans-jp`: `'Noto Sans JP', sans-serif`
+- `font-zen-kaku`: `'Zen Kaku Gothic New', sans-serif`
+- `font-biz-ud`: `'BIZ UDPGothic', sans-serif`
+- `font-klee-one`: `'Klee One', cursive`
+- `font-zen-maru`: `'Zen Maru Gothic', sans-serif`
+
+El componente `KanjiFontSelector` permite alternar rápidamente entre ellas con botones píldora o un menú desplegable, persistiendo la selección en `localStorage`.
 
 ---
 
 ## 🧪 5. Estrategia de Verificación y Testing
 
-1. **Determinismo:** Verificar que dos llamadas con la misma fecha produzcan idéntica lista de 20 kanjis en idéntico orden.
-2. **Ciclo de 20 preguntas:** Validar transiciones `0 -> 1 -> ... -> 19 -> cambio de etapa`.
-3. **Persistencia granular:** Simular recarga a mitad de la etapa (ej. pregunta 11) y validar que el estado y los aciertos previos se recuperen íntegros.
-4. **Resumen y Compartir:** Comprobar que el modal final totalice las 4 etapas sobre 80 puntos y genere el texto viral adecuado.
-5. **Compilación y DevTools:** Inspección automatizada mediante Chrome DevTools Protocol y `npm run build` sin errores.
+1. **Navegación libre de modalidades:** Comprobar que cambiar entre etapas preserva el progreso y las respuestas emitidas en cada una.
+2. **Paginación 1..20:** Validar que al pulsar un número se cargue el kanji correspondiente y que los colores reflejen aciertos y fallos.
+3. **Modo Revisión:** Verificar que las preguntas ya respondidas no admitan reintentos y muestren la respuesta dada y la solución correcta.
+4. **Selector de Fuente:** Comprobar que cambiar la tipografía altere en caliente la apariencia del kanji principal y los textos japoneses.
+5. **Compilación Limpia:** Ejecutar `npm run build && touch astro.config.mjs` garantizando 0 errores de TypeScript y bundle funcional.

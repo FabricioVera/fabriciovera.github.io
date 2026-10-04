@@ -7,6 +7,22 @@ export type KanjiStageKey = "reading" | "meaning" | "romaji" | "strokes";
 
 export type StageOutcome = "correct" | "incorrect" | "pending";
 
+/** Tipografías japonesas optimizadas para Daily Kanji */
+export type KanjiFontFamily =
+  | "noto-sans-jp"
+  | "zen-kaku-gothic"
+  | "biz-ud-gothic"
+  | "klee-one"
+  | "zen-maru-gothic";
+
+export interface KanjiFontOption {
+  id: KanjiFontFamily;
+  name: string;
+  category: string;
+  className: string;
+  cssFamily: string;
+}
+
 /** Alias de resultado para compatibilidad de nomenclatura */
 export type LegacyStageOutcome = "success" | "failure";
 

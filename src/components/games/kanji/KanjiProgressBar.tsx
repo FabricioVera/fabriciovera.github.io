@@ -57,9 +57,11 @@ export const KanjiProgressBar: React.FC<KanjiProgressBarProps> = ({
   const stages = useKanjiStore((state) => state.stages);
   const isCompleted = useKanjiStore((state) => state.isCompleted);
   const stats = useKanjiStore((state) => state.stats);
+  const setCurrentStage = useKanjiStore((state) => state.setCurrentStage);
 
   const streak = stats?.currentStreak ?? 0;
-  const activeKey = STAGE_KEYS[Math.min(currentStageIndex, 3)];
+  const activeStageIdx = selectedStageIndex !== undefined ? selectedStageIndex : Math.min(currentStageIndex, 3);
+  const activeKey = STAGE_KEYS[activeStageIdx];
   const activeStage = stages[activeKey];
 
   return (
@@ -100,32 +102,28 @@ export const KanjiProgressBar: React.FC<KanjiProgressBarProps> = ({
         <ol className="grid grid-cols-4 gap-1.5 sm:gap-2">
           {STAGES_META.map((meta, idx) => {
             const stageProgress = stages[meta.key];
-            const isStageDone = stageProgress?.isCompleted || (idx < currentStageIndex);
-            const isCurrent = currentStageIndex === idx && !isCompleted;
-            const isSelected = selectedStageIndex === idx;
-            const isClickable =
-              Boolean(onSelectStage) &&
-              (isCompleted || isStageDone || isCurrent);
-
+            const isStageDone =
+              stageProgress?.isCompleted ||
+              (stageProgress?.answers?.length ?? 0) >= QUESTIONS_PER_STAGE;
+            const isCurrent = activeStageIdx === idx;
             const score = stageProgress?.score ?? 0;
             const answersCount = stageProgress?.answers?.length ?? 0;
 
             let statusStyles = "";
 
-            if (isStageDone) {
-              statusStyles =
-                "bg-emerald-950/60 border-emerald-500/80 text-emerald-300 shadow-emerald-900/30";
-            } else if (isCurrent) {
+            if (isCurrent) {
               statusStyles =
                 "bg-amber-950/40 border-amber-400 text-amber-300 ring-2 ring-amber-400/50 shadow-amber-900/30 scale-[1.02]";
+            } else if (isStageDone) {
+              statusStyles =
+                "bg-emerald-950/60 border-emerald-500/80 text-emerald-300 shadow-emerald-900/30";
+            } else if (answersCount > 0) {
+              statusStyles =
+                "bg-neutral-800/80 border-neutral-700 text-neutral-300";
             } else {
               // Pendiente
               statusStyles =
-                "bg-neutral-900/40 border-neutral-800 text-neutral-500 opacity-60";
-            }
-
-            if (isSelected) {
-              statusStyles += " ring-2 ring-amber-400 border-amber-400";
+                "bg-neutral-900/40 border-neutral-800 text-neutral-400";
             }
 
             return (
@@ -136,24 +134,25 @@ export const KanjiProgressBar: React.FC<KanjiProgressBarProps> = ({
               >
                 <button
                   type="button"
-                  disabled={!isClickable}
-                  onClick={() => isClickable && onSelectStage?.(idx)}
-                  className={`w-full flex flex-col items-center justify-center p-1.5 sm:p-2 rounded-xl border text-center transition-all duration-200 ${statusStyles} ${
-                    isClickable
-                      ? "cursor-pointer hover:brightness-110 active:scale-95"
-                      : "cursor-default"
-                  }`}
-                  title={
-                    isClickable
-                      ? `Revisar etapa ${meta.stepNumber}: ${meta.title} (${score}/${QUESTIONS_PER_STAGE})`
-                      : `Etapa ${meta.stepNumber}: Pendiente`
-                  }
+                  onClick={() => {
+                    if (onSelectStage) {
+                      onSelectStage(idx);
+                    } else {
+                      setCurrentStage(idx);
+                    }
+                  }}
+                  className={`w-full flex flex-col items-center justify-center p-1.5 sm:p-2 rounded-xl border text-center transition-all duration-200 cursor-pointer hover:brightness-110 active:scale-95 ${statusStyles}`}
+                  title={`Modalidad ${meta.stepNumber}: ${meta.title} (${answersCount}/${QUESTIONS_PER_STAGE} contestadas • ${score} aciertos)`}
                 >
                   {/* Indicador superior con paso o puntaje */}
                   <div className="flex items-center justify-center h-5 text-xs font-bold font-mono">
                     {isStageDone ? (
                       <span className="text-[11px] text-emerald-300 font-bold">
                         {score}/{QUESTIONS_PER_STAGE}
+                      </span>
+                    ) : answersCount > 0 ? (
+                      <span className="text-[11px] text-amber-200">
+                        {answersCount}/{QUESTIONS_PER_STAGE}
                       </span>
                     ) : (
                       <span
