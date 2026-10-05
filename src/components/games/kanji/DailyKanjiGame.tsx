@@ -58,24 +58,27 @@ export const DailyKanjiGame: React.FC = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key !== "Enter") return;
 
-      // Si hay un modal visible, no interferir con la navegación del juego
-      if (showSummary || showKanaModal) return;
+      // Si el resumen final está abierto, no interferir
+      if (showSummary) return;
 
+      const state = useKanjiStore.getState();
+      const currentActiveStage = Math.min(state.currentStageIndex, 3);
       const stageKeys: KanjiStageKey[] = ["reading", "meaning", "vocabulary", "strokes"];
-      const currentKey = stageKeys[activeStage];
-      const stageProgress = stages[currentKey];
+      const currentKey = stageKeys[currentActiveStage];
+      const stageProgress = state.stages[currentKey];
       const isCurrentAnswered = Boolean(
-        kanjiTarget &&
-        stageProgress?.answers?.some((a) => a.kanjiId === kanjiTarget.id)
+        state.kanjiTarget &&
+        stageProgress?.answers?.some((a) => a.kanjiId === state.kanjiTarget?.id)
       );
 
       // Avanzar si el feedback está abierto o si la pregunta actual ya fue respondida (modo revisión)
-      if (isFeedbackOpen || isCurrentAnswered) {
+      if (state.isFeedbackOpen || isCurrentAnswered) {
         e.preventDefault();
-        if (activeStage === 3) {
-          completeCurrentStrokeKanji();
+        e.stopPropagation();
+        if (currentActiveStage === 3) {
+          state.completeCurrentStrokeKanji();
         } else {
-          advanceAfterFeedback();
+          state.advanceAfterFeedback();
         }
       }
     };
@@ -84,16 +87,7 @@ export const DailyKanjiGame: React.FC = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [
-    showSummary,
-    showKanaModal,
-    activeStage,
-    stages,
-    kanjiTarget,
-    isFeedbackOpen,
-    advanceAfterFeedback,
-    completeCurrentStrokeKanji,
-  ]);
+  }, [showSummary]);
 
   // Renderizado del spinner de carga
   if (isLoading || !kanjiTarget) {
@@ -160,9 +154,14 @@ export const DailyKanjiGame: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => setShowKanaModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-neutral-800/80 hover:bg-neutral-800 text-neutral-300 hover:text-amber-300 border border-neutral-700/60 hover:border-amber-500/40 transition-all cursor-pointer shadow-sm active:scale-95"
-            title="Abrir tabla de referencia de Hiragana y Katakana"
+            onClick={() => setShowKanaModal((prev) => !prev)}
+            aria-expanded={showKanaModal}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer shadow-sm active:scale-95 ${
+              showKanaModal
+                ? "bg-amber-500/20 text-amber-300 border border-amber-500/50"
+                : "bg-neutral-800/80 hover:bg-neutral-800 text-neutral-300 hover:text-amber-300 border border-neutral-700/60 hover:border-amber-500/40"
+            }`}
+            title="Alternar tabla de referencia de Hiragana y Katakana"
           >
             <span className="font-bold text-amber-400">あ/ア</span>
             <span className="hidden sm:inline font-medium">Silabario</span>

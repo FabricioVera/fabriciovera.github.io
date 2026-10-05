@@ -288,3 +288,236 @@ export function isAnswerCorrect(
     return normalizedUser === normalizedAns;
   });
 }
+
+export interface WordSegment {
+  char: string;
+  reading: string;
+  isKanji: boolean;
+}
+
+/**
+ * Determina si un carácter es un Kanji (ideograma CJK).
+ */
+export function isKanjiChar(char: string): boolean {
+  if (!char) return false;
+  const code = char.codePointAt(0) || 0;
+  return (
+    (code >= 0x4e00 && code <= 0x9faf) ||
+    (code >= 0x3400 && code <= 0x4dbf) ||
+    (code >= 0xf900 && code <= 0xfaff)
+  );
+}
+
+/**
+ * Validador de sonorización (rendaku) y geminación para lecturas de kanji en compuestos.
+ */
+function isRendakuMatch(cand: string, known: Set<string>): boolean {
+  if (known.has(cand)) return true;
+  const rendakuMap: Record<string, string> = {
+    が: "か", ぎ: "き", ぐ: "く", げ: "け", ご: "こ",
+    ざ: "さ", じ: "し", ず: "す", ぜ: "せ", ぞ: "そ",
+    だ: "た", ぢ: "ち", づ: "つ", で: "て", ど: "と",
+    ば: "は", び: "ひ", ぶ: "ふ", べ: "へ", ぼ: "ほ",
+    ぱ: "は", ぴ: "ひ", ぷ: "ふ", ぺ: "へ", ぽ: "ほ",
+  };
+  const first = cand[0];
+  if (rendakuMap[first]) {
+    const unvoiced = rendakuMap[first] + cand.slice(1);
+    if (known.has(unvoiced)) return true;
+  }
+  if (cand.endsWith("っ")) {
+    const stem = cand.slice(0, -1);
+    for (const k of known) {
+      if (k.startsWith(stem)) return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Desglosa una palabra japonesa compuesta y su lectura en kana
+ * para asignar a cada kanji su lectura individual separada (estilo furigana).
+ */
+export function splitWordFurigana(
+  japanese: string,
+  fullKana: string,
+  kanjiCatalog?: KanjiN5[]
+): WordSegment[] {
+  if (!japanese) return [];
+  if (!fullKana) {
+    return Array.from(japanese).map((c) => ({
+      char: c,
+      reading: "",
+      isKanji: isKanjiChar(c),
+    }));
+  }
+
+  // Mapa rápido de lecturas conocidas por caracter kanji
+  const readingMap = new Map<string, Set<string>>();
+  if (kanjiCatalog) {
+    for (const k of kanjiCatalog) {
+      const set = new Set<string>();
+      if (k.readings?.on) {
+        for (const o of k.readings.on) {
+          const clean = o.replace(/\./g, "").replace(/^-/, "").trim();
+          set.add(convertKatakanaToHiragana(clean));
+        }
+      }
+      if (k.readings?.kun) {
+        for (const ku of k.readings.kun) {
+          const clean = ku.replace(/\./g, "").replace(/^-/, "").trim();
+          set.add(clean);
+        }
+      }
+      readingMap.set(k.kanji, set);
+    }
+  }
+
+  const chars = Array.from(japanese);
+  const hasKanji = chars.some(isKanjiChar);
+  if (!hasKanji) {
+    return chars.map((c) => ({
+      char: c,
+      reading: "",
+      isKanji: false,
+    }));
+  }
+
+  const kanjiCount = chars.filter(isKanjiChar).length;
+  if (kanjiCount === 1 && chars.length === 1) {
+    return [{ char: japanese, reading: fullKana, isKanji: true }];
+  }
+
+  // Identificar prefijos y sufijos de kana idénticos (okurigana)
+  let prefixLen = 0;
+  while (
+    prefixLen < chars.length &&
+    prefixLen < fullKana.length &&
+    !isKanjiChar(chars[prefixLen]) &&
+    chars[prefixLen] === fullKana[prefixLen]
+  ) {
+    prefixLen++;
+  }
+
+  let suffixLen = 0;
+  while (
+    suffixLen < chars.length - prefixLen &&
+    suffixLen < fullKana.length - prefixLen &&
+    !isKanjiChar(chars[chars.length - 1 - suffixLen]) &&
+    chars[chars.length - 1 - suffixLen] === fullKana[fullKana.length - 1 - suffixLen]
+  ) {
+    suffixLen++;
+  }
+
+  const prefixChars = chars.slice(0, prefixLen);
+  const suffixChars = chars.slice(chars.length - suffixLen);
+  const middleChars = chars.slice(prefixLen, chars.length - suffixLen);
+  const middleKana = fullKana.slice(prefixLen, fullKana.length - suffixLen);
+
+  const middleSegments: WordSegment[] = [];
+  const allMiddleAreKanji = middleChars.every(isKanjiChar);
+
+  if (allMiddleAreKanji && middleChars.length > 0) {
+    const kCount = middleChars.length;
+    const kanaLen = middleKana.length;
+
+    let bestPartition: number[] = [];
+    let bestScore = -Infinity;
+
+    function searchPartition(kanjiIdx: number, kanaStart: number, currentLengths: number[]) {
+      if (kanjiIdx === kCount - 1) {
+        const lastLen = kanaLen - kanaStart;
+        if (lastLen > 0) {
+          const allLens = [...currentLengths, lastLen];
+          let score = 0;
+          let idx = 0;
+          for (let i = 0; i < kCount; i++) {
+            const partLen = allLens[i];
+            const partKana = middleKana.slice(idx, idx + partLen);
+            idx += partLen;
+            const kChar = middleChars[i];
+            const knownReadings = readingMap.get(kChar);
+
+            if (knownReadings && (knownReadings.has(partKana) || isRendakuMatch(partKana, knownReadings))) {
+              score += 15;
+            } else {
+              score -= Math.abs(partLen - 2) * 2;
+            }
+          }
+          if (score > bestScore) {
+            bestScore = score;
+            bestPartition = allLens;
+          }
+        }
+        return;
+      }
+
+      const remainingKanjis = kCount - 1 - kanjiIdx;
+      const maxLen = kanaLen - kanaStart - remainingKanjis;
+      for (let len = 1; len <= Math.min(4, maxLen); len++) {
+        searchPartition(kanjiIdx + 1, kanaStart + len, [...currentLengths, len]);
+      }
+    }
+
+    searchPartition(0, 0, []);
+
+    if (bestPartition.length === kCount) {
+      let kIdx = 0;
+      for (let i = 0; i < kCount; i++) {
+        const len = bestPartition[i];
+        const partKana = middleKana.slice(kIdx, kIdx + len);
+        kIdx += len;
+        middleSegments.push({
+          char: middleChars[i],
+          reading: partKana,
+          isKanji: true,
+        });
+      }
+    } else {
+      const avgLen = middleKana.length / kCount;
+      let cur = 0;
+      for (let i = 0; i < kCount; i++) {
+        const next = Math.round((i + 1) * avgLen);
+        const partKana = middleKana.slice(cur, next);
+        cur = next;
+        middleSegments.push({
+          char: middleChars[i],
+          reading: partKana || middleKana,
+          isKanji: true,
+        });
+      }
+    }
+  } else {
+    // Mezcla de kana y kanji intermedios
+    let remainingKana = middleKana;
+    for (let i = 0; i < middleChars.length; i++) {
+      const c = middleChars[i];
+      if (isKanjiChar(c)) {
+        middleSegments.push({
+          char: c,
+          reading: remainingKana,
+          isKanji: true,
+        });
+        remainingKana = "";
+      } else {
+        middleSegments.push({
+          char: c,
+          reading: "",
+          isKanji: false,
+        });
+      }
+    }
+  }
+
+  const result: WordSegment[] = [];
+  for (const c of prefixChars) {
+    result.push({ char: c, reading: "", isKanji: false });
+  }
+  result.push(...middleSegments);
+  for (const c of suffixChars) {
+    result.push({ char: c, reading: "", isKanji: false });
+  }
+
+  return result;
+}
+

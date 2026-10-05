@@ -32,13 +32,14 @@
   - ✅ Barra de paginación interactiva del 1 al 20 sobre el kanji activo con salto directo a cada ejercicio y colores de estado (acierto `🟩`, fallo `🟥`, pendiente, activo).
   - ✅ Modo revisión e histórico de respuestas: visualización completa de la respuesta emitida por el usuario y la solución correcta en ejercicios ya respondidos (solo lectura, sin reintentos evaluativos).
   - ✅ Catálogo de 5 tipografías japonesas de alta legibilidad (*Noto Sans JP*, *Zen Kaku Gothic New*, *BIZ UDPGothic*, *Klee One*, *Zen Maru Gothic*) con selector interactivo en vivo y persistencia.
-  - ✅ **Fase Vocabulario, Trazos Inversos y 1000 Kanjis (T8-T13 Completada)**:
+  - ✅ **Fase Vocabulario, Trazos Inversos y 1000 Kanjis (T8-T13 Completada y Perfeccionada)**:
     - ✅ `T8`: Catálogo extendido de 1000 kanjis Jouyou de alta frecuencia con compuestos y determinismo verificado (`top1000.json` y `jouyou1000.json`).
-    - ✅ `T9`: Modal y botón de silabarios Kana (Hiragana/Katakana con romaji en pestañas y grilla visual limpia).
-    - ✅ `T10`: Reemplazo de etapa Romaji por Vocabulario Compuesto (Jukugo: kanji + complemento con 4 opciones/escritura).
+    - ✅ `T9`: Silabario Kana en panel lateral no intrusivo (sidebar drawer) ordenado en 5 columnas canónicas (`a, i, u, e, o`) para consulta simultánea sin bloquear el juego.
+    - ✅ `T10`: Modalidad de Vocabulario Compuesto (Jukugo) con furigana individual desglosado por cada kanji (`splitWordFurigana`).
     - ✅ `T11`: Modo Trazos Inversos (Español + pronunciación ➔ dibujar kanji objetivo desde cero sin silueta previa).
-    - ✅ `T12`: Navegación ágil por teclado con tecla `Enter` tras responder o en revisión.
-    - ✅ `T13`: Mantener la interfaz limpia y directa (cero subtítulos redundantes).
+    - ✅ `T12`: Navegación ágil por teclado con tecla `Enter` tras responder en selección múltiple y modo revisión (sin bloqueo de foco ni dependencias obsoletas).
+    - ✅ `T13`: Mantener la interfaz limpia y directa (cero subtítulos redundantes, preservando personalizaciones de interfaz del usuario).
+    - ✅ `KanjiLink`: Todos los kanjis en pantalla enlazan a `https://japonesbasico.com/kanji/{kanji}` manteniendo exactamente su estilo tipográfico y visual.
   - ✅ Selección determinista de 20 kanjis diarios sin duplicados con barajado PRNG reproducibles universalmente.
   - ✅ Regla innegociable de 1 solo intento evaluativo por desafío con revelación inmediata de feedback didáctico.
   - ✅ Persistencia incremental por pregunta desacoplada con `kanjiRepository` en `localStorage` (restauración exacta ante recargas o cierres de pestaña).

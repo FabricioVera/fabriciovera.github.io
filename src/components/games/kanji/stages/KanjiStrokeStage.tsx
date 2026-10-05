@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useCallback, useMemo } from "react"
 import HanziWriter from "hanzi-writer";
 import { useKanjiStore, QUESTIONS_PER_STAGE } from "../../../../store/useKanjiStore";
 import { getPrimaryReading, getPrimaryRomaji } from "../../../../utils/kanji";
+import { KanjiLink } from "../KanjiLink";
 
 export const KanjiStrokeStage: React.FC = () => {
   const kanjiTarget = useKanjiStore((state) => state.kanjiTarget);
@@ -176,9 +177,12 @@ export const KanjiStrokeStage: React.FC = () => {
           <div className="mt-2 flex flex-col items-center">
             <h2 className="text-base sm:text-lg font-bold text-neutral-100 flex items-center gap-2">
               <span>Kanji completado:</span>
-              <span className="text-2xl font-black text-amber-400 font-serif" lang="ja">
+              <KanjiLink
+                kanji={kanjiTarget.kanji}
+                className="text-2xl font-black text-amber-400 font-serif"
+              >
                 {kanjiTarget.kanji}
-              </span>
+              </KanjiLink>
               <span className="text-xs text-neutral-400 font-normal">
                 ({kanjiTarget.meanings[0]})
               </span>
@@ -287,7 +291,9 @@ export const KanjiStrokeStage: React.FC = () => {
         {/* Overlay de éxito inmediato tras completar el kanji */}
         {strokeSuccess && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-emerald-950/80 backdrop-blur-sm z-20 text-emerald-300 font-bold text-sm animate-fadeIn">
-            <span className="text-4xl font-serif text-white">{kanjiTarget.kanji}</span>
+            <KanjiLink kanji={kanjiTarget.kanji} className="text-4xl font-serif text-white">
+              {kanjiTarget.kanji}
+            </KanjiLink>
             <span>¡Excelente! Siguiente kanji...</span>
           </div>
         )}

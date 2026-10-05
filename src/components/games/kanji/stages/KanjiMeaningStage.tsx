@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useKanjiStore, QUESTIONS_PER_STAGE } from "../../../../store/useKanjiStore";
 import { getMeaningOptions } from "../../../../utils/kanji";
+import { KanjiLink } from "../KanjiLink";
 
 export const KanjiMeaningStage: React.FC = () => {
   const kanjiTarget = useKanjiStore((state) => state.kanjiTarget);
@@ -49,6 +50,10 @@ export const KanjiMeaningStage: React.FC = () => {
   const handleChoiceClick = (choice: string) => {
     if (hasAttempted) return;
     submitAnswer(choice);
+    // Desenfocar el botón para que los eventos de teclado (Enter) fluyan libremente
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
   };
 
   const handleInputSubmit = (e: React.FormEvent) => {
@@ -73,12 +78,12 @@ export const KanjiMeaningStage: React.FC = () => {
 
       {/* Tarjeta Visual del Kanji */}
       <div className="relative flex flex-col items-center justify-center w-36 h-36 sm:w-44 sm:h-44 rounded-2xl bg-neutral-950/80 border-2 border-neutral-800/90 shadow-inner group">
-        <span
+        <KanjiLink
+          kanji={kanjiTarget.kanji}
           className="text-6xl sm:text-7xl font-bold text-neutral-50 select-none tracking-normal"
-          lang="ja"
         >
           {kanjiTarget.kanji}
-        </span>
+        </KanjiLink>
         <span className="absolute bottom-2 text-[10px] font-mono text-neutral-400">
           {kanjiTarget.unicode}
         </span>

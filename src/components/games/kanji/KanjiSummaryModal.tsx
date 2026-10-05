@@ -7,6 +7,7 @@ import {
   copyToClipboard,
 } from "../../../utils/kanjiShare";
 import type { ShareResultPayload } from "../../../types/kanji";
+import { KanjiLink } from "./KanjiLink";
 
 export interface KanjiSummaryModalProps {
   isOpen?: boolean;
@@ -233,13 +234,13 @@ export const KanjiSummaryModal: React.FC<KanjiSummaryModalProps> = ({
             </span>
             <div className="flex flex-wrap gap-1 justify-center">
               {dailyKanjis.map((k) => (
-                <span
+                <KanjiLink
                   key={k.id}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg bg-neutral-800/80 text-neutral-200 font-serif font-bold text-sm shadow-sm"
-                  lang="ja"
+                  kanji={k.kanji}
+                  className="w-7 h-7 flex items-center justify-center rounded-lg bg-neutral-800/80 hover:bg-neutral-700 text-neutral-200 font-serif font-bold text-sm shadow-sm"
                 >
                   {k.kanji}
-                </span>
+                </KanjiLink>
               ))}
             </div>
           </div>

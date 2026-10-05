@@ -4,7 +4,9 @@ import {
   getDeterministicVocabWord,
   getVocabOptions,
   normalizeAnswer,
+  splitWordFurigana,
 } from "../../../../utils/kanji";
+import { KanjiLink } from "../KanjiLink";
 
 export const KanjiVocabStage: React.FC = () => {
   const kanjiTarget = useKanjiStore((state) => state.kanjiTarget);
@@ -52,6 +54,12 @@ export const KanjiVocabStage: React.FC = () => {
     return getVocabOptions(targetWord, kanjiTarget, allKanjis, date, currentQuestionIndex);
   }, [targetWord, kanjiTarget, allKanjis, date, currentQuestionIndex]);
 
+  // Desglose de cada kanji con su lectura por separado (furigana individual)
+  const segments = useMemo(() => {
+    if (!targetWord) return [];
+    return splitWordFurigana(targetWord.japanese, targetWord.kana, allKanjis);
+  }, [targetWord, allKanjis]);
+
   if (!kanjiTarget || !targetWord) {
     return (
       <div className="flex items-center justify-center p-8 text-neutral-400">
@@ -63,6 +71,10 @@ export const KanjiVocabStage: React.FC = () => {
   const handleChoiceClick = (choice: string) => {
     if (hasAttempted) return;
     submitAnswer(choice);
+    // Desenfocar el botón para que los eventos de teclado (Enter) fluyan libremente
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
   };
 
   const handleInputSubmit = (e: React.FormEvent) => {
@@ -80,27 +92,39 @@ export const KanjiVocabStage: React.FC = () => {
     >
       {/* Encabezado de la etapa — Directiva de interfaz limpia sin subtítulos */}
       <div className="text-center">
-        <span className="text-[11px] uppercase tracking-widest font-bold px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
-          Etapa 3 • Vocabulario ({currentQuestionIndex + 1} de {QUESTIONS_PER_STAGE})
-        </span>
         <h2 className="mt-2 text-base sm:text-lg font-bold text-neutral-100">
           ¿Cuál es el significado de esta palabra?
         </h2>
       </div>
 
-      {/* Tarjeta Visual de la Palabra Compuesta */}
-      <div className="relative flex flex-col items-center justify-center w-full max-w-xs py-5 px-4 rounded-2xl bg-neutral-950/80 border-2 border-neutral-800/90 shadow-inner group">
-        {/* Lectura en Kana (Furigana superior) */}
-        <span className="text-xs sm:text-sm font-medium text-amber-400/90 mb-1 select-none">
-          {targetWord.kana}
-        </span>
-        {/* Palabra en Kanji */}
-        <span
-          className="text-4xl sm:text-5xl font-bold text-neutral-50 select-none tracking-wide"
-          lang="ja"
-        >
-          {targetWord.japanese}
-        </span>
+      {/* Tarjeta Visual de la Palabra Compuesta con lectura separada por kanji */}
+      <div className="relative flex flex-col items-center justify-center w-full max-w-sm py-5 px-4 rounded-2xl bg-neutral-950/80 border-2 border-neutral-800/90 shadow-inner group">
+        <div className="flex items-end justify-center gap-1.5 sm:gap-2.5">
+          {segments.map((seg, idx) => (
+            <div key={`${seg.char}-${idx}`} className="flex flex-col items-center min-w-[32px]">
+              {/* Lectura individual para este kanji */}
+              <span className="text-xs sm:text-sm font-medium text-amber-300 select-none min-h-[18px] leading-tight text-center">
+                {seg.reading || "\u00A0"}
+              </span>
+              {/* Carácter: si es kanji, enlace a japonesbasico.com sin alterar estilo */}
+              {seg.isKanji ? (
+                <KanjiLink
+                  kanji={seg.char}
+                  className="text-4xl sm:text-5xl font-bold text-neutral-50 select-none tracking-wide"
+                >
+                  {seg.char}
+                </KanjiLink>
+              ) : (
+                <span
+                  className="text-4xl sm:text-5xl font-bold text-neutral-50 select-none tracking-wide"
+                  lang="ja"
+                >
+                  {seg.char}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Contenido interactivo: opciones o campo de texto */}
