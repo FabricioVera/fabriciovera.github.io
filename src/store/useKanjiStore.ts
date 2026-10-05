@@ -39,7 +39,7 @@ export const STAGE_KEYS: KanjiStageKey[] = [
   "strokes",
 ];
 
-export const QUESTIONS_PER_STAGE = 20;
+export const QUESTIONS_PER_STAGE = 10;
 
 export function getTodayDateString(): string {
   const today = new Date();
