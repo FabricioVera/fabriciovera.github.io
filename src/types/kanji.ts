@@ -62,6 +62,17 @@ export interface KanjiN5 {
 /** Alias para ítems de kanji del catálogo expandido (Jouyou / Top 1000) */
 export type KanjiItem = KanjiN5;
 
+/** Ítem del cuaderno de errores / lista de kanjis a repasar */
+export interface ReviewKanjiItem {
+  id: string;
+  kanji: string;
+  meaning: string;
+  romaji: string;
+  readingKana?: string;
+  addedAt: string;
+  mistakeCount: number;
+}
+
 /** Registro de respuesta individual para cada pregunta de una etapa (1..20) */
 export interface StageAnswerRecord {
   kanjiId: string;

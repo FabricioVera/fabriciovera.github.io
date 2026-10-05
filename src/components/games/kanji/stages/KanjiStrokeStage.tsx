@@ -9,6 +9,7 @@ export const KanjiStrokeStage: React.FC = () => {
   const currentQuestionIndex = useKanjiStore((state) => state.currentQuestionIndex);
   const stageProgress = useKanjiStore((state) => state.stages.strokes);
   const completeCurrentStrokeKanji = useKanjiStore((state) => state.completeCurrentStrokeKanji);
+  const addKanjiToReview = useKanjiStore((state) => state.addKanjiToReview);
   const isCompleted = useKanjiStore((state) => state.isCompleted);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -37,6 +38,9 @@ export const KanjiStrokeStage: React.FC = () => {
       onMistake: (data) => {
         // Reproduce animación del trazo correcto para guiar pedagógicamente ante error
         writer.animateStroke(data.strokeNum);
+        if (kanjiTarget) {
+          addKanjiToReview(kanjiTarget);
+        }
       },
       onComplete: () => {
         setStrokeSuccess(true);
@@ -46,7 +50,7 @@ export const KanjiStrokeStage: React.FC = () => {
         }, 1200);
       },
     });
-  }, [completeCurrentStrokeKanji]);
+  }, [completeCurrentStrokeKanji, kanjiTarget, addKanjiToReview]);
 
   // Inicialización y limpieza limpia de HanziWriter por cada kanji activo
   useEffect(() => {

@@ -10,6 +10,8 @@ import type {
   InputMode,
   KanjiFontFamily,
   KanjiRepositoryContract,
+  ReviewKanjiItem,
+  KanjiN5,
 } from "../types/kanji";
 
 export const KANJI_STORAGE_KEYS = {
@@ -17,6 +19,7 @@ export const KANJI_STORAGE_KEYS = {
   STATS: "kanji_stats",
   INPUT_MODE: "kanji_input_mode",
   FONT_FAMILY: "kanji_font_family",
+  REVIEW_LIST: "kanji_review_list",
 } as const;
 
 /** Almacenamiento en memoria volátil para fallback ante SSR o cuota restringida */
@@ -314,5 +317,103 @@ export const kanjiRepository: KanjiRepositoryContract & {
    */
   clearDailyProgress(): void {
     safeRemoveItem(KANJI_STORAGE_KEYS.PROGRESS);
+  },
+
+  /**
+   * Obtiene la lista de kanjis guardados para repaso tras haber cometido errores.
+   */
+  getReviewList(): ReviewKanjiItem[] {
+    const raw = safeGetItem(KANJI_STORAGE_KEYS.REVIEW_LIST);
+    if (!raw) return [];
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+    } catch (err) {
+      console.error("[kanjiRepository] Error al deserializar review list:", err);
+    }
+    return [];
+  },
+
+  /**
+   * Guarda la lista completa de kanjis para repaso en almacenamiento persistente.
+   */
+  saveReviewList(list: ReviewKanjiItem[]): void {
+    try {
+      safeSetItem(KANJI_STORAGE_KEYS.REVIEW_LIST, JSON.stringify(list));
+    } catch (err) {
+      console.error("[kanjiRepository] Error al guardar review list:", err);
+    }
+  },
+
+  /**
+   * Añade o actualiza un kanji en la lista de repaso tras un fallo.
+   */
+  addKanjiToReview(kanji: KanjiN5): ReviewKanjiItem[] {
+    const currentList = this.getReviewList();
+    const existingIndex = currentList.findIndex(
+      (item) => item.kanji === kanji.kanji || item.id === kanji.id
+    );
+
+    const romajiText =
+      kanji.romaji && kanji.romaji.length > 0
+        ? kanji.romaji.slice(0, 3).join(", ")
+        : "";
+    const meaningText =
+      kanji.meanings && kanji.meanings.length > 0
+        ? kanji.meanings.slice(0, 2).join(", ")
+        : "";
+    const primaryKana =
+      kanji.readings?.kun?.[0] || kanji.readings?.on?.[0] || "";
+
+    if (existingIndex >= 0) {
+      const existing = currentList[existingIndex];
+      const updatedItem: ReviewKanjiItem = {
+        ...existing,
+        mistakeCount: (existing.mistakeCount || 1) + 1,
+        addedAt: new Date().toISOString(),
+      };
+      const newList = [
+        updatedItem,
+        ...currentList.slice(0, existingIndex),
+        ...currentList.slice(existingIndex + 1),
+      ];
+      this.saveReviewList(newList);
+      return newList;
+    }
+
+    const newItem: ReviewKanjiItem = {
+      id: kanji.id,
+      kanji: kanji.kanji,
+      meaning: meaningText,
+      romaji: romajiText,
+      readingKana: primaryKana,
+      addedAt: new Date().toISOString(),
+      mistakeCount: 1,
+    };
+
+    const newList = [newItem, ...currentList];
+    this.saveReviewList(newList);
+    return newList;
+  },
+
+  /**
+   * Elimina un kanji de la lista de repaso por su carácter o id.
+   */
+  removeKanjiFromReview(kanjiCharOrId: string): ReviewKanjiItem[] {
+    const currentList = this.getReviewList();
+    const newList = currentList.filter(
+      (item) => item.kanji !== kanjiCharOrId && item.id !== kanjiCharOrId
+    );
+    this.saveReviewList(newList);
+    return newList;
+  },
+
+  /**
+   * Limpia toda la lista de repaso.
+   */
+  clearReviewList(): void {
+    safeRemoveItem(KANJI_STORAGE_KEYS.REVIEW_LIST);
   },
 };

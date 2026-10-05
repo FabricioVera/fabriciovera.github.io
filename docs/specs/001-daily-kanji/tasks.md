@@ -244,3 +244,33 @@
   3. Ejecutar `npm run build` y verificar que la UI luce limpia, sin subtítulos y compila sin errores.
 - **Criterio de Aceptación:** Ningún componente o vista de Daily Kanji presenta subtítulos o párrafos descriptivos bajo sus encabezados.
 - **Estado:** [x]
+
+---
+
+### 🟩 Tarea T14: Sidebar de Repaso de Kanjis con Errores (Cuaderno de Errores)
+- **Objetivo:** Guardar automáticamente en almacenamiento persistente los kanjis en los que el usuario cometa un error (en cualquiera de las 4 modalidades) y desplegarlos en un panel lateral (sidebar) no intrusivo para repaso, con enlace a `japonesbasico.com`, significado en español, escritura en romaji y botón para eliminarlos individualmente con una pequeña `x`.
+- **Archivos:**
+  - `src/types/kanji.ts`
+  - `src/services/kanjiRepository.ts`
+  - `src/store/useKanjiStore.ts`
+  - `src/components/games/kanji/KanjiReviewSidebar.tsx` (Nuevo)
+  - `src/components/games/kanji/DailyKanjiGame.tsx`
+  - `src/components/games/kanji/stages/KanjiStrokeStage.tsx`
+- **Detalle de implementación:**
+  1. En `src/types/kanji.ts`: definir la interfaz `ReviewKanjiItem` (`id`, `kanji`, `meaning`, `romaji`, `readingKana`, `mistakeCount`, `addedAt`).
+  2. En `src/services/kanjiRepository.ts`: agregar `KANJI_STORAGE_KEYS.REVIEW_LIST` y métodos CRUD de persistencia en `localStorage` (`getReviewList`, `saveReviewList`, `addKanjiToReview`, `removeKanjiFromReview`, `clearReviewList`).
+  3. En `src/store/useKanjiStore.ts`:
+     - Agregar `reviewList: ReviewKanjiItem[]` al estado inicial.
+     - En `submitAnswer`: ante respuesta incorrecta (`!isCorrect`), llamar a `kanjiRepository.addKanjiToReview(kanjiTarget)`.
+     - Exponer acciones `addKanjiToReview`, `removeKanjiFromReview` y `clearReviewList`.
+  4. En `KanjiStrokeStage.tsx`: en el callback `onMistake` de `HanziWriter`, registrar el kanji objetivo en la lista de repaso.
+  5. Crear `KanjiReviewSidebar.tsx`:
+     - Drawer lateral derecho no intrusivo (`fixed right-0 h-screen w-84 sm:w-96`) sin backdrop en desktop para permitir interacción con el juego activo.
+     - Cabecera limpia sin subtítulos conforme a las directivas de diseño.
+     - Elementos de lista con componente `KanjiLink` hacia `https://japonesbasico.com/kanji/{kanji}` respetando el estilo tipográfico exacto.
+     - Despliegue de significado en español y pronunciación en romaji.
+     - Pequeño botón `✕` accesible para eliminar individualmente kanjis repasados.
+  6. En `DailyKanjiGame.tsx`: integrar el botón `[📝 Repaso]` con badge dinámico del total de kanjis pendientes e instanciar `<KanjiReviewSidebar />`.
+- **Criterio de Aceptación:** Cualquier fallo en las etapas de lectura, significado, vocabulario o trazos almacena el kanji en el sidebar de repaso; se puede consultar en cualquier momento, visitar su ficha en japonesbasico.com y eliminar con la `x`.
+- **Estado:** [x]
+

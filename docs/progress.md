@@ -39,6 +39,7 @@
     - ✅ `T11`: Modo Trazos Inversos (Español + pronunciación ➔ dibujar kanji objetivo desde cero sin silueta previa).
     - ✅ `T12`: Navegación ágil por teclado con tecla `Enter` tras responder en selección múltiple y modo revisión (sin bloqueo de foco ni dependencias obsoletas).
     - ✅ `T13`: Mantener la interfaz limpia y directa (cero subtítulos redundantes, preservando personalizaciones de interfaz del usuario).
+    - ✅ `T14`: Sidebar de Repaso de Kanjis con Errores (Cuaderno de Errores): captura automática de fallos en cualquiera de las 4 modalidades, persistencia en `localStorage`, drawer no intrusivo con enlace a `japonesbasico.com`, significado en español, romaji y botón de descarte individual `✕`.
     - ✅ `KanjiLink`: Todos los kanjis en pantalla enlazan a `https://japonesbasico.com/kanji/{kanji}` manteniendo exactamente su estilo tipográfico y visual.
   - ✅ Selección determinista de 20 kanjis diarios sin duplicados con barajado PRNG reproducibles universalmente.
   - ✅ Regla innegociable de 1 solo intento evaluativo por desafío con revelación inmediata de feedback didáctico.

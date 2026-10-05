@@ -11,6 +11,7 @@ import { KanjiVocabStage } from "./stages/KanjiVocabStage";
 import { KanjiStrokeStage } from "./stages/KanjiStrokeStage";
 import { KanjiSummaryModal } from "./KanjiSummaryModal";
 import { KanaReferenceModal } from "./KanaReferenceModal";
+import { KanjiReviewSidebar } from "./KanjiReviewSidebar";
 
 const FONT_CLASS_MAP: Record<KanjiFontFamily, string> = {
   "noto-sans-jp": "font-noto-sans-jp",
@@ -33,10 +34,12 @@ export const DailyKanjiGame: React.FC = () => {
   const isFeedbackOpen = useKanjiStore((state) => state.isFeedbackOpen);
   const advanceAfterFeedback = useKanjiStore((state) => state.advanceAfterFeedback);
   const completeCurrentStrokeKanji = useKanjiStore((state) => state.completeCurrentStrokeKanji);
+  const reviewList = useKanjiStore((state) => state.reviewList);
 
-  // Control de modales
+  // Control de modales y sidebars
   const [showSummary, setShowSummary] = useState(false);
   const [showKanaModal, setShowKanaModal] = useState(false);
+  const [showReviewSidebar, setShowReviewSidebar] = useState(false);
 
   // Inicialización de la partida diaria al montar el componente
   useEffect(() => {
@@ -148,10 +151,11 @@ export const DailyKanjiGame: React.FC = () => {
         selectedStageIndex={activeStage}
       />
 
-      {/* Barra de Opciones y Accesibilidad: Toggle de Modalidad + Botón Silabario + Selector de Tipografía */}
+      {/* Barra de Opciones y Accesibilidad: Toggle de Modalidad + Botón Silabario + Botón Repaso + Selector de Tipografía */}
       <div className="w-full max-w-xl flex flex-wrap items-center justify-between gap-2 px-1">
         <KanjiModeToggle />
         <div className="flex items-center gap-2">
+          {/* Botón Silabario */}
           <button
             type="button"
             onClick={() => setShowKanaModal((prev) => !prev)}
@@ -166,6 +170,28 @@ export const DailyKanjiGame: React.FC = () => {
             <span className="font-bold text-amber-400">あ/ア</span>
             <span className="hidden sm:inline font-medium">Silabario</span>
           </button>
+
+          {/* Botón Repaso / Cuaderno de Errores */}
+          <button
+            type="button"
+            onClick={() => setShowReviewSidebar((prev) => !prev)}
+            aria-expanded={showReviewSidebar}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer shadow-sm active:scale-95 relative ${
+              showReviewSidebar
+                ? "bg-amber-500/20 text-amber-300 border border-amber-500/50"
+                : "bg-neutral-800/80 hover:bg-neutral-800 text-neutral-300 hover:text-amber-300 border border-neutral-700/60 hover:border-amber-500/40"
+            }`}
+            title="Alternar panel de kanjis para repaso / errores"
+          >
+            <span className="font-bold text-rose-400">📝</span>
+            <span className="hidden sm:inline font-medium">Repaso</span>
+            {reviewList.length > 0 && (
+              <span className="ml-0.5 px-1.5 py-0.2 bg-rose-500/80 text-white text-[10px] font-bold rounded-full">
+                {reviewList.length}
+              </span>
+            )}
+          </button>
+
           <KanjiFontSelector />
         </div>
       </div>
@@ -185,6 +211,12 @@ export const DailyKanjiGame: React.FC = () => {
       <KanaReferenceModal
         isOpen={showKanaModal}
         onClose={() => setShowKanaModal(false)}
+      />
+
+      {/* Sidebar de Repaso de Errores */}
+      <KanjiReviewSidebar
+        isOpen={showReviewSidebar}
+        onClose={() => setShowReviewSidebar(false)}
       />
 
       {/* Modal de Resumen y Compartir Social */}

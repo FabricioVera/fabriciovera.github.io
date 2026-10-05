@@ -18,6 +18,7 @@ import type {
   KanjiStats,
   KanjiDailyState,
   KanjiFontFamily,
+  ReviewKanjiItem,
 } from "../types/kanji";
 
 const defaultKanjiCatalog: KanjiN5[] = ((top1000Data && top1000Data.length > 0 ? top1000Data : n5Data) as unknown) as KanjiN5[];
@@ -112,6 +113,7 @@ export interface KanjiStoreState {
   lastFeedback: LastFeedback | null;
   isCompleted: boolean;
   stats: KanjiStats;
+  reviewList: ReviewKanjiItem[];
   isLoading: boolean;
   date: string;
 
@@ -127,6 +129,9 @@ export interface KanjiStoreState {
   advanceToNextStage: () => void;
   completeCurrentStrokeKanji: () => void;
   completeStrokes: () => void;
+  addKanjiToReview: (kanji: KanjiN5) => void;
+  removeKanjiFromReview: (kanjiCharOrId: string) => void;
+  clearReviewList: () => void;
 }
 
 export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
@@ -147,6 +152,7 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
     totalCompleted: 0,
     lastCompletedDate: null,
   },
+  reviewList: [],
   isLoading: true,
   date: getTodayDateString(),
 
@@ -171,6 +177,7 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
     const savedFont = kanjiRepository.getFontFamilyPreference();
     const stats = kanjiRepository.getStats();
     const savedProgress = kanjiRepository.getDailyProgress(todayDate);
+    const reviewList = kanjiRepository.getReviewList();
 
     if (savedProgress && savedProgress.stages) {
       // Restauración de partida activa del mismo día
@@ -217,6 +224,7 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
         lastFeedback: null,
         isCompleted: isDone,
         stats,
+        reviewList,
         isLoading: false,
         date: todayDate,
       });
@@ -253,6 +261,7 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
         lastFeedback: null,
         isCompleted: false,
         stats,
+        reviewList,
         isLoading: false,
         date: todayDate,
       });
@@ -481,10 +490,17 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
       userAnswer: answer,
     };
 
+    // Si la respuesta fue incorrecta, registrar automáticamente el kanji en el cuaderno de errores/repaso
+    let updatedReviewList = get().reviewList;
+    if (!isCorrect) {
+      updatedReviewList = kanjiRepository.addKanjiToReview(kanjiTarget);
+    }
+
     set({
       stages: newStages,
       isFeedbackOpen: true,
       lastFeedback: feedbackPayload,
+      reviewList: updatedReviewList,
     });
 
     kanjiRepository.saveIncrementalProgress({
@@ -874,5 +890,29 @@ export const useKanjiStore = create<KanjiStoreState>((set, get) => ({
    */
   completeStrokes: () => {
     get().completeCurrentStrokeKanji();
+  },
+
+  /**
+   * Añade manualmente un kanji a la lista de repaso.
+   */
+  addKanjiToReview: (kanji: KanjiN5) => {
+    const updated = kanjiRepository.addKanjiToReview(kanji);
+    set({ reviewList: updated });
+  },
+
+  /**
+   * Elimina un kanji de la lista de repaso.
+   */
+  removeKanjiFromReview: (kanjiCharOrId: string) => {
+    const updated = kanjiRepository.removeKanjiFromReview(kanjiCharOrId);
+    set({ reviewList: updated });
+  },
+
+  /**
+   * Vacía la lista de repaso por completo.
+   */
+  clearReviewList: () => {
+    kanjiRepository.clearReviewList();
+    set({ reviewList: [] });
   },
 }));
