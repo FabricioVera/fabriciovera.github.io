@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useKanjiStore } from "../../../store/useKanjiStore";
 import type { KanjiFontFamily, KanjiStageKey } from "../../../types/kanji";
 import { KanjiProgressBar } from "./KanjiProgressBar";
-import { KanjiPaginationBar } from "./KanjiPaginationBar";
 import { KanjiFontSelector } from "./KanjiFontSelector";
 import { KanjiModeToggle } from "./KanjiModeToggle";
 import { KanjiReadingStage } from "./stages/KanjiReadingStage";
@@ -151,6 +150,7 @@ export const DailyKanjiGame: React.FC = () => {
         selectedStageIndex={activeStage}
       />
 
+
       {/* Barra de Opciones y Accesibilidad: Toggle de Modalidad + Botón Silabario + Botón Repaso + Selector de Tipografía */}
       <div className="w-full max-w-xl flex flex-wrap items-center justify-between gap-2 px-1">
         <KanjiModeToggle />
@@ -195,9 +195,6 @@ export const DailyKanjiGame: React.FC = () => {
           <KanjiFontSelector />
         </div>
       </div>
-
-      {/* Paginación de 20 Ejercicios (directamente sobre el kanji activo) */}
-      <KanjiPaginationBar />
 
       {/* Contenedor Principal de la Modalidad Activa */}
       <main className="w-full flex justify-center transition-all duration-300">

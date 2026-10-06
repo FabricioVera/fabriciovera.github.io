@@ -3,39 +3,60 @@ import { useKanjiStore, STAGE_KEYS, QUESTIONS_PER_STAGE } from "../../../store/u
 
 export interface KanjiPaginationBarProps {
   className?: string;
+  embedded?: boolean;
+  stageIndex?: number;
 }
 
-export const KanjiPaginationBar: React.FC<KanjiPaginationBarProps> = ({ className = "" }) => {
+export const KanjiPaginationBar: React.FC<KanjiPaginationBarProps> = ({
+  className = "",
+  embedded = false,
+  stageIndex,
+}) => {
   const dailyKanjis = useKanjiStore((state) => state.dailyKanjis);
   const currentStageIndex = useKanjiStore((state) => state.currentStageIndex);
   const currentQuestionIndex = useKanjiStore((state) => state.currentQuestionIndex);
   const stages = useKanjiStore((state) => state.stages);
   const goToQuestion = useKanjiStore((state) => state.goToQuestion);
 
-  const activeStageKey = STAGE_KEYS[Math.min(currentStageIndex, 3)];
+  const activeIdx = stageIndex !== undefined ? stageIndex : Math.min(currentStageIndex, 3);
+  const activeStageKey = STAGE_KEYS[activeIdx];
   const currentStage = stages[activeStageKey];
   const answers = currentStage?.answers || [];
 
   if (!dailyKanjis || dailyKanjis.length === 0) return null;
 
+  const containerClasses = embedded
+    ? `w-full flex flex-col gap-2 pt-2 px-1 border-t border-neutral-800/80 ${className}`
+    : `w-full max-w-xl mx-auto flex flex-col items-center gap-1.5 p-2.5 sm:p-3 bg-neutral-900/70 border border-neutral-800/80 rounded-2xl backdrop-blur-sm ${className}`;
+
   return (
     <nav
       aria-label="Paginación de los 20 ejercicios"
-      className={`w-full max-w-xl mx-auto flex flex-col items-center gap-1.5 p-2.5 sm:p-3 bg-neutral-900/70 border border-neutral-800/80 rounded-2xl backdrop-blur-sm ${className}`}
+      className={containerClasses}
     >
-      <div className="w-full flex items-center justify-between px-1 text-[11px] text-neutral-400">
-        <span className="font-semibold text-neutral-300">
-          Ejercicios (1-{QUESTIONS_PER_STAGE})
-        </span>
+      <div className="w-full flex flex-wrap items-center justify-between gap-1.5 px-0.5 text-[11px] text-neutral-400">
+        <div className="flex items-center gap-1.5">
+          <span className="font-semibold text-neutral-200">
+            Ejercicios (1-{QUESTIONS_PER_STAGE})
+          </span>
+          <span className="text-neutral-500">•</span>
+          <span className="font-mono text-neutral-300">
+            Aciertos:{" "}
+            <strong className="text-emerald-400 font-bold">
+              {currentStage?.score ?? 0}
+            </strong>
+            /{QUESTIONS_PER_STAGE}
+          </span>
+        </div>
         <div className="flex items-center gap-2 text-[10px]">
           <span className="flex items-center gap-1 text-emerald-400">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" /> Acierto
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" /> Acierto
           </span>
           <span className="flex items-center gap-1 text-rose-400">
-            <span className="w-2 h-2 rounded-full bg-rose-500 inline-block" /> Fallo
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 inline-block" /> Fallo
           </span>
           <span className="flex items-center gap-1 text-neutral-400">
-            <span className="w-2 h-2 rounded-full bg-neutral-700 inline-block" /> Pendiente
+            <span className="w-1.5 h-1.5 rounded-full bg-neutral-600 inline-block" /> Pendiente
           </span>
         </div>
       </div>

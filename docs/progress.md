@@ -29,7 +29,7 @@
   - ✅ Reto diario 100% determinista con semilla `YYYYMMDD + "kanji"` sobre kanjis y 208 kanas (`kana.json`).
   - ✅ Expansión a 20 desafíos por modalidad (80 retos diarios en total): 20 Lecturas, 20 Significados, 20 Vocabularios (en desarrollo) y 20 Trazos.
   - ✅ Navegación no lineal y selector libre de modalidades: cambio instantáneo entre las 4 etapas mediante pestañas interactivas sin necesidad de haber concluido la anterior.
-  - ✅ Barra de paginación interactiva del 1 al 20 sobre el kanji activo con salto directo a cada ejercicio y colores de estado (acierto `🟩`, fallo `🟥`, pendiente, activo).
+  - ✅ Barra de paginación interactiva del 1 al 20 unificada dentro de `KanjiProgressBar` con salto directo, conteo dinámico de aciertos en la misma cabecera (`Ejercicios (1-20) • Aciertos: X/20`) y colores de estado (acierto `🟩`, fallo `🟥`, pendiente, activo).
   - ✅ Modo revisión e histórico de respuestas: visualización completa de la respuesta emitida por el usuario y la solución correcta en ejercicios ya respondidos (solo lectura, sin reintentos evaluativos).
   - ✅ Catálogo de 5 tipografías japonesas de alta legibilidad (*Noto Sans JP*, *Zen Kaku Gothic New*, *BIZ UDPGothic*, *Klee One*, *Zen Maru Gothic*) con selector interactivo en vivo y persistencia.
   - ✅ **Fase Vocabulario, Trazos Inversos y 1000 Kanjis (T8-T13 Completada y Perfeccionada)**:

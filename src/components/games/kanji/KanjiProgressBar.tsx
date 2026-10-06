@@ -1,6 +1,7 @@
 import React from "react";
 import { useKanjiStore, STAGE_KEYS, QUESTIONS_PER_STAGE } from "../../../store/useKanjiStore";
 import type { KanjiStageKey, StageOutcome } from "../../../types/kanji";
+import { KanjiPaginationBar } from "./KanjiPaginationBar";
 
 interface StageMetadata {
   key: KanjiStageKey;
@@ -181,28 +182,8 @@ export const KanjiProgressBar: React.FC<KanjiProgressBarProps> = ({
         </ol>
       </nav>
 
-      {/* Barra de Sub-progreso de la Etapa Activa (1 a 20) */}
-      {!isCompleted && currentStageIndex < 4 && (
-        <div className="w-full flex flex-col gap-1.5 pt-1 px-1 border-t border-neutral-800/80 text-xs">
-          <div className="flex items-center justify-between text-neutral-300">
-            <span className="font-medium text-amber-300">
-              Pregunta {currentQuestionIndex + 1} de {QUESTIONS_PER_STAGE}
-            </span>
-            <span className="font-mono text-neutral-400">
-              Aciertos: <strong className="text-emerald-400">{activeStage?.score ?? 0}</strong> / {QUESTIONS_PER_STAGE}
-            </span>
-          </div>
-
-          <div className="w-full h-1.5 bg-neutral-800 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-amber-500 to-yellow-400 rounded-full transition-all duration-300"
-              style={{
-                width: `${Math.min(100, ((currentQuestionIndex + 1) / QUESTIONS_PER_STAGE) * 100)}%`,
-              }}
-            />
-          </div>
-        </div>
-      )}
+      {/* Paginación Integrada de Ejercicios con Conteo de Aciertos */}
+      <KanjiPaginationBar embedded stageIndex={activeStageIdx} />
     </header>
   );
 };

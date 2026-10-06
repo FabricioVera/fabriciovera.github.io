@@ -96,23 +96,25 @@
 
 ---
 
-### 🟩 Tarea T6: Paginación Interactiva (1..20) y Modo Revisión de Respuestas Previas
-- **Objetivo:** Mostrar los números 1 a 20 sobre el kanji actual para saltar a cualquier ejercicio y visualizar la respuesta previa y solución oficial en los contestados.
+### 🟩 Tarea T6: Paginación Interactiva (1..20) Integrada a KanjiProgressBar con Conteo de Aciertos
+- **Objetivo:** Integrar la botonera de 20 ejercicios y el historial de aciertos directamente dentro de `KanjiProgressBar` (eliminando barras de progreso duplicadas) e incorporar el contador en vivo de aciertos en la misma cabecera de paginación junto a `Ejercicios (1-20)`.
 - **Archivos:**
   - `src/store/useKanjiStore.ts`
-  - `src/components/games/kanji/KanjiPaginationBar.tsx` (Nuevo)
+  - `src/components/games/kanji/KanjiPaginationBar.tsx`
+  - `src/components/games/kanji/KanjiProgressBar.tsx`
   - `src/components/games/kanji/DailyKanjiGame.tsx`
   - `src/components/games/kanji/stages/KanjiReadingStage.tsx`
   - `src/components/games/kanji/stages/KanjiMeaningStage.tsx`
-  - `src/components/games/kanji/stages/KanjiRomajiStage.tsx`
+  - `src/components/games/kanji/stages/KanjiVocabStage.tsx`
   - `src/components/games/kanji/stages/KanjiStrokeStage.tsx`
 - **Detalle de implementación:**
   1. En `useKanjiStore`: acción `goToQuestion(index: number)` para cambiar directamente `currentQuestionIndex`.
-  2. Crear `KanjiPaginationBar.tsx`: renderizar 20 botones compactos numerados (1..20) con colores de estado (verde para aciertos, rojo para fallos, neutro para pendientes, anillo azul para activo).
-  3. En cada componente de etapa: detectar si `currentStage.answers` ya contiene una respuesta para el kanji activo:
+  2. En `KanjiPaginationBar.tsx`: renderizar 20 botones compactos numerados (1..20) con colores de estado (verde para aciertos, rojo para fallos, neutro para pendientes, anillo ámbar para activo) e incorporar en su cabecera `Ejercicios (1-20) • Aciertos: X/20` junto a la leyenda.
+  3. En `KanjiProgressBar.tsx`: embeber `KanjiPaginationBar embedded stageIndex={activeStageIdx}` sustituyendo la sub-barra de progreso lineal redundante.
+  4. En cada componente de etapa: detectar si `currentStage.answers` ya contiene una respuesta para el kanji activo:
      - Si está respondido: deshabilitar controles de respuesta, marcar la opción seleccionada, resaltar la correcta y mostrar tarjeta con el resultado histórico (`userAnswer`, `correctAnswer`, `isCorrect`).
      - Para trazos: si ya fue completado, indicar "Completado ✅" y permitir re-dibujar como práctica libre.
-- **Criterio de Aceptación:** El usuario puede pulsar cualquier número 1..20, ver el kanji de ese ejercicio y examinar exactamente qué respondió sin alterar su calificación.
+- **Criterio de Aceptación:** La barra de progreso y la paginación están unificadas en un solo componente cohesivo; los aciertos aparecen junto a `Ejercicios (1-20)` y el usuario puede saltar a cualquier ejercicio 1..20.
 - **Estado:** [x]
 
 ---
